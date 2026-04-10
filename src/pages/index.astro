@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ValueProps from '../components/ValueProps.astro';
+import ScheduleList from '../components/ScheduleList.astro';
+import schedule from '../content/schedule.json';
+import about from '../content/about.json';
+import site from '../content/site.json';
+
+const metaTitle = `${site.trackName} | ${site.tagline}`;
+const metaDescription = `${site.trackName} — amateur stock car racing under new management. View the 2026 race schedule and plan your visit to Thunder Ridge Speedway.`;
+
+// JSON-LD LocalBusiness structured data
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsActivityLocation',
+  name: site.trackName,
+  description: site.tagline,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address,
+  },
+  telephone: site.phone,
+  email: site.email,
+  url: 'https://thunderridgespeedway.com',
+  sameAs: [site.socialLinks.facebook, site.socialLinks.instagram].filter(Boolean),
+};
+---
+
+<BaseLayout title={metaTitle} description={metaDescription}>
+  <!-- JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- Hero -->
+  <Hero
+    headline="A New Chapter for Local Racing."
+    subheadline="Thunder Ridge Speedway is back — revitalized, professionally run, and committed to fair competition. Great racing starts here."
+    primaryCta={{ label: 'View the 2026 Schedule', href: '/schedule' }}
+    secondaryCta={{ label: 'Learn About the Track', href: '/about' }}
+  />
+
+  <!-- Value props -->
+  <ValueProps
+    headline="Racing Done Right"
+    items={about.values}
+  />
+
+  <!-- Upcoming events preview -->
+  <section class="py-20 bg-[#0d0d0d]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-2">On the Calendar</p>
+          <h2 class="text-3xl sm:text-4xl font-black text-white">Upcoming Events</h2>
+        </div>
+        <a
+          href="/schedule"
+          class="shrink-0 text-sm font-semibold text-[#dc2626] hover:text-[#b91c1c] transition-colors"
+        >
+          Full Schedule &rarr;
+        </a>
+      </div>
+
+      <ScheduleList events={schedule} upcomingOnly={true} limit={4} />
+
+      <div class="mt-8 text-center">
+        <a
+          href="/schedule"
+          class="inline-flex items-center px-6 py-3 border border-[#333333] hover:border-[#dc2626] text-white text-sm font-semibold rounded transition-colors"
+        >
+          See All Events
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- New chapter / about teaser -->
+  <section class="py-20 bg-[#111111]">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-4">Our Commitment</p>
+      <h2 class="text-3xl sm:text-4xl font-black text-white mb-6">{about.headline}</h2>
+      <p class="text-[#a1a1aa] text-lg leading-relaxed mb-8">
+        {about.subheadline}
+      </p>
+      <a
+        href="/about"
+        class="inline-flex items-center px-6 py-3 bg-[#dc2626] hover:bg-[#b91c1c] text-white font-semibold rounded transition-colors"
+      >
+        Our Story
+      </a>
+    </div>
+  </section>
+
+  <!-- Email signup / contact nudge -->
+  {site.emailSignupUrl ? (
+    <section class="py-20 bg-[#0d0d0d] border-t border-[#1a1a1a]">
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">Stay in the Loop</p>
+        <h2 class="text-2xl sm:text-3xl font-black text-white mb-3">Race Night Alerts</h2>
+        <p class="text-[#a1a1aa] mb-6">Get schedule updates, cancellations, and special announcements straight to your inbox.</p>
+        <a
+          href={site.emailSignupUrl}
+          class="inline-flex items-center px-6 py-3 bg-[#dc2626] hover:bg-[#b91c1c] text-white font-semibold rounded transition-colors"
+        >
+          Subscribe for Updates
+        </a>
+      </div>
+    </section>
+  ) : (
+    <section class="py-12 bg-[#0d0d0d] border-t border-[#1a1a1a]">
+      <div class="max-w-2xl mx-auto px-4 text-center">
+        <p class="text-[#a1a1aa]">
+          Questions? <a href="/contact" class="text-[#dc2626] hover:underline font-medium">Get in touch</a> — we're happy to help.
+        </p>
+      </div>
+    </section>
+  )}
+</BaseLayout>

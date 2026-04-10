@@ -1,0 +1,97 @@
+---
+import site from '../content/site.json';
+
+const currentYear = new Date().getFullYear();
+
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/schedule', label: 'Schedule' },
+  { href: '/about', label: 'About' },
+  { href: '/info', label: 'Track Info' },
+  { href: '/contact', label: 'Contact' },
+];
+---
+
+<footer class="bg-[#111111] border-t border-[#333333] mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <!-- Brand -->
+      <div>
+        <p class="text-[#dc2626] font-black text-2xl tracking-tighter mb-2">TRS</p>
+        <p class="font-bold text-white mb-1">{site.trackName}</p>
+        <p class="text-[#a1a1aa] text-sm leading-relaxed">{site.tagline}</p>
+      </div>
+
+      <!-- Quick links -->
+      <nav aria-label="Footer navigation">
+        <p class="text-xs font-semibold uppercase tracking-widest text-[#a1a1aa] mb-3">Quick Links</p>
+        <ul class="space-y-2" role="list">
+          {navLinks.map(({ href, label }) => (
+            <li>
+              <a
+                href={href}
+                class="text-[#a1a1aa] hover:text-white text-sm transition-colors"
+              >
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Contact -->
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest text-[#a1a1aa] mb-3">Find Us</p>
+        <address class="not-italic space-y-2 text-sm text-[#a1a1aa]">
+          <p>{site.address}</p>
+          {site.phone && (
+            <p>
+              <a href={`tel:${site.phone.replace(/\D/g, '')}`} class="hover:text-white transition-colors">
+                {site.phone}
+              </a>
+            </p>
+          )}
+          {site.email && (
+            <p>
+              <a href={`mailto:${site.email}`} class="hover:text-white transition-colors">
+                {site.email}
+              </a>
+            </p>
+          )}
+        </address>
+
+        {(site.socialLinks.facebook || site.socialLinks.instagram) && (
+          <div class="flex gap-3 mt-4">
+            {site.socialLinks.facebook && (
+              <a
+                href={site.socialLinks.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[#a1a1aa] hover:text-white transition-colors text-sm"
+                aria-label="Thunder Ridge Speedway on Facebook"
+              >
+                Facebook
+              </a>
+            )}
+            {site.socialLinks.instagram && (
+              <a
+                href={site.socialLinks.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[#a1a1aa] hover:text-white transition-colors text-sm"
+                aria-label="Thunder Ridge Speedway on Instagram"
+              >
+                Instagram
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+
+    <div class="mt-10 pt-6 border-t border-[#222222] flex flex-col sm:flex-row justify-between gap-2 text-xs text-[#a1a1aa]">
+      <p>&copy; {currentYear} {site.trackName}. All rights reserved.</p>
+      <p>Schedule subject to change. Check back for updates.</p>
+    </div>
+  </div>
+</footer>

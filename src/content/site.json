@@ -1,0 +1,20 @@
+{
+  "trackName": "Thunder Ridge Speedway",
+  "tagline": "A new chapter for local racing.",
+  "address": "1200 Speedway Blvd, Millbrook, NY 12545",
+  "phone": "(845) 555-0182",
+  "email": "info@thunderridgespeedway.com",
+  "socialLinks": {
+    "facebook": "",
+    "instagram": ""
+  },
+  "admission": {
+    "general": "$12",
+    "kids": "Free under 12",
+    "pitPass": "$30"
+  },
+  "formspreeEndpoint": "https://formspree.io/f/YOUR_FORM_ID",
+  "emailSignupUrl": "",
+  "defaultGateTime": "4:00 PM",
+  "defaultRaceTime": "6:00 PM"
+}

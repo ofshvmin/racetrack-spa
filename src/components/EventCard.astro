@@ -1,0 +1,116 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  date: string;
+  gateTime: string;
+  raceTime: string;
+  divisions: string[];
+  featured?: boolean;
+  notes?: string;
+  compact?: boolean;
+}
+
+const {
+  title,
+  date,
+  gateTime,
+  raceTime,
+  divisions,
+  featured = false,
+  notes,
+  compact = false,
+} = Astro.props;
+
+// Format date for display
+const dateObj = new Date(date + 'T12:00:00'); // noon to avoid TZ edge cases
+const displayDate = dateObj.toLocaleDateString('en-US', {
+  weekday: 'short',
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
+const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+const monthDay = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+// Determine if the event is in the past
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const isPast = dateObj < today;
+---
+
+<article
+  class:list={[
+    'relative rounded-lg border transition-colors overflow-hidden',
+    featured
+      ? 'border-[#dc2626] bg-[#1a1a1a]'
+      : 'border-[#333333] bg-[#1a1a1a] hover:border-[#555555]',
+    isPast && 'opacity-60',
+    compact ? 'p-4' : 'p-6',
+  ]}
+  aria-label={`${title} — ${displayDate}`}
+>
+  {featured && (
+    <div class="absolute top-0 left-0 right-0 h-0.5 bg-[#dc2626]" aria-hidden="true"></div>
+  )}
+
+  {featured && !compact && (
+    <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
+      Featured Event
+    </p>
+  )}
+
+  <div class:list={['flex gap-4', compact ? 'items-center' : 'flex-col sm:flex-row sm:items-start']}>
+    <!-- Date block -->
+    <div
+      class:list={[
+        'shrink-0 text-center rounded bg-[#222222] border border-[#333333]',
+        compact ? 'w-12 py-1.5 px-1' : 'w-16 py-3 px-2',
+      ]}
+    >
+      <p class:list={['font-bold text-[#dc2626] uppercase leading-none', compact ? 'text-xs' : 'text-sm']}>
+        {monthDay.split(' ')[0]}
+      </p>
+      <p class:list={['font-black text-white leading-none', compact ? 'text-lg' : 'text-2xl']}>
+        {monthDay.split(' ')[1]}
+      </p>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
+      <h3 class:list={['font-bold text-white leading-tight', compact ? 'text-base' : 'text-xl mb-1']}>
+        {title}
+        {isPast && <span class="ml-2 text-xs font-normal text-[#a1a1aa]">(past)</span>}
+      </h3>
+
+      {!compact && (
+        <p class="text-sm text-[#a1a1aa] mb-3">{dayOfWeek}, {displayDate.split(', ').slice(1).join(', ')}</p>
+      )}
+
+      <div class:list={['flex flex-wrap gap-x-4 gap-y-1 text-sm', compact ? 'mt-1' : 'mb-3']}>
+        <span class="text-[#a1a1aa]">
+          <span class="text-[#dc2626] font-medium">Gates:</span> {gateTime}
+        </span>
+        <span class="text-[#a1a1aa]">
+          <span class="text-[#dc2626] font-medium">Racing:</span> {raceTime}
+        </span>
+      </div>
+
+      {!compact && (
+        <div class="flex flex-wrap gap-2 mb-3">
+          {divisions.map((div) => (
+            <span class="px-2 py-0.5 text-xs font-medium bg-[#222222] border border-[#333333] text-[#a1a1aa] rounded">
+              {div}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {!compact && notes && (
+        <p class="text-sm text-[#a1a1aa] italic border-l-2 border-[#dc2626]/40 pl-3">
+          {notes}
+        </p>
+      )}
+    </div>
+  </div>
+</article>

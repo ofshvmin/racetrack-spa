@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ScheduleList from '../components/ScheduleList.astro';
+import schedule from '../content/schedule.json';
+import site from '../content/site.json';
+
+const metaTitle = 'Race Schedule | Thunder Ridge Speedway';
+const metaDescription =
+  'The full 2026 race schedule for Thunder Ridge Speedway in Millbrook, NY. Dates, divisions, and event details — updated throughout the season.';
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const upcoming = schedule.filter((e) => new Date(e.date + 'T12:00:00') >= today);
+const past = schedule.filter((e) => new Date(e.date + 'T12:00:00') < today);
+---
+
+<BaseLayout title={metaTitle} description={metaDescription}>
+  <!-- Page header -->
+  <section class="bg-[#0d0d0d] pt-16 pb-10 border-b border-[#333333]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
+        {site.trackName}
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-black text-white mb-4">2026 Race Schedule</h1>
+      <p class="text-[#a1a1aa] text-lg max-w-2xl">
+        Every race night on the calendar — gates, hot laps, and features. All five divisions compete
+        across a full season of Saturday night racing.
+      </p>
+    </div>
+  </section>
+
+  <!-- Schedule subject-to-change notice -->
+  <div class="bg-[#111111] border-b border-[#333333]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-start gap-3">
+      <svg
+        class="w-4 h-4 text-[#a1a1aa] mt-0.5 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <p class="text-sm text-[#a1a1aa]">
+        Schedule is subject to change. Rainouts and postponements are announced on this site and our
+        social media channels as early as possible.
+      </p>
+    </div>
+  </div>
+
+  <div class="bg-[#0d0d0d] py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+
+      <!-- Upcoming events -->
+      <section aria-labelledby="upcoming-heading">
+        <h2 id="upcoming-heading" class="text-2xl font-black text-white mb-6 flex items-center gap-3">
+          Upcoming Events
+          {upcoming.length > 0 && (
+            <span class="text-sm font-semibold bg-[#dc2626] text-white px-2.5 py-0.5 rounded-full">
+              {upcoming.length}
+            </span>
+          )}
+        </h2>
+        <ScheduleList events={upcoming} />
+      </section>
+
+      <!-- Past events -->
+      {past.length > 0 && (
+        <section aria-labelledby="past-heading">
+          <h2
+            id="past-heading"
+            class="text-2xl font-black text-white mb-2 flex items-center gap-3"
+          >
+            Past Events
+            <span class="text-sm font-semibold bg-[#1a1a1a] border border-[#333333] text-[#a1a1aa] px-2.5 py-0.5 rounded-full">
+              {past.length}
+            </span>
+          </h2>
+          <p class="text-sm text-[#a1a1aa] mb-6">Results and standings are posted after each event.</p>
+          <div class="opacity-60">
+            <ScheduleList events={past} compact={true} />
+          </div>
+        </section>
+      )}
+
+      <!-- Admission callout -->
+      <section
+        aria-labelledby="admission-heading"
+        class="bg-[#111111] border border-[#333333] rounded-xl p-8"
+      >
+        <h2 id="admission-heading" class="text-xl font-black text-white mb-6">
+          Admission &amp; Pricing
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div class="flex flex-col gap-1">
+            <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626]">
+              General Admission
+            </p>
+            <p class="text-3xl font-black text-white">{site.admission.general}</p>
+            <p class="text-sm text-[#a1a1aa]">Per person, per event</p>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626]">
+              Kids (Under 12)
+            </p>
+            <p class="text-3xl font-black text-white">{site.admission.kids}</p>
+            <p class="text-sm text-[#a1a1aa]">With a paying adult</p>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626]">Pit Pass</p>
+            <p class="text-3xl font-black text-white">{site.admission.pitPass}</p>
+            <p class="text-sm text-[#a1a1aa]">Full pit area access all night</p>
+          </div>
+        </div>
+        <p class="mt-6 text-sm text-[#a1a1aa] border-t border-[#333333] pt-4">
+          Cash preferred at the gate. Card payment is available. Admission is collected at the main
+          gate — arrive early on featured event nights.
+        </p>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,241 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../content/site.json';
+
+const metaTitle = 'Contact Us | Thunder Ridge Speedway';
+const metaDescription =
+  `Reach out to Thunder Ridge Speedway in Millbrook, NY. Questions about racing, directions, sponsorships, or media — we're here. Call, email, or use the contact form.`;
+
+// Build a maps embed URL from the address
+const mapsAddress = encodeURIComponent(site.address);
+const mapsEmbedUrl = `https://www.google.com/maps?q=${mapsAddress}&output=embed`;
+const mapsLinkUrl = `https://www.google.com/maps/search/?api=1&query=${mapsAddress}`;
+
+// Only render social links that have a non-empty value
+const socialEntries = Object.entries(site.socialLinks).filter(([, url]) => url && url.trim() !== '');
+
+const socialLabels: Record<string, string> = {
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  twitter: 'Twitter / X',
+  youtube: 'YouTube',
+};
+---
+
+<BaseLayout title={metaTitle} description={metaDescription}>
+  <!-- Page header -->
+  <section class="bg-[#0d0d0d] pt-16 pb-10 border-b border-[#333333]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
+        {site.trackName}
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-black text-white mb-4">Get in Touch</h1>
+      <p class="text-[#a1a1aa] text-lg max-w-xl">
+        We'll get back to you within two business days. For race-night questions, calling is faster.
+      </p>
+    </div>
+  </section>
+
+  <!-- Main content: form + contact details -->
+  <section class="bg-[#0d0d0d] py-16" aria-labelledby="contact-form-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+
+        <!-- Contact form — spans 3/5 on large screens -->
+        <div class="lg:col-span-3">
+          <h2 id="contact-form-heading" class="text-xl font-black text-white mb-6">
+            Send a Message
+          </h2>
+
+          <form
+            action={site.formspreeEndpoint}
+            method="POST"
+            class="space-y-5"
+            novalidate
+          >
+            <!-- Honeypot — hidden from humans, catches bots -->
+            <input type="text" name="_gotcha" class="hidden" aria-hidden="true" tabindex="-1" autocomplete="off" />
+
+            <!-- Redirect after submission -->
+            <input type="hidden" name="_next" value="/contact?sent=true" />
+
+            <!-- Name -->
+            <div>
+              <label for="contact-name" class="block text-sm font-semibold text-white mb-1.5">
+                Name <span class="text-[#dc2626]" aria-label="required">*</span>
+              </label>
+              <input
+                id="contact-name"
+                type="text"
+                name="name"
+                required
+                autocomplete="name"
+                placeholder="Your name"
+                class="w-full bg-[#1a1a1a] border border-[#333333] text-white placeholder-[#a1a1aa] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#dc2626] focus:ring-1 focus:ring-[#dc2626] transition-colors"
+              />
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label for="contact-email" class="block text-sm font-semibold text-white mb-1.5">
+                Email <span class="text-[#dc2626]" aria-label="required">*</span>
+              </label>
+              <input
+                id="contact-email"
+                type="email"
+                name="email"
+                required
+                autocomplete="email"
+                placeholder="you@example.com"
+                class="w-full bg-[#1a1a1a] border border-[#333333] text-white placeholder-[#a1a1aa] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#dc2626] focus:ring-1 focus:ring-[#dc2626] transition-colors"
+              />
+            </div>
+
+            <!-- Subject -->
+            <div>
+              <label for="contact-subject" class="block text-sm font-semibold text-white mb-1.5">
+                Subject
+              </label>
+              <select
+                id="contact-subject"
+                name="subject"
+                class="w-full bg-[#1a1a1a] border border-[#333333] text-white rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#dc2626] focus:ring-1 focus:ring-[#dc2626] transition-colors appearance-none"
+              >
+                <option value="General Inquiry">General Inquiry</option>
+                <option value="Driver Question">Driver Question</option>
+                <option value="Sponsorship">Sponsorship</option>
+                <option value="Media">Media</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <!-- Message -->
+            <div>
+              <label for="contact-message" class="block text-sm font-semibold text-white mb-1.5">
+                Message <span class="text-[#dc2626]" aria-label="required">*</span>
+              </label>
+              <textarea
+                id="contact-message"
+                name="message"
+                required
+                rows="6"
+                placeholder="Tell us what's on your mind..."
+                class="w-full bg-[#1a1a1a] border border-[#333333] text-white placeholder-[#a1a1aa] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#dc2626] focus:ring-1 focus:ring-[#dc2626] transition-colors resize-y"
+              ></textarea>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+              <button
+                type="submit"
+                class="inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-bold px-8 py-3 rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dc2626]"
+              >
+                Send Message
+              </button>
+              <p class="text-xs text-[#a1a1aa]">
+                We typically respond within two business days.
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Contact details — spans 2/5 on large screens -->
+        <aside class="lg:col-span-2 space-y-8" aria-label="Contact details">
+
+          <div class="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 space-y-6">
+
+            <!-- Address -->
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-2">
+                Address
+              </p>
+              <address class="not-italic text-[#a1a1aa] text-sm leading-relaxed">
+                {site.address}
+              </address>
+              <a
+                href={mapsLinkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-2 inline-block text-xs font-semibold text-[#dc2626] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dc2626]"
+              >
+                Open in Google Maps &rarr;
+              </a>
+            </div>
+
+            <!-- Phone -->
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-2">
+                Phone
+              </p>
+              <a
+                href={`tel:${site.phone.replace(/[^\d+]/g, '')}`}
+                class="text-[#a1a1aa] text-sm hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                {site.phone}
+              </a>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-2">
+                Email
+              </p>
+              <a
+                href={`mailto:${site.email}`}
+                class="text-[#a1a1aa] text-sm hover:text-white transition-colors break-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                {site.email}
+              </a>
+            </div>
+
+            <!-- Social links — only rendered if URLs are present -->
+            {socialEntries.length > 0 && (
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
+                  Follow Us
+                </p>
+                <ul class="space-y-2">
+                  {socialEntries.map(([platform, url]) => (
+                    <li>
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-[#a1a1aa] text-sm hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                      >
+                        {socialLabels[platform] ?? platform}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <!-- Schedule note -->
+            <div class="border-t border-[#333333] pt-5">
+              <p class="text-xs text-[#a1a1aa] leading-relaxed">
+                All official schedule updates, rainouts, and postponements are posted on this
+                website first.
+              </p>
+            </div>
+          </div>
+
+          <!-- Google Maps embed -->
+          <div class="rounded-xl overflow-hidden border border-[#333333] aspect-video">
+            <iframe
+              title={`Map showing the location of ${site.trackName}`}
+              src={mapsEmbedUrl}
+              width="100%"
+              height="100%"
+              style="border:0;"
+              allowfullscreen
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              class="w-full h-full"
+            ></iframe>
+          </div>
+
+        </aside>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

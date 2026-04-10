@@ -1,0 +1,59 @@
+---
+import EventCard from './EventCard.astro';
+
+interface ScheduleEntry {
+  id: string;
+  title: string;
+  date: string;
+  gateTime: string;
+  raceTime: string;
+  divisions: string[];
+  featured: boolean;
+  notes?: string;
+}
+
+interface Props {
+  events: ScheduleEntry[];
+  /** Show only upcoming events */
+  upcomingOnly?: boolean;
+  /** Max events to display */
+  limit?: number;
+  compact?: boolean;
+}
+
+const { events, upcomingOnly = false, limit, compact = false } = Astro.props;
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+let filtered = upcomingOnly
+  ? events.filter((e) => new Date(e.date + 'T12:00:00') >= today)
+  : events;
+
+if (limit) {
+  filtered = filtered.slice(0, limit);
+}
+---
+
+{filtered.length === 0 ? (
+  <div class="text-center py-12 border border-[#333333] rounded-lg">
+    <p class="text-[#a1a1aa] text-lg">No upcoming events scheduled.</p>
+    <p class="text-sm text-[#a1a1aa] mt-1">Check back soon — we update the schedule regularly.</p>
+  </div>
+) : (
+  <div class:list={['space-y-4', compact && 'space-y-3']}>
+    {filtered.map((event) => (
+      <EventCard
+        id={event.id}
+        title={event.title}
+        date={event.date}
+        gateTime={event.gateTime}
+        raceTime={event.raceTime}
+        divisions={event.divisions}
+        featured={event.featured}
+        notes={event.notes}
+        compact={compact}
+      />
+    ))}
+  </div>
+)}

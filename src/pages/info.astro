@@ -1,0 +1,214 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import info from '../content/info.json';
+import site from '../content/site.json';
+---
+
+<BaseLayout title={info.metaTitle} description={info.metaDescription}>
+  <!-- Page header -->
+  <section class="bg-[#0d0d0d] pt-16 pb-10 border-b border-[#333333]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
+        {site.trackName}
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-black text-white mb-5">Track Information</h1>
+
+      <!-- Quick jump navigation -->
+      <nav aria-label="Page sections">
+        <p class="text-[#a1a1aa] text-sm mb-2 font-medium uppercase tracking-wide">Jump to:</p>
+        <div class="flex flex-wrap gap-4">
+          <a
+            href="#drivers"
+            class="text-white font-semibold border-b-2 border-[#dc2626] pb-0.5 hover:text-[#dc2626] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dc2626]"
+          >
+            Drivers Info
+          </a>
+          <span class="text-[#333333] select-none" aria-hidden="true">|</span>
+          <a
+            href="#spectators"
+            class="text-white font-semibold border-b-2 border-transparent hover:border-[#dc2626] hover:text-[#dc2626] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dc2626]"
+          >
+            Spectator Info
+          </a>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <div class="bg-[#0d0d0d]">
+
+    <!-- Drivers section -->
+    <section
+      id="drivers"
+      class="py-16 border-b border-[#333333] scroll-mt-6"
+      aria-labelledby="drivers-heading"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-10">
+          <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
+            Competitors
+          </p>
+          <h2 id="drivers-heading" class="text-3xl sm:text-4xl font-black text-white mb-4">
+            {info.drivers.headline}
+          </h2>
+          <p class="text-[#a1a1aa] text-lg max-w-2xl leading-relaxed">{info.drivers.intro}</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {info.drivers.sections.map((section) => (
+            <div class="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6">
+              <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <span class="w-1 h-5 bg-[#dc2626] rounded-full shrink-0" aria-hidden="true"></span>
+                {section.title}
+              </h3>
+              <ul class="space-y-3">
+                {section.items.map((item) => (
+                  <li class="flex items-start gap-3 text-sm text-[#a1a1aa] leading-relaxed">
+                    <span
+                      class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#dc2626] shrink-0"
+                      aria-hidden="true"
+                    ></span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <!-- Rules PDF callout -->
+        <div class="mt-10 bg-[#111111] border border-[#333333] rounded-xl p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="flex-1">
+            <p class="font-bold text-white mb-1">2026 Rulebook</p>
+            <p class="text-sm text-[#a1a1aa]">
+              The full division rulebook will be available as a PDF download before the season
+              opener. Tech officials reference this document at every inspection.
+            </p>
+          </div>
+          <a
+            href="/rules.pdf"
+            class="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#333333] text-[#a1a1aa] font-semibold text-sm px-5 py-2.5 rounded-lg cursor-not-allowed opacity-50"
+            aria-disabled="true"
+            tabindex="-1"
+          >
+            <svg
+              class="w-4 h-4"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z"
+              />
+              <path
+                d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z"
+              />
+            </svg>
+            Download PDF — Coming Soon
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Spectators section -->
+    <section
+      id="spectators"
+      class="py-16 scroll-mt-6"
+      aria-labelledby="spectators-heading"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-10">
+          <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
+            Fans &amp; Families
+          </p>
+          <h2 id="spectators-heading" class="text-3xl sm:text-4xl font-black text-white mb-4">
+            {info.spectators.headline}
+          </h2>
+          <p class="text-[#a1a1aa] text-lg max-w-2xl leading-relaxed">{info.spectators.intro}</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {info.spectators.sections.map((section) => (
+            <div class="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6">
+              <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <span class="w-1 h-5 bg-[#dc2626] rounded-full shrink-0" aria-hidden="true"></span>
+                {section.title}
+              </h3>
+              <ul class="space-y-3">
+                {section.items.map((item) => (
+                  <li class="flex items-start gap-3 text-sm text-[#a1a1aa] leading-relaxed">
+                    <span
+                      class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#dc2626] shrink-0"
+                      aria-hidden="true"
+                    ></span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <!-- Admission pricing table -->
+        <div
+          class="bg-[#111111] border border-[#333333] rounded-xl overflow-hidden"
+          aria-labelledby="pricing-heading"
+        >
+          <div class="px-6 py-5 border-b border-[#333333]">
+            <h3 id="pricing-heading" class="text-lg font-bold text-white">Admission Pricing</h3>
+          </div>
+          <table class="w-full">
+            <caption class="sr-only">Thunder Ridge Speedway admission pricing</caption>
+            <thead>
+              <tr class="border-b border-[#333333]">
+                <th
+                  scope="col"
+                  class="text-left text-xs font-semibold uppercase tracking-widest text-[#a1a1aa] px-6 py-3"
+                >
+                  Category
+                </th>
+                <th
+                  scope="col"
+                  class="text-right text-xs font-semibold uppercase tracking-widest text-[#a1a1aa] px-6 py-3"
+                >
+                  Price
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#333333]">
+              <tr>
+                <td class="px-6 py-4 text-white font-medium">General Admission</td>
+                <td class="px-6 py-4 text-right text-[#dc2626] font-bold text-lg">
+                  {site.admission.general}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-white font-medium">
+                  Kids
+                  <span class="ml-2 text-xs text-[#a1a1aa] font-normal">under 12</span>
+                </td>
+                <td class="px-6 py-4 text-right text-[#dc2626] font-bold text-lg">
+                  {site.admission.kids}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-white font-medium">
+                  Pit Pass
+                  <span class="ml-2 text-xs text-[#a1a1aa] font-normal">full pit area access</span>
+                </td>
+                <td class="px-6 py-4 text-right text-[#dc2626] font-bold text-lg">
+                  {site.admission.pitPass}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="text-xs text-[#a1a1aa] px-6 py-4 border-t border-[#333333]">
+            Cash preferred. Card payment available at the main gate.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>

@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ValueProps from '../components/ValueProps.astro';
+import about from '../content/about.json';
+import site from '../content/site.json';
+
+// Split story on double newlines to preserve paragraph breaks
+const storyParagraphs = about.story
+  .split(/\n\n+/)
+  .map((p) => p.trim())
+  .filter(Boolean);
+---
+
+<BaseLayout title={about.metaTitle} description={about.metaDescription}>
+  <!-- Page header -->
+  <section class="bg-[#0d0d0d] pt-16 pb-12 border-b border-[#333333]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
+        {site.trackName}
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-black text-white mb-5 max-w-3xl">
+        {about.headline}
+      </h1>
+      <p class="text-xl text-[#a1a1aa] max-w-2xl leading-relaxed">{about.subheadline}</p>
+    </div>
+  </section>
+
+  <!-- Story section -->
+  <section class="bg-[#0d0d0d] py-16" aria-labelledby="story-heading">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 id="story-heading" class="sr-only">Our Story</h2>
+      <div class="space-y-6">
+        {storyParagraphs.map((paragraph) => (
+          <p class="text-[#a1a1aa] text-lg leading-relaxed">{paragraph}</p>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Values grid — ValueProps renders its own <section> with bg-[#111111] -->
+  <ValueProps headline="What We Stand For" items={about.values} />
+
+  <!-- Owner message -->
+  {about.ownerMessage && (
+    <section class="bg-[#0d0d0d] py-16" aria-labelledby="owner-heading">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 id="owner-heading" class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-6">
+          From the Owner
+        </h2>
+        <blockquote class="border-l-4 border-[#dc2626] pl-6">
+          <p class="text-white text-xl font-medium leading-relaxed italic">
+            &ldquo;{about.ownerMessage}&rdquo;
+          </p>
+          <footer class="mt-4">
+            <cite class="text-[#a1a1aa] text-sm not-italic">&mdash; {site.trackName} ownership</cite>
+          </footer>
+        </blockquote>
+      </div>
+    </section>
+  )}
+
+  <!-- CTA section -->
+  <section class="bg-[#111111] border-t border-[#333333] py-16" aria-labelledby="cta-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 id="cta-heading" class="text-2xl sm:text-3xl font-black text-white mb-4">
+        Ready to come out?
+      </h2>
+      <p class="text-[#a1a1aa] mb-8 max-w-xl mx-auto">
+        Check the 2026 race schedule for upcoming events, or get in touch if you have questions.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="/schedule"
+          class="inline-block bg-[#dc2626] text-white font-bold px-8 py-3 rounded-lg hover:bg-[#b91c1c] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dc2626]"
+        >
+          View Race Schedule
+        </a>
+        <a
+          href="/contact"
+          class="inline-block bg-transparent border border-[#333333] text-white font-bold px-8 py-3 rounded-lg hover:border-[#a1a1aa] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          Contact Us
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

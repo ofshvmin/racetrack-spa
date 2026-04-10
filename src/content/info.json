@@ -1,0 +1,111 @@
+{
+  "metaTitle": "Track Info | Thunder Ridge Speedway",
+  "metaDescription": "Driver registration, tech inspection, division rules, and spectator info for Thunder Ridge Speedway in Millbrook, NY. Everything you need for race night.",
+  "drivers": {
+    "headline": "Driver Information",
+    "intro": "Everything you need to show up ready to race. If your question isn't answered here, reach out before race day — not after you've already loaded the trailer.",
+    "sections": [
+      {
+        "title": "Registration & Check-In",
+        "items": [
+          "Driver registration opens at 3:00 PM on race nights. Check-in closes 30 minutes before scheduled hot laps.",
+          "First-time competitors must register in person at the pit office and provide a valid driver's license.",
+          "Annual membership forms are available at the pit office or by contacting us ahead of your first race.",
+          "All cars must be registered and numbered before entering the pit area. Duplicate numbers will be resolved by the pit steward on a first-come basis.",
+          "Transponders are required for all divisions. Loaner units are available at the pit office for a $20 deposit."
+        ]
+      },
+      {
+        "title": "Tech Inspection",
+        "items": [
+          "Tech lane opens at 3:00 PM and closes 15 minutes before the start of hot laps.",
+          "All cars must pass tech before they are permitted on the racing surface, no exceptions.",
+          "Post-race tech is conducted on top finishers in every feature. Disqualification for tech failure is final.",
+          "Bring your rule book. Tech officials reference the current season rulebook — published on this site — for every inspection.",
+          "Protest procedures and fees are outlined in the rulebook. All protests must be filed before the completion of the event."
+        ]
+      },
+      {
+        "title": "Divisions & Classes",
+        "items": [
+          "Thunder Ridge currently sanctions five divisions: Sportsman Modified, Limited Late Model, Street Stock, Pure Stock, and 4-Cylinder.",
+          "Full division rules and eligibility requirements are available in the 2026 rulebook — contact us to request a copy.",
+          "Engine, tire, and body rules are division-specific. Review your division's section carefully before building or modifying a car.",
+          "Questions about class eligibility should be directed to the tech director before race day, not at the tech lane."
+        ]
+      },
+      {
+        "title": "Track Rules",
+        "items": [
+          "Aggressive or retaliatory driving will result in immediate black-flag disqualification and may result in suspension.",
+          "All drivers are expected to conduct themselves professionally in the pit area, on pit road, and on the racing surface.",
+          "Alcohol is not permitted in the pit area at any time. Violation results in removal from the facility.",
+          "Pit speed limit is 10 MPH. The pace car sets the pit entrance and exit pace during caution periods.",
+          "The flagman and race director have final authority over all on-track decisions."
+        ]
+      },
+      {
+        "title": "Payouts",
+        "items": [
+          "Feature payouts are posted in the pit office at the start of each race night.",
+          "Payout structure is based on car count — a minimum car count per division is required for full payout.",
+          "All payouts are issued in cash at the pit office following the completion of tech on that night's features.",
+          "Points fund details and end-of-season championship payouts will be published ahead of the 2026 season opener."
+        ]
+      }
+    ]
+  },
+  "spectators": {
+    "headline": "Spectator Information",
+    "intro": "First time at Thunder Ridge or coming back after a while — here's what you need to know to have a good night.",
+    "sections": [
+      {
+        "title": "Getting Here",
+        "items": [
+          "Thunder Ridge Speedway is located at 1200 Speedway Blvd, Millbrook, NY 12545.",
+          "From the Taconic State Parkway, take the Millbrook exit and head east on Route 44 for approximately 3 miles, then turn south on Speedway Blvd.",
+          "GPS directions to '1200 Speedway Blvd, Millbrook, NY' are reliable. Do not use directions that route through Barker Road — that entrance is for competitors only.",
+          "Questions about directions? Call us at (845) 555-0182 on race day."
+        ]
+      },
+      {
+        "title": "Parking",
+        "items": [
+          "General parking is free and located in the main lot off Speedway Blvd.",
+          "Overflow parking is available in the field lot on the north side of the property — attendants will direct you.",
+          "RV and trailer parking is available in the designated area past the main lot. No hookups are provided.",
+          "Accessible parking spaces are located closest to the main grandstand entrance — display a valid placard to use these spaces."
+        ]
+      },
+      {
+        "title": "Admission",
+        "items": [
+          "General admission: $12 per person.",
+          "Children under 12: Free.",
+          "Pit passes: $30 — includes access to the pit area throughout the event.",
+          "Season passes are not available for the 2026 season but may be offered in future seasons.",
+          "Admission is paid at the main gate. Cash is preferred; card payment is available."
+        ]
+      },
+      {
+        "title": "What to Bring",
+        "items": [
+          "Ear protection is strongly recommended, especially for children — racing is loud.",
+          "Dress for the weather. The grandstands are open-air and evenings in Millbrook can get cool, even in summer.",
+          "Seat cushions and folding chairs are welcome in the general admission areas.",
+          "Outside food and non-alcoholic beverages in sealed containers are permitted in the grandstands.",
+          "Alcohol purchased at the concession stand may be consumed in designated areas only."
+        ]
+      },
+      {
+        "title": "Food & Concessions",
+        "items": [
+          "The Thunder Ridge concession stand is open from gate time through the completion of the final feature.",
+          "We serve hot dogs, burgers, nachos, popcorn, soft drinks, water, and beer.",
+          "A food truck may be on site for select events — follow our social media for announcements.",
+          "Concession stand accepts cash and card."
+        ]
+      }
+    ]
+  }
+}

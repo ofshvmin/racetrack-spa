@@ -1,0 +1,38 @@
+---
+interface ValueProp {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  headline?: string;
+  items: ValueProp[];
+}
+
+const {
+  headline = 'Why Thunder Ridge',
+  items,
+} = Astro.props;
+---
+
+<section class="py-20 bg-[#111111]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {headline && (
+      <div class="text-center mb-12">
+        <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">The Difference</p>
+        <h2 class="text-3xl sm:text-4xl font-black text-white">{headline}</h2>
+      </div>
+    )}
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {items.map(({ icon, title, description }) => (
+        <div class="bg-[#1a1a1a] border border-[#333333] rounded-lg p-6 hover:border-[#dc2626]/40 transition-colors">
+          <div class="text-3xl mb-4 select-none" aria-hidden="true">{icon}</div>
+          <h3 class="font-bold text-white text-lg mb-2">{title}</h3>
+          <p class="text-[#a1a1aa] text-sm leading-relaxed">{description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
