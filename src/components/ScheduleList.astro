@@ -8,6 +8,7 @@ interface ScheduleEntry {
   gateTime: string;
   raceTime: string;
   divisions: string[];
+  type?: 'practice' | 'race';
   featured: boolean;
   notes?: string;
 }
@@ -50,6 +51,7 @@ if (limit) {
         gateTime={event.gateTime}
         raceTime={event.raceTime}
         divisions={event.divisions}
+        type={event.type}
         featured={event.featured}
         notes={event.notes}
         compact={compact}

@@ -178,18 +178,39 @@ import site from '../content/site.json';
             </thead>
             <tbody class="divide-y divide-[#333333]">
               <tr>
-                <td class="px-6 py-4 text-white font-medium">General Admission</td>
+                <td class="px-6 py-4 text-white font-medium">
+                  Adults
+                  <span class="ml-2 text-xs text-[#a1a1aa] font-normal">ages {site.admission.adultAges}</span>
+                </td>
                 <td class="px-6 py-4 text-right text-[#dc2626] font-bold text-lg">
-                  {site.admission.general}
+                  {site.admission.adult}
                 </td>
               </tr>
               <tr>
                 <td class="px-6 py-4 text-white font-medium">
-                  Kids
-                  <span class="ml-2 text-xs text-[#a1a1aa] font-normal">under 12</span>
+                  Seniors
+                  <span class="ml-2 text-xs text-[#a1a1aa] font-normal">ages {site.admission.seniorAges}</span>
                 </td>
                 <td class="px-6 py-4 text-right text-[#dc2626] font-bold text-lg">
-                  {site.admission.kids}
+                  {site.admission.senior}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-white font-medium">
+                  Youth
+                  <span class="ml-2 text-xs text-[#a1a1aa] font-normal">ages {site.admission.youthAges}</span>
+                </td>
+                <td class="px-6 py-4 text-right text-[#dc2626] font-bold text-lg">
+                  {site.admission.youth}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-white font-medium">
+                  Children
+                  <span class="ml-2 text-xs text-[#a1a1aa] font-normal">{site.admission.childrenAges}</span>
+                </td>
+                <td class="px-6 py-4 text-right text-[#dc2626] font-bold text-lg">
+                  {site.admission.children}
                 </td>
               </tr>
               <tr>

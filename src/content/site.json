@@ -1,7 +1,7 @@
 {
   "trackName": "Chemung Speedrome",
   "tagline": "A new chapter for local racing.",
-  "address": "1200 Speedway Blvd, Millbrook, NY 12545",
+  "address": "605 Wyncoop Creek Rd, Chemung, NY 14825",
   "phone": "(845) 555-0182",
   "email": "info@chemungspeedrome.com",
   "socialLinks": {
@@ -9,12 +9,18 @@
     "instagram": ""
   },
   "admission": {
-    "general": "$12",
-    "kids": "Free under 12",
-    "pitPass": "$30"
+    "adult": "$15",
+    "adultAges": "16–61",
+    "senior": "$13",
+    "seniorAges": "62+",
+    "youth": "$7",
+    "youthAges": "11–15",
+    "children": "Free",
+    "childrenAges": "10 & under",
+    "pitPass": "$45"
   },
   "formspreeEndpoint": "https://formspree.io/f/YOUR_FORM_ID",
   "emailSignupUrl": "",
-  "defaultGateTime": "4:00 PM",
-  "defaultRaceTime": "6:00 PM"
+  "defaultGateTime": "5:00 PM",
+  "defaultRaceTime": "7:00 PM"
 }

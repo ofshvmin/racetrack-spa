@@ -8,7 +8,7 @@
       {
         "title": "Registration & Check-In",
         "items": [
-          "Driver registration opens at 3:00 PM on race nights. Check-in closes 30 minutes before scheduled hot laps.",
+          "Driver registration opens at 4:30 PM on race nights when pit gates open. Check-in closes 30 minutes before scheduled hot laps.",
           "First-time competitors must register in person at the pit office and provide a valid driver's license.",
           "Annual membership forms are available at the pit office or by contacting us ahead of your first race.",
           "All cars must be registered and numbered before entering the pit area. Duplicate numbers will be resolved by the pit steward on a first-come basis.",
@@ -18,7 +18,7 @@
       {
         "title": "Tech Inspection",
         "items": [
-          "Tech lane opens at 3:00 PM and closes 15 minutes before the start of hot laps.",
+          "Tech lane opens at 4:30 PM and closes 15 minutes before the start of hot laps.",
           "All cars must pass tech before they are permitted on the racing surface, no exceptions.",
           "Post-race tech is conducted on top finishers in every feature. Disqualification for tech failure is final.",
           "Bring your rule book. Tech officials reference the current season rulebook — published on this site — for every inspection.",
@@ -28,8 +28,8 @@
       {
         "title": "Divisions & Classes",
         "items": [
-          "Chemung Speedrome currently sanctions five divisions: Sportsman Modified, Limited Late Model, Street Stock, Pure Stock, and 4-Cylinder.",
-          "Full division rules and eligibility requirements are available in the 2026 rulebook — contact us to request a copy.",
+          "Chemung Speedrome currently sanctions four divisions: 4-Cyl, Hobby Stocks, Super Stocks, and Mods — all four run feature events every race night.",
+          "Feature lengths: 4-Cyl 15 laps, Hobby Stocks 20 laps, Super Stocks 25 laps, Mods 30 laps. Full division rules are available in the 2026 rulebook — contact us to request a copy.",
           "Engine, tire, and body rules are division-specific. Review your division's section carefully before building or modifying a car.",
           "Questions about class eligibility should be directed to the tech director before race day, not at the tech lane."
         ]
@@ -62,16 +62,15 @@
       {
         "title": "Getting Here",
         "items": [
-          "Chemung Speedrome is located at 1200 Speedway Blvd, Millbrook, NY 12545.",
-          "From the Taconic State Parkway, take the Millbrook exit and head east on Route 44 for approximately 3 miles, then turn south on Speedway Blvd.",
-          "GPS directions to '1200 Speedway Blvd, Millbrook, NY' are reliable. Do not use directions that route through Barker Road — that entrance is for competitors only.",
+          "Chemung Speedrome is located at 605 Wyncoop Creek Rd, Chemung, NY 14825.",
+          "GPS directions to '605 Wyncoop Creek Rd, Chemung, NY' are reliable.",
           "Questions about directions? Call us at (845) 555-0182 on race day."
         ]
       },
       {
         "title": "Parking",
         "items": [
-          "General parking is free and located in the main lot off Speedway Blvd.",
+          "General parking is free and located in the main lot.",
           "Overflow parking is available in the field lot on the north side of the property — attendants will direct you.",
           "RV and trailer parking is available in the designated area past the main lot. No hookups are provided.",
           "Accessible parking spaces are located closest to the main grandstand entrance — display a valid placard to use these spaces."
@@ -80,10 +79,11 @@
       {
         "title": "Admission",
         "items": [
-          "General admission: $12 per person.",
-          "Children under 12: Free.",
-          "Pit passes: $30 — includes access to the pit area throughout the event.",
-          "Season passes are not available for the 2026 season but may be offered in future seasons.",
+          "Adults (ages 16–61): $15.",
+          "Seniors (ages 62+): $13.",
+          "Youth (ages 11–15): $7.",
+          "Children ages 10 and under: Free.",
+          "Pit passes: $45 — includes access to the pit area throughout the event.",
           "Admission is paid at the main gate. Cash is preferred; card payment is available."
         ]
       },
@@ -91,7 +91,7 @@
         "title": "What to Bring",
         "items": [
           "Ear protection is strongly recommended, especially for children — racing is loud.",
-          "Dress for the weather. The grandstands are open-air and evenings in Millbrook can get cool, even in summer.",
+          "Dress for the weather. The grandstands are open-air and evenings in Chemung can get cool, even in summer.",
           "Seat cushions and folding chairs are welcome in the general admission areas.",
           "Outside food and non-alcoholic beverages in sealed containers are permitted in the grandstands.",
           "Alcohol purchased at the concession stand may be consumed in designated areas only."

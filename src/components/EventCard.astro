@@ -6,6 +6,7 @@ interface Props {
   gateTime: string;
   raceTime: string;
   divisions: string[];
+  type?: 'practice' | 'race';
   featured?: boolean;
   notes?: string;
   compact?: boolean;
@@ -17,10 +18,13 @@ const {
   gateTime,
   raceTime,
   divisions,
+  type = 'race',
   featured = false,
   notes,
   compact = false,
 } = Astro.props;
+
+const isPractice = type === 'practice';
 
 // Format date for display
 const dateObj = new Date(date + 'T12:00:00'); // noon to avoid TZ edge cases
@@ -42,7 +46,9 @@ const isPast = dateObj < today;
 <article
   class:list={[
     'relative rounded-lg border transition-colors overflow-hidden',
-    featured
+    isPractice
+      ? 'border-[#444444] bg-[#1a1a1a] hover:border-[#666666]'
+      : featured
       ? 'border-[#dc2626] bg-[#1a1a1a]'
       : 'border-[#333333] bg-[#1a1a1a] hover:border-[#555555]',
     isPast && 'opacity-60',
@@ -50,11 +56,19 @@ const isPast = dateObj < today;
   ]}
   aria-label={`${title} — ${displayDate}`}
 >
-  {featured && (
+  {(featured && !isPractice) && (
     <div class="absolute top-0 left-0 right-0 h-0.5 bg-[#dc2626]" aria-hidden="true"></div>
   )}
+  {isPractice && (
+    <div class="absolute top-0 left-0 right-0 h-0.5 bg-[#555555]" aria-hidden="true"></div>
+  )}
 
-  {featured && !compact && (
+  {isPractice && !compact && (
+    <p class="text-xs font-semibold uppercase tracking-widest text-[#a1a1aa] mb-3">
+      Open Practice
+    </p>
+  )}
+  {featured && !compact && !isPractice && (
     <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
       Featured Event
     </p>
@@ -92,17 +106,21 @@ const isPast = dateObj < today;
           <span class="text-[#dc2626] font-medium">Gates:</span> {gateTime}
         </span>
         <span class="text-[#a1a1aa]">
-          <span class="text-[#dc2626] font-medium">Racing:</span> {raceTime}
+          <span class="text-[#dc2626] font-medium">{isPractice ? 'Practice:' : 'Racing:'}</span> {raceTime}
         </span>
       </div>
 
       {!compact && (
         <div class="flex flex-wrap gap-2 mb-3">
-          {divisions.map((div) => (
+          {divisions.length > 0 ? divisions.map((div) => (
             <span class="px-2 py-0.5 text-xs font-medium bg-[#222222] border border-[#333333] text-[#a1a1aa] rounded">
               {div}
             </span>
-          ))}
+          )) : isPractice && (
+            <span class="px-2 py-0.5 text-xs font-medium bg-[#222222] border border-[#444444] text-[#666666] rounded italic">
+              All divisions welcome
+            </span>
+          )}
         </div>
       )}
 
