@@ -1,6 +1,6 @@
 {
-  "metaTitle": "Track Info | Thunder Ridge Speedway",
-  "metaDescription": "Driver registration, tech inspection, division rules, and spectator info for Thunder Ridge Speedway in Millbrook, NY. Everything you need for race night.",
+  "metaTitle": "Track Info | Chemung Speedrome",
+  "metaDescription": "Driver registration, tech inspection, division rules, and spectator info for Chemung Speedrome. Everything you need for race night.",
   "drivers": {
     "headline": "Driver Information",
     "intro": "Everything you need to show up ready to race. If your question isn't answered here, reach out before race day — not after you've already loaded the trailer.",
@@ -28,7 +28,7 @@
       {
         "title": "Divisions & Classes",
         "items": [
-          "Thunder Ridge currently sanctions five divisions: Sportsman Modified, Limited Late Model, Street Stock, Pure Stock, and 4-Cylinder.",
+          "Chemung Speedrome currently sanctions five divisions: Sportsman Modified, Limited Late Model, Street Stock, Pure Stock, and 4-Cylinder.",
           "Full division rules and eligibility requirements are available in the 2026 rulebook — contact us to request a copy.",
           "Engine, tire, and body rules are division-specific. Review your division's section carefully before building or modifying a car.",
           "Questions about class eligibility should be directed to the tech director before race day, not at the tech lane."
@@ -57,12 +57,12 @@
   },
   "spectators": {
     "headline": "Spectator Information",
-    "intro": "First time at Thunder Ridge or coming back after a while — here's what you need to know to have a good night.",
+    "intro": "First time at Chemung Speedrome or coming back after a while — here's what you need to know to have a good night.",
     "sections": [
       {
         "title": "Getting Here",
         "items": [
-          "Thunder Ridge Speedway is located at 1200 Speedway Blvd, Millbrook, NY 12545.",
+          "Chemung Speedrome is located at 1200 Speedway Blvd, Millbrook, NY 12545.",
           "From the Taconic State Parkway, take the Millbrook exit and head east on Route 44 for approximately 3 miles, then turn south on Speedway Blvd.",
           "GPS directions to '1200 Speedway Blvd, Millbrook, NY' are reliable. Do not use directions that route through Barker Road — that entrance is for competitors only.",
           "Questions about directions? Call us at (845) 555-0182 on race day."
@@ -100,7 +100,7 @@
       {
         "title": "Food & Concessions",
         "items": [
-          "The Thunder Ridge concession stand is open from gate time through the completion of the final feature.",
+          "The Chemung Speedrome concession stand is open from gate time through the completion of the final feature.",
           "We serve hot dogs, burgers, nachos, popcorn, soft drinks, water, and beer.",
           "A food truck may be on site for select events — follow our social media for announcements.",
           "Concession stand accepts cash and card."
