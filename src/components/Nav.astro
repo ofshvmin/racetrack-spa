@@ -14,15 +14,16 @@ const currentPath = Astro.url.pathname;
 
 <header class="sticky top-0 z-50 bg-[#0d0d0d]/95 backdrop-blur-sm border-b border-[#333333]">
   <nav aria-label="Main navigation" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
+    <div class="flex items-center justify-between h-18">
       <!-- Logo / Track name -->
       <a
         href="/"
         class="flex items-center gap-2 font-bold text-lg text-white hover:text-[#dc2626] transition-colors focus-visible:outline-[#dc2626]"
         aria-label={`${site.trackName} — Home`}
       >
-        <span class="text-[#dc2626] text-2xl font-black tracking-tighter">TRS</span>
-        <span class="hidden sm:inline">{site.trackName}</span>
+        <span class="font-display font-extrabold text-xl tracking-wide uppercase leading-none">
+          CHEMUNG <span class="text-[#dc2626]">SPEEDROME</span>
+        </span>
       </a>
 
       <!-- Desktop nav -->
@@ -34,10 +35,10 @@ const currentPath = Astro.url.pathname;
               <a
                 href={href}
                 class:list={[
-                  'px-4 py-2 rounded text-sm font-medium transition-colors',
+                  'px-4 py-2 text-sm font-medium transition-colors',
                   isActive
-                    ? 'text-[#dc2626] bg-[#dc2626]/10'
-                    : 'text-[#a1a1aa] hover:text-white hover:bg-[#222222]',
+                    ? 'text-white border-b-2 border-[#dc2626] rounded-none pb-0.5'
+                    : 'text-[#a1a1aa] hover:text-white hover:bg-[#222222] rounded',
                 ]}
                 aria-current={isActive ? 'page' : undefined}
               >
@@ -51,7 +52,7 @@ const currentPath = Astro.url.pathname;
       <!-- CTA -->
       <a
         href="/schedule"
-        class="hidden md:inline-flex items-center px-4 py-2 bg-[#dc2626] hover:bg-[#b91c1c] text-white text-sm font-semibold rounded transition-colors focus-visible:outline-[#dc2626]"
+        class="hidden md:inline-flex items-center px-5 py-2.5 bg-[#dc2626] hover:bg-[#b91c1c] text-white text-xs font-bold rounded-none tracking-widest uppercase transition-colors focus-visible:outline-[#dc2626]"
       >
         View Schedule
       </a>
@@ -88,10 +89,10 @@ const currentPath = Astro.url.pathname;
                 href={href}
                 role="menuitem"
                 class:list={[
-                  'block px-4 py-3 rounded text-sm font-medium transition-colors',
+                  'block px-4 py-3 text-sm font-medium transition-colors',
                   isActive
-                    ? 'text-[#dc2626] bg-[#dc2626]/10'
-                    : 'text-[#a1a1aa] hover:text-white hover:bg-[#222222]',
+                    ? 'text-white border-b-2 border-[#dc2626] rounded-none pb-0.5'
+                    : 'text-[#a1a1aa] hover:text-white hover:bg-[#222222] rounded',
                 ]}
                 aria-current={isActive ? 'page' : undefined}
               >

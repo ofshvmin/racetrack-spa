@@ -45,24 +45,17 @@ const isPast = dateObj < today;
 
 <article
   class:list={[
-    'relative rounded-lg border transition-colors overflow-hidden',
+    'relative border-l-4 transition-colors overflow-hidden',
     isPractice
-      ? 'border-[#444444] bg-[#1a1a1a] hover:border-[#666666]'
+      ? 'border-l-[#444444] bg-[#111111] border border-[#222222] border-l-4'
       : featured
-      ? 'border-[#dc2626] bg-[#1a1a1a]'
-      : 'border-[#333333] bg-[#1a1a1a] hover:border-[#555555]',
-    isPast && 'opacity-60',
+      ? 'border-l-[#dc2626] bg-[#161616] border border-[#2a2a2a] border-l-4'
+      : 'border-l-transparent bg-[#111111] border border-[#222222] hover:border-[#333333]',
+    isPast && 'opacity-50',
     compact ? 'p-4' : 'p-6',
   ]}
   aria-label={`${title} — ${displayDate}`}
 >
-  {(featured && !isPractice) && (
-    <div class="absolute top-0 left-0 right-0 h-0.5 bg-[#dc2626]" aria-hidden="true"></div>
-  )}
-  {isPractice && (
-    <div class="absolute top-0 left-0 right-0 h-0.5 bg-[#555555]" aria-hidden="true"></div>
-  )}
-
   {isPractice && !compact && (
     <p class="text-xs font-semibold uppercase tracking-widest text-[#a1a1aa] mb-3">
       Open Practice
@@ -78,21 +71,22 @@ const isPast = dateObj < today;
     <!-- Date block -->
     <div
       class:list={[
-        'shrink-0 text-center rounded bg-[#222222] border border-[#333333]',
+        'shrink-0 text-center bg-[#dc2626] flex-none',
         compact ? 'w-12 py-1.5 px-1' : 'w-16 py-3 px-2',
+        isPast && 'bg-[#333333]',
       ]}
     >
-      <p class:list={['font-bold text-[#dc2626] uppercase leading-none', compact ? 'text-xs' : 'text-sm']}>
+      <p class:list={['font-display font-bold text-white/80 uppercase leading-none', compact ? 'text-xs' : 'text-xs tracking-widest']}>
         {monthDay.split(' ')[0]}
       </p>
-      <p class:list={['font-black text-white leading-none', compact ? 'text-lg' : 'text-2xl']}>
+      <p class:list={['font-display font-extrabold text-white leading-none mt-0.5', compact ? 'text-lg' : 'text-2xl']}>
         {monthDay.split(' ')[1]}
       </p>
     </div>
 
     <!-- Content -->
     <div class="flex-1 min-w-0">
-      <h3 class:list={['font-bold text-white leading-tight', compact ? 'text-base' : 'text-xl mb-1']}>
+      <h3 class:list={['font-display font-bold text-white leading-tight uppercase tracking-wide', compact ? 'text-base' : 'text-xl mb-1']}>
         {title}
         {isPast && <span class="ml-2 text-xs font-normal text-[#a1a1aa]">(past)</span>}
       </h3>
