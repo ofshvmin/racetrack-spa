@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "b-mod",
+    "num": "01",
+    "type": "FEATURE",
+    "name": "B-Mods",
+    "description": "Open-tube chassis modifieds. Loud, light, and built to slide. The headline feature most Fridays.",
+    "specs": {
+      "Weight": "2,400 lb",
+      "Engine": "Crate 604",
+      "Tire": "Hoosier WRS-2"
+    }
+  },
+  {
+    "slug": "hobby",
+    "num": "02",
+    "type": "WEEKLY",
+    "name": "Hobby Stock",
+    "description": "Full-bodied entry class. Where most Speedrome careers begin — and a few never leave.",
+    "specs": {
+      "Weight": "2,800 lb",
+      "Engine": "Stock V8",
+      "Tire": "American Racer"
+    }
+  },
+  {
+    "slug": "4cyl",
+    "num": "03",
+    "type": "WEEKLY",
+    "name": "4 Cylinder",
+    "description": "Front-wheel imports and economy steel. Cheapest seat at the dance and twice the door-banging.",
+    "specs": {
+      "Weight": "2,200 lb",
+      "Engine": "Stock 4-cyl",
+      "Tire": "DOT street"
+    }
+  },
+  {
+    "slug": "super",
+    "num": "04",
+    "type": "WEEKLY",
+    "name": "Super Stock",
+    "description": "Late-model bodied V8 stockers. The fastest fenders on the property and the closest finishes of the night.",
+    "specs": {
+      "Weight": "3,100 lb",
+      "Engine": "Crate 602",
+      "Tire": "Hoosier F-45"
+    }
+  }
+]

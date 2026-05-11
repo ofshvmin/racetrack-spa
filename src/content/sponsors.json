@@ -1,0 +1,14 @@
+[
+  { "name": "Valley Auto", "subtitle": "Parts & Service", "style": "" },
+  { "name": "Riverside Hardware", "subtitle": "", "style": "mono" },
+  { "name": "Big Flats Towing", "subtitle": "24 / 7", "style": "large" },
+  { "name": "Steuben Welding Co.", "subtitle": "Est. 1978", "style": "" },
+  { "name": "Southern Tier Excavation", "subtitle": "", "style": "mono" },
+  { "name": "Elmira Tire & Brake", "subtitle": "Since 1962", "style": "" },
+  { "name": "County Line Garage", "subtitle": "Performance Built", "style": "stack" },
+  { "name": "Hometown Diner", "subtitle": "Open Late Fridays", "style": "large" },
+  { "name": "Lake Rd. Powersports", "subtitle": "Sales · Service", "style": "" },
+  { "name": "Schepp Oil & Propane", "subtitle": "", "style": "mono" },
+  { "name": "Corning Fabricators", "subtitle": "", "style": "large" },
+  { "name": "Painted Post Insurance Group", "subtitle": "Local Since 1991", "style": "" }
+]

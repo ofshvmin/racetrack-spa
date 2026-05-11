@@ -1,118 +1,141 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
-import ValueProps from '../components/ValueProps.astro';
 import ScheduleList from '../components/ScheduleList.astro';
 import schedule from '../content/schedule.json';
-import about from '../content/about.json';
+import divisions from '../content/divisions.json';
+import sponsors from '../content/sponsors.json';
 import site from '../content/site.json';
 
 const metaTitle = `${site.trackName} | ${site.tagline}`;
-const metaDescription = `${site.trackName} — amateur stock car racing under new management. View the 2026 race schedule and plan your visit to Chemung Speedrome.`;
+const metaDescription = `Chemung Speedrome — Friday night short-track racing on a quarter-mile asphalt oval in Chemung, NY. 2026 season schedule, race classes, and visitor info.`;
 
-// JSON-LD LocalBusiness structured data
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SportsActivityLocation',
   name: site.trackName,
   description: site.tagline,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: site.address,
-  },
+  address: { '@type': 'PostalAddress', streetAddress: site.address },
   telephone: site.phone,
   email: site.email,
   url: 'https://chemungspeedrome.com',
   sameAs: [site.socialLinks.facebook, site.socialLinks.instagram].filter(Boolean),
 };
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const upcomingRaces = schedule.filter(
+  e => e.type === 'race' && new Date(e.date + 'T12:00:00') >= today
+);
+const nextEvent  = upcomingRaces[0] ?? null;
+const raceCount  = schedule.filter(e => e.type === 'race').length;
 ---
 
 <BaseLayout title={metaTitle} description={metaDescription}>
-  <!-- JSON-LD -->
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <!-- Hero -->
-  <Hero
-    headline="A New Chapter for Local Racing."
-    subheadline="Chemung Speedrome is back — revitalized, professionally run, and committed to fair competition. Great racing starts here."
-    primaryCta={{ label: 'View the 2026 Schedule', href: '/schedule' }}
-    secondaryCta={{ label: 'Learn About the Track', href: '/about' }}
-  />
+  <Hero nextEvent={nextEvent} />
 
-  <!-- Value props -->
-  <ValueProps
-    headline="Racing Done Right"
-    items={about.values}
-  />
+  <div class="checker" aria-hidden="true"></div>
 
-  <!-- Upcoming events preview -->
-  <section class="py-20 bg-[#0d0d0d]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+  <!-- Stats strip -->
+  <div class="stats-strip">
+    <div class="container stats-strip-inner">
+      <div class="stat">
+        <div class="v">0.25<span class="unit">mi</span></div>
+        <div class="l">Asphalt Oval</div>
+      </div>
+      <div class="stat">
+        <div class="v">4<span class="unit">cl</span></div>
+        <div class="l">Weekly Classes</div>
+      </div>
+      <div class="stat">
+        <div class="v">{raceCount}<span class="unit">·</span></div>
+        <div class="l">Race Nights 2026</div>
+      </div>
+      <div class="stat">
+        <div class="v">{site.admission.adult}</div>
+        <div class="l">General Admission</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schedule preview -->
+  <section class="block" id="schedule">
+    <div class="container">
+      <div class="section-head">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-2">On the Calendar</p>
-          <h2 class="font-display text-4xl sm:text-5xl font-extrabold text-white uppercase tracking-tight">Upcoming Events</h2>
+          <div class="section-eyebrow">2026 Season · Fridays</div>
+          <h2 class="section-title">The <span class="hot">Schedule.</span></h2>
         </div>
-        <a
-          href="/schedule"
-          class="shrink-0 text-xs font-bold text-[#dc2626] hover:text-white uppercase tracking-widest border-b border-[#dc2626] pb-0.5 transition-colors"
-        >
-          Full Schedule &rarr;
-        </a>
+        <a class="link" href="/schedule">Full season →</a>
       </div>
-
-      <ScheduleList events={schedule} upcomingOnly={true} limit={4} />
-
-      <div class="mt-8 text-center">
-        <a
-          href="/schedule"
-          class="inline-flex items-center px-6 py-3 border border-[#333333] hover:border-[#dc2626] text-white text-sm font-semibold rounded transition-colors"
-        >
-          See All Events
-        </a>
+      <ScheduleList events={upcomingRaces} limit={7} showFilters={true} />
+      <div style="margin-top:32px;text-align:center;">
+        <a href="/schedule" class="btn btn-ghost">See all {raceCount} race nights →</a>
       </div>
     </div>
   </section>
 
-  <!-- New chapter / about teaser -->
-  <section class="py-20 bg-[#111111]">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-4">Our Commitment</p>
-      <h2 class="font-display text-4xl sm:text-5xl font-extrabold text-white uppercase tracking-tight mb-6">{about.headline}</h2>
-      <p class="text-[#a1a1aa] text-lg leading-relaxed mb-8">
-        {about.subheadline}
-      </p>
-      <a
-        href="/about"
-        class="inline-flex items-center px-8 py-3 bg-[#dc2626] hover:bg-[#b91c1c] text-white font-bold text-xs rounded-none tracking-widest uppercase transition-colors"
-      >
-        Our Story
-      </a>
+  <div class="checker thin" aria-hidden="true"></div>
+
+  <!-- Classes -->
+  <section class="block" id="classes" style="padding-top:80px;">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">Race Divisions</div>
+          <h2 class="section-title">Four <span class="hot">classes.</span><br />One quarter mile.</h2>
+        </div>
+        <a class="link" href="/info">Driver info →</a>
+      </div>
+      <div class="classes-grid">
+        {divisions.map((div, i) => (
+          <article class="class-card" data-c={div.slug}>
+            <div class="num">0{i + 1} / {div.type}</div>
+            <div class="nm">{div.name}<span class="accent"></span></div>
+            <p>{div.description}</p>
+            <div class="specs">
+              {Object.entries(div.specs).map(([key, val]) => (
+                <div><span>{key}</span><strong>{val}</strong></div>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
 
-  <!-- Email signup / contact nudge -->
-  {site.emailSignupUrl ? (
-    <section class="py-20 bg-[#0d0d0d] border-t border-[#1a1a1a]">
-      <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">Stay in the Loop</p>
-        <h2 class="text-2xl sm:text-3xl font-black text-white mb-3">Race Night Alerts</h2>
-        <p class="text-[#a1a1aa] mb-6">Get schedule updates, cancellations, and special announcements straight to your inbox.</p>
-        <a
-          href={site.emailSignupUrl}
-          class="inline-flex items-center px-6 py-3 bg-[#dc2626] hover:bg-[#b91c1c] text-white font-semibold rounded transition-colors"
-        >
-          Subscribe for Updates
-        </a>
+  <!-- Sponsors -->
+  <section class="block sponsors" id="sponsors">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">Partners of the Speedrome</div>
+          <h2 class="section-title">Built by <span class="hot">the valley.</span></h2>
+        </div>
+        <a class="link" href="#sponsor-cta">Become a partner →</a>
       </div>
-    </section>
-  ) : (
-    <section class="py-12 bg-[#0d0d0d] border-t border-[#1a1a1a]">
-      <div class="max-w-2xl mx-auto px-4 text-center">
-        <p class="text-[#a1a1aa]">
-          Questions? <a href="/contact" class="text-[#dc2626] hover:underline font-medium">Get in touch</a> — we're happy to help.
-        </p>
+      <div class="sponsor-grid">
+        {sponsors.map(s => (
+          <div class:list={['sponsor', s.style && `is-${s.style}`]}>
+            <div class="nm">
+              {s.name}
+              {s.subtitle && <span class="small">— {s.subtitle} —</span>}
+            </div>
+          </div>
+        ))}
       </div>
-    </section>
-  )}
+      <div class="sponsor-cta" id="sponsor-cta">
+        <div>
+          <h3>Put your name on the wall.</h3>
+          <p>Track sponsorships, billboard placements, and division naming rights for the 2026 season are open. Local rates, all year long.</p>
+        </div>
+        <a href="/contact" class="btn btn-primary"><span class="arrow"></span> Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
 </BaseLayout>

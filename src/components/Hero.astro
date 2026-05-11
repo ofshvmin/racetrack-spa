@@ -1,105 +1,128 @@
 ---
-interface Props {
-  headline: string;
-  subheadline: string;
-  primaryCta: { label: string; href: string };
-  secondaryCta?: { label: string; href: string };
+interface ScheduleEntry {
+  id: string;
+  type?: string;
+  title: string;
+  date: string;
+  gateTime: string;
+  raceTime: string;
+  divisions: string[];
+  featured?: boolean;
+  notes?: string;
 }
 
-const { headline, subheadline, primaryCta, secondaryCta } = Astro.props;
+interface Props {
+  nextEvent?: ScheduleEntry | null;
+}
+
+const { nextEvent = null } = Astro.props;
+
+let nextDayAbbr = '';
+let nextMonthAbbr = '';
+let nextDayNum = '';
+let nextEventISO = '';
+
+if (nextEvent) {
+  const d = new Date(nextEvent.date + 'T12:00:00');
+  nextDayAbbr   = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+  nextMonthAbbr = d.toLocaleDateString('en-US', { month: 'short' });
+  nextDayNum    = String(d.getDate());
+
+  const [time, ampm] = nextEvent.raceTime.split(' ');
+  let [h, m] = time.split(':').map(Number);
+  if (ampm === 'PM' && h !== 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+  nextEventISO = `${nextEvent.date}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00-04:00`;
+}
 ---
 
-<section class="relative overflow-hidden bg-[#0d0d0d] min-h-[88vh] flex items-center">
-  <!-- Photo background slot — replace this div's bg with a real image later -->
-  <div
-    aria-hidden="true"
-    class="absolute inset-0 bg-[#0d0d0d]"
-    style="background-image: radial-gradient(ellipse 80% 60% at 60% 40%, #1a0a0a 0%, #0d0d0d 70%);"
-  ></div>
+<section class="hero">
+  <div class="oval" aria-hidden="true"></div>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="lights" aria-hidden="true"></div>
 
-  <!-- Diagonal speed lines texture -->
-  <div
-    aria-hidden="true"
-    class="absolute inset-0 opacity-[0.04]"
-    style="background-image: repeating-linear-gradient(
-      -55deg,
-      #ffffff 0px,
-      #ffffff 1px,
-      transparent 1px,
-      transparent 60px
-    );"
-  ></div>
+  <div class="container hero-inner">
 
-  <!-- Photo overlay gradient — keeps text readable once a photo is placed -->
-  <div
-    aria-hidden="true"
-    class="absolute inset-0"
-    style="background: linear-gradient(105deg, rgba(13,13,13,0.95) 0%, rgba(13,13,13,0.75) 50%, rgba(13,13,13,0.4) 100%);"
-  ></div>
+    <div class="eyebrow" aria-hidden="true">
+      <span class="dot"></span>
+      <span>Friday Night · Chemung, NY · Est. 2026</span>
+      <span class="dot"></span>
+    </div>
 
-  <!-- Bottom fade to next section -->
-  <div
-    aria-hidden="true"
-    class="absolute bottom-0 left-0 right-0 h-32"
-    style="background: linear-gradient(to bottom, transparent, #0d0d0d);"
-  ></div>
-
-  <!-- Red top accent bar -->
-  <div aria-hidden="true" class="absolute top-0 left-0 right-0 h-1 bg-[#dc2626]"></div>
-
-  <div class="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
-    <div class="max-w-3xl">
-      <!-- Eyebrow -->
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-8 h-px bg-[#dc2626]"></div>
-        <p class="text-xs font-bold uppercase tracking-widest text-[#dc2626]">
-          Chemung, NY · 2026 Season
-        </p>
+    <div class="logo-mark" role="img" aria-label="Chemung Speedrome">
+      <div class="top-rule">
+        <span>Asphalt&nbsp;·&nbsp;Quarter Mile</span>
+        <span>Southern Tier&nbsp;·&nbsp;NY</span>
       </div>
-
-      <h1 class="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-white leading-[0.95] tracking-tight mb-6 uppercase">
-        {headline}
-      </h1>
-
-      <p class="text-lg sm:text-xl text-[#a1a1aa] leading-relaxed mb-10 max-w-xl">
-        {subheadline}
-      </p>
-
-      <div class="flex flex-col sm:flex-row gap-4">
-        <a
-          href={primaryCta.href}
-          class="inline-flex items-center justify-center px-8 py-4 bg-[#dc2626] hover:bg-[#b91c1c] text-white font-bold text-sm rounded-none tracking-widest uppercase transition-colors focus-visible:outline-[#dc2626]"
-        >
-          {primaryCta.label}
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="ml-2" aria-hidden="true">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </a>
-        {secondaryCta && (
-          <a
-            href={secondaryCta.href}
-            class="inline-flex items-center justify-center px-8 py-4 border border-[#555555] hover:border-white text-white font-semibold text-sm rounded-none tracking-wide uppercase transition-colors"
-          >
-            {secondaryCta.label}
-          </a>
-        )}
+      <div class="chemung">CHEM<span class="accent">U</span>NG</div>
+      <div class="speedrome-row">
+        <div class="bar left"></div>
+        <div class="speedrome">Speedrome</div>
+        <div class="bar"></div>
       </div>
-
-      <!-- Stats bar -->
-      <div class="mt-14 pt-8 border-t border-[#1f1f1f] grid grid-cols-3 gap-6 max-w-lg">
-        <div>
-          <p class="font-display font-bold text-3xl text-white leading-none">4</p>
-          <p class="text-xs text-[#a1a1aa] mt-1 uppercase tracking-wide">Divisions</p>
-        </div>
-        <div>
-          <p class="font-display font-bold text-3xl text-white leading-none">21</p>
-          <p class="text-xs text-[#a1a1aa] mt-1 uppercase tracking-wide">Race Nights</p>
-        </div>
-        <div>
-          <p class="font-display font-bold text-3xl text-white leading-none">$15</p>
-          <p class="text-xs text-[#a1a1aa] mt-1 uppercase tracking-wide">Gate Admission</p>
-        </div>
+      <div class="meta">
+        <span><span class="pip">●</span>&nbsp;Fridays</span>
+        <span>·</span>
+        <span>Under the Lights</span>
+        <span>·</span>
+        <span>Since <strong style="color:var(--ink)">2026</strong></span>
       </div>
     </div>
+
+    <div class="tagline">
+      <h1>Friday nights belong to the <span class="hot">short track.</span></h1>
+      <p>A reborn quarter-mile asphalt oval in the heart of the Southern Tier. Four classes, one summer of fenders, fumes, and Friday-night glory racing.</p>
+      <div class="actions">
+        <a href="/schedule" class="btn btn-primary"><span class="arrow"></span> See the Schedule</a>
+        <a href="/info" class="btn btn-ghost">Track Info</a>
+      </div>
+    </div>
+
+    {nextEvent && (
+      <div class="next-race">
+        <div class="next-race-inner">
+          <div>
+            <div class="tag">Next Race</div>
+            <div class="when" style="margin-top:10px;">
+              <span class="day">{nextDayAbbr},</span> {nextMonthAbbr} {nextDayNum}
+            </div>
+            <div class="feature">
+              <strong>{nextEvent.title}</strong>
+              {nextEvent.notes && <Fragment> — {nextEvent.notes}</Fragment>}
+            </div>
+          </div>
+          <div></div>
+          <div class="countdown" aria-label="Time until next race">
+            <div class="cd"><div class="num" data-cd="days">00</div><div class="lbl">Days</div></div>
+            <div class="cd"><div class="num" data-cd="hours">00</div><div class="lbl">Hours</div></div>
+            <div class="cd"><div class="num" data-cd="mins">00</div><div class="lbl">Min</div></div>
+            <div class="cd"><div class="num" data-cd="secs">00</div><div class="lbl">Sec</div></div>
+          </div>
+        </div>
+      </div>
+    )}
+
   </div>
 </section>
+
+{nextEvent && (
+  <script define:vars={{ nextEventISO }}>
+    const target = new Date(nextEventISO).getTime();
+    const els = {
+      days:  document.querySelector('[data-cd="days"]'),
+      hours: document.querySelector('[data-cd="hours"]'),
+      mins:  document.querySelector('[data-cd="mins"]'),
+      secs:  document.querySelector('[data-cd="secs"]'),
+    };
+    const pad = n => String(Math.max(0, n)).padStart(2, '0');
+    function tick() {
+      let diff = Math.max(0, target - Date.now());
+      if (els.days)  els.days.textContent  = pad(Math.floor(diff / 86400000));
+      if (els.hours) els.hours.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+      if (els.mins)  els.mins.textContent  = pad(Math.floor((diff % 3600000) / 60000));
+      if (els.secs)  els.secs.textContent  = pad(Math.floor((diff % 60000) / 1000));
+    }
+    tick();
+    setInterval(tick, 1000);
+  </script>
+)}

@@ -1,131 +1,31 @@
 ---
-import site from '../content/site.json';
-
 const navLinks = [
-  { href: '/', label: 'Home' },
   { href: '/schedule', label: 'Schedule' },
-  { href: '/about', label: 'About' },
-  { href: '/info', label: 'Track Info' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/info',     label: 'Classes'  },
+  { href: '/about',    label: 'About'    },
+  { href: '/contact',  label: 'Contact'  },
 ];
 
 const currentPath = Astro.url.pathname;
 ---
 
-<header class="sticky top-0 z-50 bg-[#0d0d0d]/95 backdrop-blur-sm border-b border-[#333333]">
-  <nav aria-label="Main navigation" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-18">
-      <!-- Logo / Track name -->
-      <a
-        href="/"
-        class="flex items-center gap-2 font-bold text-lg text-white hover:text-[#dc2626] transition-colors focus-visible:outline-[#dc2626]"
-        aria-label={`${site.trackName} — Home`}
-      >
-        <span class="font-display font-extrabold text-xl tracking-wide uppercase leading-none">
-          CHEMUNG <span class="text-[#dc2626]">SPEEDROME</span>
-        </span>
-      </a>
+<header class="topbar">
+  <div class="container topbar-inner">
 
-      <!-- Desktop nav -->
-      <ul class="hidden md:flex items-center gap-1" role="list">
-        {navLinks.map(({ href, label }) => {
-          const isActive = href === '/' ? currentPath === '/' : currentPath.startsWith(href);
-          return (
-            <li>
-              <a
-                href={href}
-                class:list={[
-                  'px-4 py-2 text-sm font-medium transition-colors',
-                  isActive
-                    ? 'text-white border-b-2 border-[#dc2626] rounded-none pb-0.5'
-                    : 'text-[#a1a1aa] hover:text-white hover:bg-[#222222] rounded',
-                ]}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                {label}
-              </a>
-            </li>
-          );
-        })}
-      </ul>
+    <a href="/" class="nav-mark" aria-label="Chemung Speedrome home">
+      <span class="badge" aria-hidden="true"><span>CS</span></span>
+      <span class="name">CHEMUNG <em>/</em> SPEEDROME</span>
+    </a>
 
-      <!-- CTA -->
-      <a
-        href="/schedule"
-        class="hidden md:inline-flex items-center px-5 py-2.5 bg-[#dc2626] hover:bg-[#b91c1c] text-white text-xs font-bold rounded-none tracking-widest uppercase transition-colors focus-visible:outline-[#dc2626]"
-      >
-        View Schedule
-      </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      {navLinks.map(({ href, label }) => {
+        const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
+        return (
+          <a href={href} aria-current={isActive ? 'page' : undefined}>{label}</a>
+        );
+      })}
+      <a href="/schedule" class="nav-cta">View Schedule</a>
+    </nav>
 
-      <!-- Mobile menu button -->
-      <button
-        id="mobile-menu-btn"
-        type="button"
-        aria-controls="mobile-menu"
-        aria-expanded="false"
-        class="md:hidden p-2 rounded text-[#a1a1aa] hover:text-white hover:bg-[#222222] transition-colors"
-        aria-label="Toggle navigation menu"
-      >
-        <svg id="icon-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-        <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Mobile menu -->
-    <div id="mobile-menu" class="md:hidden hidden pb-4" role="menu">
-      <ul class="flex flex-col gap-1" role="list">
-        {navLinks.map(({ href, label }) => {
-          const isActive = href === '/' ? currentPath === '/' : currentPath.startsWith(href);
-          return (
-            <li role="none">
-              <a
-                href={href}
-                role="menuitem"
-                class:list={[
-                  'block px-4 py-3 text-sm font-medium transition-colors',
-                  isActive
-                    ? 'text-white border-b-2 border-[#dc2626] rounded-none pb-0.5'
-                    : 'text-[#a1a1aa] hover:text-white hover:bg-[#222222] rounded',
-                ]}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                {label}
-              </a>
-            </li>
-          );
-        })}
-        <li role="none">
-          <a
-            href="/schedule"
-            role="menuitem"
-            class="block mt-2 px-4 py-3 bg-[#dc2626] hover:bg-[#b91c1c] text-white text-sm font-semibold rounded text-center transition-colors"
-          >
-            View Schedule
-          </a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+  </div>
 </header>
-
-<!-- Mobile nav toggle: minimal JS required for this interaction -->
-<script>
-  const btn = document.getElementById('mobile-menu-btn');
-  const menu = document.getElementById('mobile-menu');
-  const iconOpen = document.getElementById('icon-open');
-  const iconClose = document.getElementById('icon-close');
-
-  btn?.addEventListener('click', () => {
-    const isOpen = menu?.classList.toggle('hidden') === false;
-    btn.setAttribute('aria-expanded', String(isOpen));
-    iconOpen?.classList.toggle('hidden', isOpen);
-    iconClose?.classList.toggle('hidden', !isOpen);
-  });
-</script>

@@ -1,4 +1,6 @@
 ---
+import site from '../content/site.json';
+
 interface Props {
   id: string;
   title: string;
@@ -12,117 +14,74 @@ interface Props {
   compact?: boolean;
 }
 
-const {
-  title,
-  date,
-  gateTime,
-  raceTime,
-  divisions,
-  type = 'race',
-  featured = false,
-  notes,
-  compact = false,
-} = Astro.props;
+const { title, date, gateTime, raceTime, divisions, type = 'race', featured = false, notes } = Astro.props;
 
 const isPractice = type === 'practice';
 
-// Format date for display
-const dateObj = new Date(date + 'T12:00:00'); // noon to avoid TZ edge cases
-const displayDate = dateObj.toLocaleDateString('en-US', {
-  weekday: 'short',
-  month: 'long',
-  day: 'numeric',
-  year: 'numeric',
-});
-const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
-const monthDay = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+const dateObj  = new Date(date + 'T12:00:00');
+const dayNum   = String(dateObj.getDate()).padStart(2, '0');
+const dayAbbr  = dateObj.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+const monthAbbr = dateObj.toLocaleDateString('en-US', { month: 'short' });
+const year     = dateObj.getFullYear();
 
-// Determine if the event is in the past
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 const isPast = dateObj < today;
+
+const SLUGS: Record<string, string> = {
+  'Mods': 'b-mod',       'B-Mods': 'b-mod',
+  '4-Cyl': '4cyl',       '4 Cylinder': '4cyl',
+  'Hobby Stocks': 'hobby','Hobby Stock': 'hobby',
+  'Super Stocks': 'super','Super Stock': 'super',
+};
+const LABELS: Record<string, string> = {
+  'Mods': 'B-Mod',        'B-Mods': 'B-Mod',
+  '4-Cyl': '4 Cyl',       '4 Cylinder': '4 Cyl',
+  'Hobby Stocks': 'Hobby', 'Hobby Stock': 'Hobby',
+  'Super Stocks': 'Super', 'Super Stock': 'Super',
+};
+
+const classesAttr = divisions.map(d => SLUGS[d] ?? d.toLowerCase().replace(/[^a-z0-9]/g, '-')).join(' ');
 ---
 
 <article
-  class:list={[
-    'relative border-l-4 transition-colors overflow-hidden',
-    isPractice
-      ? 'border-l-[#444444] bg-[#111111] border border-[#222222] border-l-4'
-      : featured
-      ? 'border-l-[#dc2626] bg-[#161616] border border-[#2a2a2a] border-l-4'
-      : 'border-l-transparent bg-[#111111] border border-[#222222] hover:border-[#333333]',
-    isPast && 'opacity-50',
-    compact ? 'p-4' : 'p-6',
-  ]}
-  aria-label={`${title} — ${displayDate}`}
+  class:list={['race-row', featured && !isPractice && 'is-special', isPast && 'is-past']}
+  data-classes={classesAttr}
+  aria-label={`${title} — ${monthAbbr} ${parseInt(dayNum)}, ${year}`}
 >
-  {isPractice && !compact && (
-    <p class="text-xs font-semibold uppercase tracking-widest text-[#a1a1aa] mb-3">
-      Open Practice
-    </p>
-  )}
-  {featured && !compact && !isPractice && (
-    <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
-      Featured Event
-    </p>
-  )}
+  <div class="date">
+    <div class="day-num">{dayNum}</div>
+    <div class="day-info"><strong>{dayAbbr}</strong>{monthAbbr}<br />{year}</div>
+  </div>
 
-  <div class:list={['flex gap-4', compact ? 'items-center' : 'flex-col sm:flex-row sm:items-start']}>
-    <!-- Date block -->
-    <div
-      class:list={[
-        'shrink-0 text-center bg-[#dc2626] flex-none',
-        compact ? 'w-12 py-1.5 px-1' : 'w-16 py-3 px-2',
-        isPast && 'bg-[#333333]',
-      ]}
-    >
-      <p class:list={['font-display font-bold text-white/80 uppercase leading-none', compact ? 'text-xs' : 'text-xs tracking-widest']}>
-        {monthDay.split(' ')[0]}
-      </p>
-      <p class:list={['font-display font-extrabold text-white leading-none mt-0.5', compact ? 'text-lg' : 'text-2xl']}>
-        {monthDay.split(' ')[1]}
-      </p>
-    </div>
+  <div class="title">
+    {title}
+    {notes && <span class="sub">{notes}</span>}
+  </div>
 
-    <!-- Content -->
-    <div class="flex-1 min-w-0">
-      <h3 class:list={['font-display font-bold text-white leading-tight uppercase tracking-wide', compact ? 'text-base' : 'text-xl mb-1']}>
-        {title}
-        {isPast && <span class="ml-2 text-xs font-normal text-[#a1a1aa]">(past)</span>}
-      </h3>
+  <div class="classes">
+    {isPractice ? (
+      <span class="tag-class">Practice</span>
+    ) : divisions.map(div => (
+      <span class="tag-class" data-class={SLUGS[div] ?? div.toLowerCase()}>
+        {LABELS[div] ?? div}
+      </span>
+    ))}
+  </div>
 
-      {!compact && (
-        <p class="text-sm text-[#a1a1aa] mb-3">{dayOfWeek}, {displayDate.split(', ').slice(1).join(', ')}</p>
-      )}
+  <div class="gates">
+    <div class="row"><span>Gates</span><strong>{gateTime}</strong></div>
+    <div class="row"><span>{isPractice ? 'Start' : 'Green'}</span><strong>{raceTime}</strong></div>
+  </div>
 
-      <div class:list={['flex flex-wrap gap-x-4 gap-y-1 text-sm', compact ? 'mt-1' : 'mb-3']}>
-        <span class="text-[#a1a1aa]">
-          <span class="text-[#dc2626] font-medium">Gates:</span> {gateTime}
-        </span>
-        <span class="text-[#a1a1aa]">
-          <span class="text-[#dc2626] font-medium">{isPractice ? 'Practice:' : 'Racing:'}</span> {raceTime}
-        </span>
-      </div>
-
-      {!compact && (
-        <div class="flex flex-wrap gap-2 mb-3">
-          {divisions.length > 0 ? divisions.map((div) => (
-            <span class="px-2 py-0.5 text-xs font-medium bg-[#222222] border border-[#333333] text-[#a1a1aa] rounded">
-              {div}
-            </span>
-          )) : isPractice && (
-            <span class="px-2 py-0.5 text-xs font-medium bg-[#222222] border border-[#444444] text-[#666666] rounded italic">
-              All divisions welcome
-            </span>
-          )}
-        </div>
-      )}
-
-      {!compact && notes && (
-        <p class="text-sm text-[#a1a1aa] italic border-l-2 border-[#dc2626]/40 pl-3">
-          {notes}
-        </p>
-      )}
-    </div>
+  <div class="ticket">
+    {isPractice ? (
+      <div class="price" style="color:var(--ink-mute);font-size:18px">Free</div>
+    ) : (
+      <>
+        <div class="price">{site.admission.adult}<small> / adult</small></div>
+        <a href="/schedule" class="buy">Details</a>
+      </>
+    )}
   </div>
 </article>
