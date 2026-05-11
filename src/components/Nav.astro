@@ -9,11 +9,25 @@ const navLinks = [
 const currentPath = Astro.url.pathname;
 ---
 
+<!-- Speed Wedge brand mark — referenced by Nav badge -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="wedge-mark" viewBox="0 0 340 340">
+      <polygon points="80,70 290,70 260,270 50,270" fill="currentColor"/>
+      <rect x="60" y="120" width="240" height="10" fill="#0a0a0c" transform="skewX(-12 0 0)"/>
+      <rect x="60" y="155" width="240" height="6"  fill="#0a0a0c" transform="skewX(-12 0 0)"/>
+      <rect x="60" y="180" width="240" height="14" fill="#0a0a0c" transform="skewX(-12 0 0)"/>
+      <rect x="60" y="215" width="240" height="6"  fill="#0a0a0c" transform="skewX(-12 0 0)"/>
+      <polygon points="80,70 110,70 80,270 50,270" fill="#e8552a"/>
+    </symbol>
+  </defs>
+</svg>
+
 <header class="topbar">
   <div class="container topbar-inner">
 
     <a href="/" class="nav-mark" aria-label="Chemung Speedrome home">
-      <span class="badge" aria-hidden="true"><span>CS</span></span>
+      <span class="badge" aria-hidden="true"><svg viewBox="0 0 340 340"><use href="#wedge-mark"/></svg></span>
       <span class="name">CHEMUNG <em>/</em> SPEEDROME</span>
     </a>
 

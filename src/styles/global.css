@@ -126,18 +126,12 @@ h1, h2 {
   text-transform: uppercase;
 }
 .nav-mark .badge {
-  width: 36px; height: 36px;
-  background: var(--hot);
-  color: #0a0a0c;
+  width: 38px; height: 38px;
   display: grid;
   place-items: center;
-  font-family: 'Big Shoulders Display', sans-serif;
-  font-weight: 900;
-  font-style: italic;
-  font-size: 22px;
-  transform: skewX(-8deg);
+  color: var(--ink);
 }
-.nav-mark .badge span { transform: skewX(8deg); display: block; line-height: 1; }
+.nav-mark .badge svg { width: 100%; height: 100%; display: block; }
 .nav-mark .name {
   font-family: 'Big Shoulders Display', sans-serif;
   font-weight: 800;
