@@ -1,9 +1,9 @@
 ---
 const navLinks = [
-  { href: '/schedule', label: 'Schedule' },
-  { href: '/info',     label: 'Classes'  },
-  { href: '/about',    label: 'About'    },
-  { href: '/contact',  label: 'Contact'  },
+  { href: '/schedule',  label: 'Schedule' },
+  { href: '/info',      label: 'Drivers'  },
+  { href: '/#sponsors', label: 'Sponsors' },
+  { href: '/#info',     label: 'Visit'    },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -33,12 +33,12 @@ const currentPath = Astro.url.pathname;
 
     <nav class="nav-links" aria-label="Main navigation">
       {navLinks.map(({ href, label }) => {
-        const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
+        const isActive = currentPath === href || (href !== '/' && !href.includes('#') && currentPath.startsWith(href));
         return (
           <a href={href} aria-current={isActive ? 'page' : undefined}>{label}</a>
         );
       })}
-      <a href="/schedule" class="nav-cta">View Schedule</a>
+      <a href="#" class="nav-cta" data-tickets>Tickets</a>
     </nav>
 
   </div>

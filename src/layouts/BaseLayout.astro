@@ -40,7 +40,7 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).toStri
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@300;400;500;600;700&family=Saira:wght@600;700;800;900&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -50,5 +50,6 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).toStri
       <slot />
     </main>
     <Footer />
+    <script src="/tickets-pop.js" is:inline></script>
   </body>
 </html>

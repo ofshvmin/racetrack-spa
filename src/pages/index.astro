@@ -1,14 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
-import ScheduleList from '../components/ScheduleList.astro';
+import ElmBanner from '../components/ElmBanner.astro';
 import schedule from '../content/schedule.json';
-import divisions from '../content/divisions.json';
 import sponsors from '../content/sponsors.json';
 import site from '../content/site.json';
 
 const metaTitle = `${site.trackName} | ${site.tagline}`;
-const metaDescription = `Chemung Speedrome — Friday night short-track racing on a quarter-mile asphalt oval in Chemung, NY. 2026 season schedule, race classes, and visitor info.`;
+const metaDescription = `Chemung Speedrome — Friday night short-track racing on a 3/8-mile asphalt oval in Chemung, NY. 2026 season schedule, race classes, and visitor info.`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -28,85 +27,111 @@ today.setHours(0, 0, 0, 0);
 const upcomingRaces = schedule.filter(
   e => e.type === 'race' && new Date(e.date + 'T12:00:00') >= today
 );
-const nextEvent  = upcomingRaces[0] ?? null;
-const raceCount  = schedule.filter(e => e.type === 'race').length;
+const nextEvent = upcomingRaces[0] ?? null;
+
+let nextDayAbbr = '';
+let nextMonthAbbr = '';
+let nextDayNum = '';
+let nextEventISO = '';
+
+if (nextEvent) {
+  const d = new Date(nextEvent.date + 'T12:00:00');
+  nextDayAbbr   = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+  nextMonthAbbr = d.toLocaleDateString('en-US', { month: 'short' });
+  nextDayNum    = String(d.getDate());
+
+  const [time, ampm] = nextEvent.raceTime.split(' ');
+  let [h, m] = time.split(':').map(Number);
+  if (ampm === 'PM' && h !== 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+  nextEventISO = `${nextEvent.date}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00-04:00`;
+}
 ---
 
 <BaseLayout title={metaTitle} description={metaDescription}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <!-- Hero -->
-  <Hero nextEvent={nextEvent} />
+  <Hero />
 
   <div class="checker" aria-hidden="true"></div>
 
-  <!-- Stats strip -->
-  <div class="stats-strip">
-    <div class="container stats-strip-inner">
-      <div class="stat">
-        <div class="v">0.25<span class="unit">mi</span></div>
-        <div class="l">Asphalt Oval</div>
-      </div>
-      <div class="stat">
-        <div class="v">4<span class="unit">cl</span></div>
-        <div class="l">Weekly Classes</div>
-      </div>
-      <div class="stat">
-        <div class="v">{raceCount}<span class="unit">·</span></div>
-        <div class="l">Race Nights 2026</div>
-      </div>
-      <div class="stat">
-        <div class="v">{site.admission.adult}</div>
-        <div class="l">General Admission</div>
-      </div>
-    </div>
-  </div>
+  <!-- Next Race -->
+  {nextEvent && (
+    <section class="next-race-section">
+      <div class="container">
 
-  <!-- Schedule preview -->
-  <section class="block" id="schedule">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <div class="section-eyebrow">2026 Season · Fridays</div>
-          <h2 class="section-title">The <span class="hot">Schedule.</span></h2>
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow">Friday this week</div>
+            <h2 class="section-title">Next at the <span class="hot">Speedrome.</span></h2>
+          </div>
+          <a class="link" href="/schedule">Full season →</a>
         </div>
-        <a class="link" href="/schedule">Full season →</a>
-      </div>
-      <ScheduleList events={upcomingRaces} limit={7} showFilters={true} />
-      <div style="margin-top:32px;text-align:center;">
-        <a href="/schedule" class="btn btn-ghost">See all {raceCount} race nights →</a>
-      </div>
-    </div>
-  </section>
 
-  <div class="checker thin" aria-hidden="true"></div>
-
-  <!-- Classes -->
-  <section class="block" id="classes" style="padding-top:80px;">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <div class="section-eyebrow">Race Divisions</div>
-          <h2 class="section-title">Four <span class="hot">classes.</span><br />One quarter mile.</h2>
-        </div>
-        <a class="link" href="/info">Driver info →</a>
-      </div>
-      <div class="classes-grid">
-        {divisions.map((div, i) => (
-          <article class="class-card" data-c={div.slug}>
-            <div class="num">0{i + 1} / {div.type}</div>
-            <div class="nm">{div.name}<span class="accent"></span></div>
-            <p>{div.description}</p>
-            <div class="specs">
-              {Object.entries(div.specs).map(([key, val]) => (
-                <div><span>{key}</span><strong>{val}</strong></div>
-              ))}
+        <article class="next-race">
+          <div class="meta-col">
+            <div class="tag">Next Race</div>
+            <div class="when">
+              <span class="day">{nextDayAbbr},</span> {nextMonthAbbr}&nbsp;{nextDayNum}
             </div>
-          </article>
-        ))}
+            <div class="feature">{nextEvent.title}</div>
+            {nextEvent.notes && <p class="feature-sub">{nextEvent.notes}</p>}
+
+            <div class="presenter-chip" aria-label="Race presented by Elm Chevrolet">
+              <span class="lbl">Race presented by</span>
+              <span class="bowtie" aria-hidden="true"></span>
+              <span class="nm">
+                <span class="elm">Elm</span>
+                <span class="chev">Chevrolet</span>
+              </span>
+            </div>
+
+            <div class="actions">
+              <a href="#" class="btn btn-primary" data-tickets><span class="arrow"></span> Ticket Info</a>
+              <a href="/schedule" class="btn btn-ghost">See Schedule</a>
+            </div>
+          </div>
+
+          <div class="cd-col">
+            <div class="cd-row" aria-label="Time until next race">
+              <div class="cd"><div class="num" data-cd="days">00</div><div class="lbl">Days</div></div>
+              <div class="cd"><div class="num" data-cd="hours">00</div><div class="lbl">Hours</div></div>
+              <div class="cd"><div class="num" data-cd="mins">00</div><div class="lbl">Min</div></div>
+              <div class="cd"><div class="num" data-cd="secs">00</div><div class="lbl">Sec</div></div>
+            </div>
+            <div class="gates">
+              <div class="row"><span>Gates</span><strong>{nextEvent.gateTime}</strong></div>
+              <div class="row"><span>Green Flag</span><strong>{nextEvent.raceTime}</strong></div>
+            </div>
+          </div>
+        </article>
+
       </div>
-    </div>
-  </section>
+    </section>
+  )}
+
+  {nextEvent && (
+    <script define:vars={{ nextEventISO }}>
+      const target = new Date(nextEventISO).getTime();
+      const els = {
+        days:  document.querySelector('[data-cd="days"]'),
+        hours: document.querySelector('[data-cd="hours"]'),
+        mins:  document.querySelector('[data-cd="mins"]'),
+        secs:  document.querySelector('[data-cd="secs"]'),
+      };
+      const pad = n => String(Math.max(0, n)).padStart(2, '0');
+      function tick() {
+        let diff = Math.max(0, target - Date.now());
+        if (els.days)  els.days.textContent  = pad(Math.floor(diff / 86400000));
+        if (els.hours) els.hours.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+        if (els.mins)  els.mins.textContent  = pad(Math.floor((diff % 3600000) / 60000));
+        if (els.secs)  els.secs.textContent  = pad(Math.floor((diff % 60000) / 1000));
+      }
+      tick();
+      setInterval(tick, 1000);
+    </script>
+  )}
 
   <!-- Sponsors -->
   <section class="block sponsors" id="sponsors">
@@ -114,10 +139,11 @@ const raceCount  = schedule.filter(e => e.type === 'race').length;
       <div class="section-head">
         <div>
           <div class="section-eyebrow">Partners of the Speedrome</div>
-          <h2 class="section-title">Built by <span class="hot">the valley.</span></h2>
+          <h2 class="section-title">The folks who keep the <span class="hot">lights on.</span></h2>
         </div>
         <a class="link" href="#sponsor-cta">Become a partner →</a>
       </div>
+      <ElmBanner />
       <div class="sponsor-grid">
         {sponsors.map(s => (
           <div class:list={['sponsor', s.style && `is-${s.style}`]}>

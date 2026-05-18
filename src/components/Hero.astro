@@ -1,39 +1,5 @@
 ---
-interface ScheduleEntry {
-  id: string;
-  type?: string;
-  title: string;
-  date: string;
-  gateTime: string;
-  raceTime: string;
-  divisions: string[];
-  featured?: boolean;
-  notes?: string;
-}
-
-interface Props {
-  nextEvent?: ScheduleEntry | null;
-}
-
-const { nextEvent = null } = Astro.props;
-
-let nextDayAbbr = '';
-let nextMonthAbbr = '';
-let nextDayNum = '';
-let nextEventISO = '';
-
-if (nextEvent) {
-  const d = new Date(nextEvent.date + 'T12:00:00');
-  nextDayAbbr   = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
-  nextMonthAbbr = d.toLocaleDateString('en-US', { month: 'short' });
-  nextDayNum    = String(d.getDate());
-
-  const [time, ampm] = nextEvent.raceTime.split(' ');
-  let [h, m] = time.split(':').map(Number);
-  if (ampm === 'PM' && h !== 12) h += 12;
-  if (ampm === 'AM' && h === 12) h = 0;
-  nextEventISO = `${nextEvent.date}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00-04:00`;
-}
+// Next event is handled in the page, not the hero
 ---
 
 <section class="hero">
@@ -51,7 +17,7 @@ if (nextEvent) {
 
     <div class="logo-mark" role="img" aria-label="Chemung Speedrome">
       <div class="top-rule">
-        <span>Asphalt&nbsp;·&nbsp;Quarter Mile</span>
+        <span>Asphalt&nbsp;·&nbsp;3/8 Mile Oval</span>
         <span>Southern Tier&nbsp;·&nbsp;NY</span>
       </div>
       <div class="chemung">CHEM<span class="accent">U</span>NG</div>
@@ -60,69 +26,20 @@ if (nextEvent) {
         <div class="speedrome">Speedrome</div>
         <div class="bar"></div>
       </div>
-      <div class="meta">
-        <span><span class="pip">●</span>&nbsp;Fridays</span>
-        <span>·</span>
-        <span>Under the Lights</span>
-        <span>·</span>
-        <span>Since <strong style="color:var(--ink)">2026</strong></span>
+
+      <div class="presenter" aria-label="2026 Season presented by Elm Chevrolet">
+        <span class="label">2026 Season &nbsp;·&nbsp; Presented by</span>
+        <span class="bowtie" aria-hidden="true"></span>
+        <span class="name">
+          <span class="elm">Elm</span>
+          <span class="chev">Chevrolet</span>
+        </span>
       </div>
     </div>
 
     <div class="tagline">
       <h1>Friday nights belong to the <span class="hot">short track.</span></h1>
-      <p>A reborn quarter-mile asphalt oval in the heart of the Southern Tier. Four classes, one summer of fenders, fumes, and Friday-night glory racing.</p>
-      <div class="actions">
-        <a href="/schedule" class="btn btn-primary"><span class="arrow"></span> See the Schedule</a>
-        <a href="/info" class="btn btn-ghost">Track Info</a>
-      </div>
     </div>
-
-    {nextEvent && (
-      <div class="next-race">
-        <div class="next-race-inner">
-          <div>
-            <div class="tag">Next Race</div>
-            <div class="when" style="margin-top:10px;">
-              <span class="day">{nextDayAbbr},</span> {nextMonthAbbr} {nextDayNum}
-            </div>
-            <div class="feature">
-              <strong>{nextEvent.title}</strong>
-              {nextEvent.notes && <Fragment> — {nextEvent.notes}</Fragment>}
-            </div>
-          </div>
-          <div></div>
-          <div class="countdown" aria-label="Time until next race">
-            <div class="cd"><div class="num" data-cd="days">00</div><div class="lbl">Days</div></div>
-            <div class="cd"><div class="num" data-cd="hours">00</div><div class="lbl">Hours</div></div>
-            <div class="cd"><div class="num" data-cd="mins">00</div><div class="lbl">Min</div></div>
-            <div class="cd"><div class="num" data-cd="secs">00</div><div class="lbl">Sec</div></div>
-          </div>
-        </div>
-      </div>
-    )}
 
   </div>
 </section>
-
-{nextEvent && (
-  <script define:vars={{ nextEventISO }}>
-    const target = new Date(nextEventISO).getTime();
-    const els = {
-      days:  document.querySelector('[data-cd="days"]'),
-      hours: document.querySelector('[data-cd="hours"]'),
-      mins:  document.querySelector('[data-cd="mins"]'),
-      secs:  document.querySelector('[data-cd="secs"]'),
-    };
-    const pad = n => String(Math.max(0, n)).padStart(2, '0');
-    function tick() {
-      let diff = Math.max(0, target - Date.now());
-      if (els.days)  els.days.textContent  = pad(Math.floor(diff / 86400000));
-      if (els.hours) els.hours.textContent = pad(Math.floor((diff % 86400000) / 3600000));
-      if (els.mins)  els.mins.textContent  = pad(Math.floor((diff % 3600000) / 60000));
-      if (els.secs)  els.secs.textContent  = pad(Math.floor((diff % 60000) / 1000));
-    }
-    tick();
-    setInterval(tick, 1000);
-  </script>
-)}
