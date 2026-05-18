@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import divisions from '../content/divisions.json';
+import site from '../content/site.json';
+
+const metaTitle = 'Drivers & Classes | Chemung Speedrome';
+const metaDescription = 'Race classes, technical rules, registration info, and tech inspection schedule for Chemung Speedrome. Four divisions racing every Friday night.';
+
+const rulesUrls: Record<string, string> = {
+  'b-mod': 'https://www.rocmodifiedseries.com/rules/',
+};
+---
+
+<BaseLayout title={metaTitle} description={metaDescription}>
+
+  <!-- Page header -->
+  <section class="page-header">
+    <div class="container page-header-inner">
+      <div class="eyebrow">Drivers · Classes · Rules</div>
+      <h1>Four classes. <span class="hot">One 3/8 mile oval.</span></h1>
+      <p class="lede">Everything a competitor needs to race at Chemung. Pick your class, read the rules, register the car, show up Thursday for tech, run Friday night.</p>
+    </div>
+  </section>
+
+  <!-- Classes -->
+  <section class="block" id="classes">
+    <div class="container">
+
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">Race Divisions</div>
+          <h2 class="section-title">The <span class="hot">classes.</span></h2>
+        </div>
+        <a class="link" href="https://www.rocmodifiedseries.com/rules/" target="_blank" rel="noopener">ROC Modified rulebook →</a>
+      </div>
+
+      <div class="classes-grid">
+        {divisions.map((div) => (
+          <article class="class-card" data-c={div.slug}>
+            <div class="num">{div.num} / {div.type}</div>
+            <div class="nm">{div.name}<span class="accent"></span></div>
+            <p>{div.description}</p>
+            <div class="specs">
+              {Object.entries(div.specs).map(([key, val]) => (
+                <div><span>{key}</span><strong>{val}</strong></div>
+              ))}
+            </div>
+            <a
+              href={rulesUrls[div.slug] ?? '#'}
+              class="rules"
+              target={rulesUrls[div.slug] ? '_blank' : undefined}
+              rel={rulesUrls[div.slug] ? 'noopener' : undefined}
+            >
+              {div.name} rules
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <!-- Registration + Tech -->
+      <div class="info-row">
+
+        <div class="info-cell">
+          <div class="head">Race &amp; Register</div>
+          <h2>Get on the entry list.</h2>
+          <p>Pre-register online before noon Thursday or sign in at the pit gate Friday afternoon. New drivers — bring your suit, helmet, and a current physical from your doctor on file.</p>
+          <ul>
+            <li><span class="lbl">Pre-Reg Closes</span><span class="val"><strong>Thu 12:00 PM</strong></span></li>
+            <li><span class="lbl">Pit Gate Opens</span><span class="val"><strong>Fri 3:00 PM</strong></span></li>
+            <li><span class="lbl">Driver's Meeting</span><span class="val"><strong>Fri 6:00 PM</strong></span></li>
+            <li><span class="lbl">Hot Laps</span><span class="val"><strong>Fri 6:15 PM</strong></span></li>
+          </ul>
+          <a href="/contact" class="cta">Driver registration</a>
+        </div>
+
+        <div class="info-cell">
+          <div class="head">Tech &amp; Inspection</div>
+          <h2>Tech opens Thursday.</h2>
+          <p>Cars must clear pre-race tech before they roll onto the property Friday. We tech Thursday 5–8 PM at the pit gate — free of charge, all classes welcome. Race-night tech for top finishers happens at the scales.</p>
+          <ul>
+            <li><span class="lbl">Pre-Tech</span><span class="val"><strong>Thu 5:00 – 8:00 PM</strong></span></li>
+            <li><span class="lbl">Post-Race Tech</span><span class="val"><strong>Top 3 each class</strong></span></li>
+            <li><span class="lbl">Tech Director</span><span class="val">Mike Pellegrino · (607)&nbsp;555-0188</span></li>
+          </ul>
+          <a href="/contact" class="cta">Tech bulletin</a>
+        </div>
+
+      </div>
+
+      <!-- Pit info strip -->
+      <div class="pit-strip">
+        <div class="pit-cell">
+          <div class="k">Pit Pass · Adult</div>
+          <div class="v">$30</div>
+        </div>
+        <div class="pit-cell">
+          <div class="k">Pit Pass · Crew Under 18</div>
+          <div class="v">$20</div>
+        </div>
+        <div class="pit-cell">
+          <div class="k">Annual License</div>
+          <div class="v">$50</div>
+        </div>
+        <div class="pit-cell">
+          <div class="k">Minimum Age · Driver</div>
+          <div class="v">16<span class="u"> yrs</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</BaseLayout>

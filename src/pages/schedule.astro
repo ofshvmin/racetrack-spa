@@ -1,128 +1,128 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ScheduleList from '../components/ScheduleList.astro';
 import schedule from '../content/schedule.json';
 import site from '../content/site.json';
 
 const metaTitle = 'Race Schedule | Chemung Speedrome';
-const metaDescription =
-  'The full 2026 race schedule for Chemung Speedrome. Dates, divisions, and event details — updated throughout the season.';
+const metaDescription = 'The full 2026 race schedule for Chemung Speedrome. Dates, divisions, and event details — every Friday night, May through September.';
 
-const today = new Date();
-today.setHours(0, 0, 0, 0);
+const divMap: Record<string, { cls: string; label: string }> = {
+  'Mods':        { cls: 'b-mod', label: 'B-Mod' },
+  'Hobby Stocks':{ cls: 'hobby', label: 'Hobby'  },
+  '4-Cyl':       { cls: '4cyl',  label: '4 Cyl'  },
+  'Super Stocks':{ cls: 'super', label: 'Super'  },
+};
 
-const upcoming = schedule.filter((e) => new Date(e.date + 'T12:00:00') >= today);
-const past = schedule.filter((e) => new Date(e.date + 'T12:00:00') < today);
+const races = schedule
+  .filter(e => e.type === 'race')
+  .map(e => {
+    const d = new Date(e.date + 'T12:00:00');
+    const dayNum = String(d.getDate()).padStart(2, '0');
+    const weekday = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+    const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+    const year = d.getFullYear();
+    const divTags = e.divisions.map(name => divMap[name]).filter(Boolean);
+    const dataClasses = divTags.map(t => t.cls).join(' ');
+    const isPast = new Date(e.date + 'T23:59:59') < new Date();
+    return { ...e, dayNum, weekday, month, year, divTags, dataClasses, isPast };
+  });
+
+const raceCount = races.length;
 ---
 
 <BaseLayout title={metaTitle} description={metaDescription}>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="container status-bar-inner">
+      <div class="status">
+        <span class="dot"></span>
+        <span><strong>This Friday: ON</strong> · No cancellations · Check back for updates</span>
+      </div>
+      <div class="pattern">Every Friday · Gates 5:00 · Green 7:00</div>
+    </div>
+  </div>
+
   <!-- Page header -->
-  <section class="bg-[#0d0d0d] pt-16 pb-10 border-b border-[#333333]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626] mb-3">
-        {site.trackName}
-      </p>
-      <h1 class="font-display text-5xl sm:text-6xl font-extrabold text-white uppercase tracking-tight mb-4">2026 Race Schedule</h1>
-      <p class="text-[#a1a1aa] text-lg max-w-2xl">
-        Every race night on the calendar — gates, hot laps, and features. All five divisions compete
-        across a full season of Friday night racing.
-      </p>
+  <section class="page-header">
+    <div class="container page-header-inner">
+      <div class="eyebrow">2026 Season · {raceCount} Features</div>
+      <h1>The <span class="hot">Schedule.</span></h1>
+      <p class="lede">We race every Friday night, May through September. Gates at 5:00 PM, green flag at 7:00 PM, rain or shine. Cancellations are posted here by 4:00 PM the day of the race.</p>
     </div>
   </section>
 
-  <!-- Schedule subject-to-change notice -->
-  <div class="bg-[#111111] border-b border-[#333333]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-start gap-3">
-      <svg
-        class="w-4 h-4 text-[#a1a1aa] mt-0.5 shrink-0"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
-          clip-rule="evenodd"
-        />
-      </svg>
-      <p class="text-sm text-[#a1a1aa]">
-        Schedule is subject to change. Rainouts and postponements are announced on this site and our
-        social media channels as early as possible.
-      </p>
-    </div>
-  </div>
+  <!-- Schedule -->
+  <section class="block">
+    <div class="container">
 
-  <div class="bg-[#0d0d0d] py-14">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+      <div class="schedule-filters" role="tablist" aria-label="Filter by class">
+        <button class="chip is-active" data-filter="all">All Races</button>
+        <button class="chip" data-filter="b-mod" data-class="b-mod">B-Mods</button>
+        <button class="chip" data-filter="hobby" data-class="hobby">Hobby Stock</button>
+        <button class="chip" data-filter="4cyl"  data-class="4cyl">4 Cylinder</button>
+        <button class="chip" data-filter="super" data-class="super">Super Stock</button>
+      </div>
 
-      <!-- Upcoming events -->
-      <section aria-labelledby="upcoming-heading">
-        <h2 id="upcoming-heading" class="text-2xl font-black text-white mb-6 flex items-center gap-3">
-          Upcoming Events
-          {upcoming.length > 0 && (
-            <span class="text-sm font-semibold bg-[#dc2626] text-white px-2.5 py-0.5 rounded-full">
-              {upcoming.length}
-            </span>
-          )}
-        </h2>
-        <ScheduleList events={upcoming} />
-      </section>
-
-      <!-- Past events -->
-      {past.length > 0 && (
-        <section aria-labelledby="past-heading">
-          <h2
-            id="past-heading"
-            class="text-2xl font-black text-white mb-2 flex items-center gap-3"
+      <div class="schedule" id="schedule-list">
+        {races.map(race => (
+          <article
+            class:list={['race-row', race.featured && 'is-special', race.isPast && 'is-past']}
+            data-classes={race.dataClasses}
           >
-            Past Events
-            <span class="text-sm font-semibold bg-[#1a1a1a] border border-[#333333] text-[#a1a1aa] px-2.5 py-0.5 rounded-full">
-              {past.length}
-            </span>
-          </h2>
-          <p class="text-sm text-[#a1a1aa] mb-6">Results and standings are posted after each event.</p>
-          <div class="opacity-60">
-            <ScheduleList events={past} compact={true} />
-          </div>
-        </section>
-      )}
+            <div class="date">
+              <div class="day-num">{race.dayNum}</div>
+              <div class="day-info"><strong>{race.weekday}</strong>{race.month}<br />{race.year}</div>
+            </div>
+            <div class="title">
+              {race.title}
+              {race.notes && <span class="sub">{race.notes}</span>}
+            </div>
+            <div class="classes">
+              {race.divTags.map(t => (
+                <span class="tag-class" data-class={t.cls}>{t.label}</span>
+              ))}
+            </div>
+            <div class="gates">
+              <div class="row"><span>Gates</span><strong>{race.gateTime}</strong></div>
+              <div class="row"><span>Green</span><strong>{race.raceTime}</strong></div>
+            </div>
+            <div class="ticket">
+              <div class="price">{site.admission.adult}<small> / adult</small></div>
+              <a href="#" class="buy" data-tickets>Tickets</a>
+            </div>
+          </article>
+        ))}
+      </div>
 
-      <!-- Admission callout -->
-      <section
-        aria-labelledby="admission-heading"
-        class="bg-[#111111] border border-[#333333] rounded-xl p-8"
-      >
-        <h2 id="admission-heading" class="text-xl font-black text-white mb-6">
-          Admission &amp; Pricing
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div class="flex flex-col gap-1">
-            <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626]">
-              General Admission
-            </p>
-            <p class="text-3xl font-black text-white">{site.admission.general}</p>
-            <p class="text-sm text-[#a1a1aa]">Per person, per event</p>
-          </div>
-          <div class="flex flex-col gap-1">
-            <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626]">
-              Kids (Under 12)
-            </p>
-            <p class="text-3xl font-black text-white">{site.admission.kids}</p>
-            <p class="text-sm text-[#a1a1aa]">With a paying adult</p>
-          </div>
-          <div class="flex flex-col gap-1">
-            <p class="text-xs font-semibold uppercase tracking-widest text-[#dc2626]">Pit Pass</p>
-            <p class="text-3xl font-black text-white">{site.admission.pitPass}</p>
-            <p class="text-sm text-[#a1a1aa]">Full pit area access all night</p>
-          </div>
+      <div class="schedule-note">
+        <div class="icon">!</div>
+        <div>
+          <h3>Rain &amp; Cancellation Policy</h3>
+          <p>If the program is canceled before gates open, all advance tickets are honored at the rescheduled date. Cancellations are posted to the status banner above by 4:00 PM the day of the race. Once the green flag flies, the night is official — no refunds for rain after that.</p>
         </div>
-        <p class="mt-6 text-sm text-[#a1a1aa] border-t border-[#333333] pt-4">
-          Cash preferred at the gate. Card payment is available. Admission is collected at the main
-          gate — arrive early on featured event nights.
-        </p>
-      </section>
+      </div>
 
     </div>
-  </div>
+  </section>
+
 </BaseLayout>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+  const rows  = document.querySelectorAll<HTMLElement>('.race-row');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+      const f = chip.dataset.filter;
+      rows.forEach(r => {
+        if (f === 'all') r.classList.remove('is-hidden');
+        else {
+          const hits = (r.dataset.classes ?? '').split(' ').includes(f ?? '');
+          r.classList.toggle('is-hidden', !hits);
+        }
+      });
+    });
+  });
+</script>

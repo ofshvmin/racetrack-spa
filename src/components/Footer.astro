@@ -4,13 +4,13 @@ import site from '../content/site.json';
 const year = new Date().getFullYear();
 ---
 
-<footer class="site-footer">
+<footer class="site-footer" id="info">
   <div class="container">
     <div class="footer-grid">
 
       <div class="footer-brand">
         <div class="nm">Chemung<br>Speed<em>·</em>rome</div>
-        <p>A quarter-mile asphalt oval in the Southern Tier of New York. Friday-night short-track racing for the whole family.</p>
+        <p>A 3/8-mile asphalt oval in the Southern Tier of New York. Friday-night short-track racing for the people who built the place.</p>
       </div>
 
       <div class="footer-col">
@@ -28,23 +28,19 @@ const year = new Date().getFullYear();
         <h4>Race Night</h4>
         <ul>
           <li><a href="/schedule">Schedule</a></li>
-          <li><a href="/info">Classes &amp; Rules</a></li>
-          <li><a href="/info">Pit Passes</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li><a href="/drivers">Drivers &amp; Rules</a></li>
+          <li><a href="#" data-tickets>Tickets</a></li>
+          <li><a href="/drivers#pit">Pit Passes</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
         <h4>The Track</h4>
         <ul>
-          <li><a href="/about">Our Story</a></li>
           <li><a href="/#sponsors">Sponsors</a></li>
-          {site.socialLinks.facebook && (
-            <li><a href={site.socialLinks.facebook} target="_blank" rel="noopener noreferrer">Facebook</a></li>
-          )}
-          {site.socialLinks.instagram && (
-            <li><a href={site.socialLinks.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>
-          )}
+          <li><a href="#">Results</a></li>
+          <li><a href="#">Standings</a></li>
+          <li><a href="/contact">Contact</a></li>
         </ul>
       </div>
 
