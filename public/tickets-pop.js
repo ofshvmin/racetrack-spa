@@ -12,10 +12,10 @@
         <h2 id="tickets-pop-h">Pay at the <span class="hot">gate.</span></h2>
 
         <div class="price-list" aria-label="Admission prices">
-          <div class="pr"><span class="lbl">Adult</span><span class="val">$12<small>typ.</small></span></div>
-          <div class="pr"><span class="lbl">Senior 62+ / Military</span><span class="val">$10</span></div>
-          <div class="pr"><span class="lbl">Kids 12 &amp; Under</span><span class="val">FREE</span></div>
-          <div class="pr"><span class="lbl">Family (2 adults + kids)</span><span class="val">$25</span></div>
+          <div class="pr"><span class="lbl">Adults 16–61</span><span class="val">$15</span></div>
+          <div class="pr"><span class="lbl">Seniors 62+</span><span class="val">$13</span></div>
+          <div class="pr"><span class="lbl">Kids 11–15</span><span class="val">$7</span></div>
+          <div class="pr"><span class="lbl">10 &amp; Under</span><span class="val">FREE</span></div>
         </div>
 
         <div class="payment">

@@ -1,0 +1,77 @@
+[
+  {
+    "date": "2026-05-15",
+    "title": "Opening Night",
+    "raceNum": 1,
+    "divisions": [
+      {
+        "slug": "4cyl",
+        "name": "4-Cylinder",
+        "feature": [
+          { "pos": 1, "driver": "Nick Robinson" },
+          { "pos": 2, "driver": "Gene Purvis" },
+          { "pos": 3, "driver": "Greg Moldt" },
+          { "pos": 4, "driver": "Beau Baker" },
+          { "pos": 5, "driver": "Chris Norconk" },
+          { "pos": 6, "driver": "Matt Jenkins" },
+          { "pos": 7, "driver": "Brandon Measheaw" },
+          { "pos": 8, "driver": "RJ Manwaring" },
+          { "pos": 9, "driver": "Troy Hodge" }
+        ],
+        "heats": ["Matt Jenkins", "Nick Robinson"],
+        "dnf": []
+      },
+      {
+        "slug": "hobby",
+        "name": "Hobby Stock",
+        "feature": [
+          { "pos": 1,  "driver": "Anthony Gullo" },
+          { "pos": 2,  "driver": "Terry Potrzebowski" },
+          { "pos": 3,  "driver": "Michael Bast" },
+          { "pos": 4,  "driver": "Mark Taylor" },
+          { "pos": 5,  "driver": "Cody Marshall" },
+          { "pos": 6,  "driver": "Mike Bailey" },
+          { "pos": 7,  "driver": "Ryan Osgood" },
+          { "pos": 8,  "driver": "Ethan Roberts" },
+          { "pos": 9,  "driver": "Chad Lane" },
+          { "pos": 10, "driver": "Thomas Decker" },
+          { "pos": 11, "driver": "M-R Taylor" },
+          { "pos": 12, "driver": "John Lane" },
+          { "pos": 13, "driver": "Mike Kinter" },
+          { "pos": 14, "driver": "Kalysta Demark" },
+          { "pos": 15, "driver": "Paul Bailey" }
+        ],
+        "heats": ["Anthony Gullo", "Ryan Osgood"],
+        "dnf": []
+      },
+      {
+        "slug": "super",
+        "name": "Super Stock",
+        "feature": [
+          { "pos": 1, "driver": "Devin Gullo" },
+          { "pos": 2, "driver": "Tim Gullo" },
+          { "pos": 3, "driver": "Derrick Vogler" }
+        ],
+        "heats": ["Devin Gullo"],
+        "dnf": []
+      },
+      {
+        "slug": "b-mod",
+        "name": "Modified",
+        "feature": [
+          { "pos": 1, "driver": "Jimmy Zacharias" },
+          { "pos": 2, "driver": "Kevin Youngs" },
+          { "pos": 3, "driver": "Lee Sharpsteen" },
+          { "pos": 4, "driver": "Zack Curren" },
+          { "pos": 5, "driver": "Zack Knowlden" },
+          { "pos": 6, "driver": "Jesse Kent" },
+          { "pos": 7, "driver": "Jody Buckley" },
+          { "pos": 8, "driver": "TJ Potrzebowski" },
+          { "pos": 9, "driver": "Garrett Zacharias" }
+        ],
+        "heats": ["Jimmy Zacharias", "Kevin Youngs"],
+        "dnf": ["Lucas Bartlett"]
+      }
+    ]
+  }
+]

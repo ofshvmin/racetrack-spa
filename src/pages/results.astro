@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import results from '../content/results.json';
+
+const metaTitle = 'Race Results | Chemung Speedrome';
+const metaDescription = 'Official race results for Chemung Speedrome 2026. Feature finishes, heat race winners, and full finishing orders for all four divisions.';
+
+const nights = results.map(night => {
+  const d = new Date(night.date + 'T12:00:00');
+  const label = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+  return { ...night, label };
+});
+---
+
+<BaseLayout title={metaTitle} description={metaDescription}>
+
+  <section class="page-header">
+    <div class="container page-header-inner">
+      <div class="eyebrow">2026 Season &middot; {results.length} Race{results.length !== 1 ? 's' : ''}</div>
+      <h1>The <span class="hot">Results.</span></h1>
+      <p class="lede">Official feature finishes and heat race winners for every Friday night in 2026.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="container">
+
+      {nights.map(night => (
+        <div class="results-night">
+          <div class="results-night-hdr">
+            <div class="results-night-date">{night.label}</div>
+            <div class="results-night-meta">Race {night.raceNum} &middot; {night.title}</div>
+          </div>
+          <div class="results-grid">
+            {night.divisions.map(div => (
+              <div class="results-div-card" data-c={div.slug}>
+                <div class="results-div-name">{div.name}</div>
+                <ol class="finish-list">
+                  {div.feature.map(f => (
+                    <li class:list={['finish-item', f.pos === 1 && 'is-p1', f.pos === 2 && 'is-p2', f.pos === 3 && 'is-p3']}>
+                      <span class="finish-pos">{String(f.pos).padStart(2, ' ')}</span>
+                      <span class="finish-driver">{f.driver}</span>
+                    </li>
+                  ))}
+                  {div.dnf.map(driver => (
+                    <li class="finish-item is-dnf">
+                      <span class="finish-pos">DNF</span>
+                      <span class="finish-driver">{driver}</span>
+                    </li>
+                  ))}
+                </ol>
+                {div.heats.length > 0 && (
+                  <div class="heats-row">
+                    <div class="heats-label">Heat Win{div.heats.length > 1 ? 's' : ''}</div>
+                    {div.heats.map(h => (
+                      <div class="heat-item">{h}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+    </div>
+  </section>
+
+</BaseLayout>
