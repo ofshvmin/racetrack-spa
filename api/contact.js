@@ -3,7 +3,8 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const TO   = ['daniel.g.mathews@gmail.com'];
-const FROM = process.env.RESEND_FROM_EMAIL ?? 'Chemung Speedrome <noreply@chemungspeedrome.com>';
+// onboarding@resend.dev works without domain verification; swap for verified domain address once DNS is confirmed
+const FROM = 'onboarding@resend.dev';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
