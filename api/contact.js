@@ -22,13 +22,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    await resend.emails.send({
+    const { error: sendError } = await resend.emails.send({
       from: FROM,
       to: TO,
       replyTo: `${name.trim()} <${email.trim()}>`,
       subject: `[Speedrome Contact] ${subject || 'General Inquiry'} — ${name.trim()}`,
       html: buildHtml({ name, email, subject, message }),
     });
+    if (sendError) throw sendError;
     return res.redirect(303, '/contact?sent=true');
   } catch (err) {
     console.error('Resend error:', err);
