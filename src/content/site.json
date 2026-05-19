@@ -19,7 +19,6 @@
     "childrenAges": "10 & under",
     "pitPass": "$45"
   },
-  "formspreeEndpoint": "https://formspree.io/f/xojbvdry",
   "emailSignupUrl": "",
   "defaultGateTime": "5:00 PM",
   "defaultRaceTime": "7:00 PM"

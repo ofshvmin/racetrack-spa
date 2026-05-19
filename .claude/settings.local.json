@@ -2,7 +2,30 @@
   "permissions": {
     "allow": [
       "Bash(python3:*)",
-      "Bash(pnpm create:*)"
+      "Bash(pnpm create:*)",
+      "Bash(pnpm dev *)",
+      "Bash(command -v nvm)",
+      "Bash(command -v fnm)",
+      "Bash(command -v volta)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'Design overhaul: display font, hero, nav, cards, and layout improvements *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4321/)",
+      "Bash(~/.nvm/versions/node/v22.22.0/bin/node ~/.nvm/versions/node/v22.22.0/bin/pnpm dev)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4321/schedule)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4321/about)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4321/info)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4321/contact)",
+      "Bash(git -C /Users/danko/code/projects/racetrack-spa add src/components/Nav.astro src/styles/global.css)",
+      "Bash(git -C /Users/danko/code/projects/racetrack-spa commit -m \"Replace nav badge with Speed Wedge SVG mark from Homepage v4\")",
+      "Bash(git -C /Users/danko/code/projects/racetrack-spa push origin main)",
+      "Bash(pnpm build *)",
+      "Bash(~/.nvm/versions/node/v22.22.0/bin/node ~/.nvm/versions/node/v22.22.0/bin/pnpm build)",
+      "Bash(curl -s http://localhost:4323/)",
+      "Bash(curl -s http://localhost:4323/schedule)",
+      "Bash(xargs kill -9)",
+      "Bash(nvm list *)",
+      "Bash(fnm list *)",
+      "Bash(volta list *)"
     ]
   }
 }

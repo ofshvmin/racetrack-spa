@@ -53,54 +53,59 @@
     "featured": false
   },
   {
-    "id": "2026-05-22-race-night",
+    "id": "2026-05-22-memorial-weekend",
     "type": "race",
-    "title": "Race Night",
+    "title": "Memorial Weekend 75",
     "date": "2026-05-22",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": false
+    "divisions": ["Hobby Stocks", "4-Cyl", "Super Stocks"],
+    "featured": true,
+    "notes": "Hobby Stock 75-lap feature + support classes."
   },
   {
-    "id": "2026-05-29-race-night",
+    "id": "2026-05-29-twin-25s",
     "type": "race",
-    "title": "Race Night",
+    "title": "Twin 25s",
     "date": "2026-05-29",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": false
+    "divisions": ["Mods", "Hobby Stocks", "4-Cyl"],
+    "featured": false,
+    "notes": "B-Mod twin 25-lap features. Pit Stop Night."
   },
   {
-    "id": "2026-06-05-race-night",
+    "id": "2026-06-05-kids-night",
     "type": "race",
-    "title": "Race Night",
+    "title": "Kids Night",
     "date": "2026-06-05",
-    "gateTime": "5:00 PM",
+    "gateTime": "4:30 PM",
     "raceTime": "7:00 PM",
     "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": false
+    "featured": true,
+    "notes": "Free admission for 12 & under. Pit walk before feature."
   },
   {
-    "id": "2026-06-12-race-night",
+    "id": "2026-06-12-super-stock-50",
     "type": "race",
-    "title": "Race Night",
+    "title": "Super Stock 50",
     "date": "2026-06-12",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": false
+    "divisions": ["Super Stocks", "4-Cyl"],
+    "featured": false,
+    "notes": "Super Stock 50-lapper. Four Cylinder support."
   },
   {
-    "id": "2026-06-19-race-night",
+    "id": "2026-06-19-fan-appreciation",
     "type": "race",
-    "title": "Race Night",
+    "title": "Fan Appreciation Night",
     "date": "2026-06-19",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": false
+    "divisions": ["Mods", "Hobby Stocks", "Super Stocks"],
+    "featured": true,
+    "notes": "$2 hot dogs · pit passes half-price all night."
   },
   {
     "id": "2026-07-03-kinters-contracting-night",

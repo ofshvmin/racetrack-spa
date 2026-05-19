@@ -47,17 +47,22 @@ const socialLabels: Record<string, string> = {
             Send a Message
           </h2>
 
+          <!-- Success / error banners — shown by script when ?sent or ?error param present -->
+          <div id="form-success" class="hidden mb-6 p-4 border border-green-700 bg-green-950 text-green-300 rounded-lg text-sm">
+            Message sent — we'll get back to you within two business days.
+          </div>
+          <div id="form-error" class="hidden mb-6 p-4 border border-red-700 bg-red-950 text-red-300 rounded-lg text-sm">
+            Something went wrong. Please try again or email us directly.
+          </div>
+
           <form
-            action={site.formspreeEndpoint}
+            action="/api/contact"
             method="POST"
             class="space-y-5"
             novalidate
           >
             <!-- Honeypot — hidden from humans, catches bots -->
             <input type="text" name="_gotcha" class="hidden" aria-hidden="true" tabindex="-1" autocomplete="off" />
-
-            <!-- Redirect after submission -->
-            <input type="hidden" name="_next" value="/contact?sent=true" />
 
             <!-- Name -->
             <div>
@@ -239,3 +244,9 @@ const socialLabels: Record<string, string> = {
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('sent') === 'true')  document.getElementById('form-success')?.classList.remove('hidden');
+  if (p.get('error'))            document.getElementById('form-error')?.classList.remove('hidden');
+</script>
