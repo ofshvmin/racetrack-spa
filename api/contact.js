@@ -32,8 +32,8 @@ export default async function handler(req, res) {
     if (sendError) throw sendError;
     return res.redirect(303, '/contact?sent=true');
   } catch (err) {
-    console.error('Resend error:', err);
-    return res.redirect(303, '/contact?error=send');
+    const code = encodeURIComponent((err?.name ?? err?.statusCode ?? err?.message ?? 'unknown').toString().slice(0, 80));
+    return res.redirect(303, `/contact?error=send&detail=${code}`);
   }
 }
 
