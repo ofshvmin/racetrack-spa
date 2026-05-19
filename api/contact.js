@@ -25,15 +25,15 @@ export default async function handler(req, res) {
     const { error: sendError } = await resend.emails.send({
       from: FROM,
       to: TO,
-      replyTo: `${name.trim()} <${email.trim()}>`,
+      reply_to: `${name.trim()} <${email.trim()}>`,
       subject: `[Speedrome Contact] ${subject || 'General Inquiry'} — ${name.trim()}`,
       html: buildHtml({ name, email, subject, message }),
     });
     if (sendError) throw sendError;
     return res.redirect(303, '/contact?sent=true');
   } catch (err) {
-    const code = encodeURIComponent((err?.name ?? err?.statusCode ?? err?.message ?? 'unknown').toString().slice(0, 80));
-    return res.redirect(303, `/contact?error=send&detail=${code}`);
+    const detail = [err?.name, err?.message].filter(Boolean).join(': ').slice(0, 160);
+    return res.redirect(303, `/contact?error=send&detail=${encodeURIComponent(detail)}`);
   }
 }
 
