@@ -1,69 +1,208 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import results from '../content/results.json';
+import schedule from '../content/schedule.json';
 
 const metaTitle = 'Race Results | Chemung Speedrome';
 const metaDescription = 'Official race results for Chemung Speedrome 2026. Feature finishes, heat race winners, and full finishing orders for all four divisions.';
 
+const resultDates = new Set(results.map(r => r.date));
+
 const nights = results.map(night => {
   const d = new Date(night.date + 'T12:00:00');
-  const label = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
-  return { ...night, label };
-});
+  const fullDate = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const shortDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const totalEntries = night.divisions.reduce((s, div) => s + div.feature.length + div.dnf.length, 0);
+  return { ...night, fullDate, shortDate, totalEntries };
+}).reverse();
+
+const nextRace = (schedule as any[])
+  .filter(e => e.type === 'race' && !resultDates.has(e.date))
+  .sort((a, b) => a.date.localeCompare(b.date))
+  .slice(0, 1)
+  .map(e => {
+    const d = new Date(e.date + 'T12:00:00');
+    return {
+      date: e.date,
+      fullDate: d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' }),
+      title: e.title,
+    };
+  })[0] ?? null;
+
+const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
 ---
 
 <BaseLayout title={metaTitle} description={metaDescription}>
 
   <section class="page-header">
     <div class="container page-header-inner">
-      <div class="eyebrow">2026 Season &middot; {results.length} Race{results.length !== 1 ? 's' : ''}</div>
+      <div class="eyebrow">2026 Season &middot; Feature results</div>
       <h1>The <span class="hot">Results.</span></h1>
-      <p class="lede">Official feature finishes and heat race winners for every Friday night in 2026.</p>
+      <p class="lede">Every Friday's feature finishing order, heat winners, and DNFs. Newest race at the top. Use the rail on the left to jump to a specific night, or search for a driver to see every appearance across the season.</p>
     </div>
   </section>
 
   <section class="block">
-    <div class="container">
+    <div class="container results-layout">
 
-      {nights.map(night => (
-        <div class="results-night">
-          <div class="results-night-hdr">
-            <div class="results-night-date">{night.label}</div>
-            <div class="results-night-meta">Race {night.raceNum} &middot; {night.title}</div>
-          </div>
-          <div class="results-grid">
-            {night.divisions.map(div => (
-              <div class="results-div-card" data-c={div.slug}>
-                <div class="results-div-name">{div.name}</div>
-                <ol class="finish-list">
-                  {div.feature.map(f => (
-                    <li class:list={['finish-item', f.pos === 1 && 'is-p1', f.pos === 2 && 'is-p2', f.pos === 3 && 'is-p3']}>
-                      <span class="finish-pos">{String(f.pos).padStart(2, ' ')}</span>
-                      <span class="finish-driver">{f.driver}</span>
-                    </li>
-                  ))}
-                  {div.dnf.map(driver => (
-                    <li class="finish-item is-dnf">
-                      <span class="finish-pos">DNF</span>
-                      <span class="finish-driver">{driver}</span>
-                    </li>
-                  ))}
-                </ol>
-                {div.heats.length > 0 && (
-                  <div class="heats-row">
-                    <div class="heats-label">Heat Win{div.heats.length > 1 ? 's' : ''}</div>
-                    {div.heats.map(h => (
-                      <div class="heat-item">{h}</div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+      <!-- Jump rail -->
+      <aside class="jump-rail" aria-label="Jump to race night">
+        <div class="head">Race Night</div>
+        {nights.map((night, i) => (
+          <a href={`#race-${night.date}`} class={i === 0 ? 'is-active' : ''}>
+            {night.shortDate}
+            <span class="sub">{night.title}</span>
+          </a>
+        ))}
+        {nextRace && (
+          <a href={`#race-${nextRace.date}`} style="opacity:0.45">
+            {new Date(nextRace.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+            <span class="sub">{nextRace.title}</span>
+          </a>
+        )}
+      </aside>
+
+      <!-- Results feed -->
+      <div class="results-feed">
+
+        <!-- Driver search -->
+        <div class="driver-search">
+          <label for="driver-q">Find a Driver</label>
+          <input id="driver-q" type="search" placeholder="Type a name — Zacharias, Robinson, Gullo…" autocomplete="off" />
+          <span class="count" id="driver-count" aria-live="polite"></span>
         </div>
-      ))}
 
+        {nights.map(night => (
+          <article class="race-night" id={`race-${night.date}`}>
+
+            <header class="race-night-head">
+              <div>
+                <div class="date"><span class="day">Fri,</span> {night.fullDate}</div>
+                <div class="feature">{night.title}</div>
+              </div>
+              <div></div>
+              <div class="meta">
+                <strong>{night.divisions.length} classes</strong> &middot; {night.totalEntries} entries<br />
+                Gates {night.divisions[0]?.feature ? '5:00' : '—'} &middot; Green 7:00
+              </div>
+            </header>
+
+            <div class="class-grid">
+              {night.divisions.map(div => (
+                <section class="class-panel" data-c={divCss(div.slug)}>
+                  <div class="cls-head">
+                    <div class="cls-name">{div.name}</div>
+                    <div class="cls-entries"><strong>{div.feature.length + div.dnf.length}</strong> entries</div>
+                  </div>
+                  {div.heats.length > 0 && (
+                    <div class="heats">
+                      <span class="lbl">Heat{div.heats.length > 1 ? 's' : ''}</span>
+                      <span class="winners">
+                        {div.heats.map(h => <span>{h}</span>)}
+                      </span>
+                    </div>
+                  )}
+                  <ol class="field">
+                    {div.feature.map(f => (
+                      <li class:list={[f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd']}>
+                        <span class="pos">{f.pos}</span>
+                        <span class="nm">{f.driver}</span>
+                      </li>
+                    ))}
+                  </ol>
+                  {div.dnf.length > 0 && (
+                    <div class="notes">
+                      {div.dnf.map(driver => (
+                        <div class="row">
+                          <span class="tag">DNF</span>
+                          <span class="nm">{driver}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              ))}
+            </div>
+
+          </article>
+        ))}
+
+        {nextRace && (
+          <article class="race-night is-placeholder" id={`race-${nextRace.date}`}>
+            <header class="race-night-head">
+              <div>
+                <div class="date" style="color:var(--ink-mute)">{nextRace.fullDate}</div>
+                <div class="feature" style="color:var(--ink-dim)">{nextRace.title}</div>
+              </div>
+              <div></div>
+              <div class="meta">Results pending</div>
+            </header>
+            <div class="placeholder-body">
+              <strong>Race not yet run</strong>
+              Results posted here after the checkered flag.
+            </div>
+          </article>
+        )}
+
+      </div>
     </div>
   </section>
 
 </BaseLayout>
+
+<script>
+  // Driver search — highlights matches, dims unmatched race cards
+  (function () {
+    const q = document.getElementById('driver-q') as HTMLInputElement | null;
+    const countEl = document.getElementById('driver-count');
+    if (!q) return;
+
+    const cards = document.querySelectorAll<HTMLElement>('.race-night:not(.is-placeholder)');
+    const nameNodes = Array.from(document.querySelectorAll<HTMLElement>('.field .nm, .notes .nm'));
+    const originals = new WeakMap<HTMLElement, string>();
+    nameNodes.forEach(n => originals.set(n, n.textContent ?? ''));
+
+    function reset() {
+      nameNodes.forEach(n => { n.textContent = originals.get(n) ?? ''; });
+      cards.forEach(c => c.classList.remove('is-dimmed'));
+      if (countEl) countEl.textContent = '';
+    }
+
+    q.addEventListener('input', () => {
+      const term = q.value.trim();
+      if (!term) { reset(); return; }
+      const re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      let hits = 0;
+      const cardHits = new Map<Element, number>();
+      nameNodes.forEach(n => {
+        const orig = originals.get(n) ?? '';
+        re.lastIndex = 0;
+        if (re.test(orig)) {
+          hits++;
+          re.lastIndex = 0;
+          n.innerHTML = orig.replace(re, '<mark>$1</mark>');
+          const card = n.closest('.race-night');
+          if (card) cardHits.set(card, (cardHits.get(card) ?? 0) + 1);
+        } else {
+          n.textContent = orig;
+        }
+      });
+      cards.forEach(c => c.classList.toggle('is-dimmed', !cardHits.has(c)));
+      if (countEl) countEl.textContent = hits + (hits === 1 ? ' result' : ' results');
+    });
+
+    // Scroll-based jump rail active state
+    const rail = document.querySelectorAll<HTMLAnchorElement>('.jump-rail a[href^="#race-"]');
+    if (rail.length) {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = '#' + entry.target.id;
+            rail.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === id));
+          }
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      document.querySelectorAll<HTMLElement>('.race-night[id]').forEach(el => observer.observe(el));
+    }
+  })();
+</script>

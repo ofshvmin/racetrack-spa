@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const TO   = ['oldcar99@gmail.com', 'daniel.g.mathews@gmail.com'];
+const TO   = ['daniel.g.mathews@gmail.com'];
 const FROM = process.env.RESEND_FROM_EMAIL ?? 'Chemung Speedrome <noreply@chemungspeedrome.com>';
 
 export default async function handler(req, res) {

@@ -1,0 +1,190 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../content/site.json';
+
+const metaTitle = 'Visit | Chemung Speedrome';
+const metaDescription = 'Directions and visitor information for Chemung Speedrome. A 3/8-mile asphalt oval in Chemung, NY — easy off Route 17, gates at 5:00 PM every Friday.';
+
+const mapsAddress = encodeURIComponent(site.address);
+const mapsEmbedUrl = `https://www.google.com/maps?q=${mapsAddress}&output=embed`;
+const mapsLinkUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapsAddress}`;
+---
+
+<BaseLayout title={metaTitle} description={metaDescription}>
+
+  <!-- Page header -->
+  <section class="page-header">
+    <div class="container page-header-inner">
+      <div class="eyebrow">Find the track</div>
+      <h1>Get to the <span class="hot">Speedrome.</span></h1>
+      <p class="lede">A 3/8-mile asphalt oval in Chemung, NY — about thirty miles southeast of Corning and a stone's throw from the Pennsylvania line. Easy off Route 17, well-lit, plenty of parking. Race in cash. Bring a jacket — it gets cool under the lights.</p>
+    </div>
+  </section>
+
+  <!-- Map + address -->
+  <section class="block" style="padding-bottom:0">
+    <div class="container">
+
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">Where we race</div>
+          <h2 class="section-title">The <span class="hot">address.</span></h2>
+        </div>
+        <a class="link" href="#directions">Driving directions ↓</a>
+      </div>
+
+      <div class="map-row">
+        <div class="map-frame">
+          <span class="map-corner">Chemung, NY &middot; 3/8 mi asphalt</span>
+          <iframe
+            src={mapsEmbedUrl}
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title={`Map to ${site.trackName}`}
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="address-pane">
+          <div class="head">Track Address</div>
+          <div class="addr">
+            {site.address.split(',')[0]}
+            <span class="sub">{site.address.split(',').slice(1).join(',').trim()}</span>
+          </div>
+          <div class="coords">
+            <span>Latitude</span>&nbsp;&nbsp;&nbsp;42.0017° N<br />
+            <span>Longitude</span>&nbsp;76.6353° W<br />
+            <span>Exit</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rt 17 &middot; Exit 59
+          </div>
+          {site.phone && (
+            <div class="coords">
+              <span>Phone</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href={`tel:${site.phone.replace(/\D/g,'')}`} style="color:var(--ink)">{site.phone}</a>
+            </div>
+          )}
+          <a href={mapsLinkUrl} target="_blank" rel="noopener noreferrer" class="open-map">Open in Maps</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Directions -->
+  <section class="block" id="directions" style="padding-top:40px">
+    <div class="container">
+
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">Driving routes</div>
+          <h2 class="section-title">From the <span class="hot">main roads.</span></h2>
+        </div>
+        <span class="link" style="cursor:default;color:var(--ink-dim)">Times approximate, race-night traffic</span>
+      </div>
+
+      <div class="dir-grid">
+
+        <article class="dir">
+          <div class="from">From the West</div>
+          <div class="city">Corning <span class="miles">28 mi &middot; ~35 min</span></div>
+          <ol>
+            <li>Take <strong>I-86 / NY-17 East</strong> from Corning.</li>
+            <li>Continue past Elmira about 18 miles.</li>
+            <li>Take <strong>Exit 59</strong> (Lowman / Chemung).</li>
+            <li>Right onto <strong>Lake Road</strong> — track is on the left.</li>
+          </ol>
+        </article>
+
+        <article class="dir">
+          <div class="from">From Elmira</div>
+          <div class="city">Elmira <span class="miles">14 mi &middot; ~20 min</span></div>
+          <ol>
+            <li>Head east on <strong>NY-17 / I-86 East</strong>.</li>
+            <li>Continue about 13 miles.</li>
+            <li>Take <strong>Exit 59</strong> (Lowman / Chemung).</li>
+            <li>Right onto <strong>Lake Road</strong>; track is on the left.</li>
+          </ol>
+        </article>
+
+        <article class="dir">
+          <div class="from">From the East</div>
+          <div class="city">Binghamton <span class="miles">48 mi &middot; ~55 min</span></div>
+          <ol>
+            <li>Head west on <strong>I-86 / NY-17 West</strong>.</li>
+            <li>Continue about 45 miles past Owego &amp; Waverly.</li>
+            <li>Take <strong>Exit 59</strong> (Lowman / Chemung).</li>
+            <li>Left onto <strong>Lake Road</strong>; track is on the right.</li>
+          </ol>
+        </article>
+
+        <article class="dir">
+          <div class="from">From PA</div>
+          <div class="city">Sayre, PA <span class="miles">19 mi &middot; ~25 min</span></div>
+          <ol>
+            <li>Take <strong>US-220 North</strong> from Sayre.</li>
+            <li>Cross into NY; merge onto <strong>I-86 West</strong>.</li>
+            <li>Take <strong>Exit 59</strong> (Lowman / Chemung).</li>
+            <li>Left onto <strong>Lake Road</strong>; track is on the right.</li>
+          </ol>
+        </article>
+
+      </div>
+
+      <!-- Rain policy -->
+      <div class="schedule-note" id="rain">
+        <div class="icon">!</div>
+        <div>
+          <h3>Rain &amp; Cancellation Policy</h3>
+          <p>If the program is canceled before gates open, all advance tickets are honored at the rescheduled date. Cancellations are posted to the schedule page status banner by <strong>4:00 PM the day of the race</strong>. Once the green flag flies, the night is official — no refunds for rain after that.</p>
+          <p style="margin-top:10px;color:var(--ink-mute);font-size:14.5px;line-height:1.6">Don't drive in until you check the banner — we'd rather you save the gas than make the trip to find a wet track.</p>
+          <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase">
+            <a href="/schedule" style="color:var(--hot)">Status &amp; Schedule →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- In the press -->
+  <section class="block" style="padding-top:0">
+    <div class="container">
+
+      <div class="press-head">
+        <div>
+          <div class="section-eyebrow">In the press</div>
+          <h2>The <span class="hot">Speedrome</span> in print.</h2>
+        </div>
+        <p class="lede-r">Coverage of the relaunch, the new ownership, and the 2026 season. More to come — drop a story and we'll add it here.</p>
+      </div>
+
+      <div class="press-grid">
+
+        <a class="press" href="#" target="_blank" rel="noopener">
+          <div class="outlet">Star-Gazette</div>
+          <span class="placeholder-mark">Link TBD</span>
+          <h3>The lights come back on at Chemung Speedrome</h3>
+          <p class="lede">Coverage of the relaunch under new ownership, the planned 2026 season, and what's changed at the 3/8-mile oval since the doors last closed.</p>
+          <span class="date">Spring 2026</span>
+          <span class="read">Read article</span>
+        </a>
+
+        <a class="press" href="#" target="_blank" rel="noopener">
+          <div class="outlet">Speed-Sport / Local Press</div>
+          <span class="placeholder-mark">Link TBD</span>
+          <h3>Southern Tier short track gets a second life</h3>
+          <p class="lede">Profile of the new ownership group, the partnership with the Race of Champions Modified Series, and the Friday-night schedule for the inaugural reopening season.</p>
+          <span class="date">Spring 2026</span>
+          <span class="read">Read article</span>
+        </a>
+
+        <a class="press" href={`mailto:${site.email}`} style="background:var(--surface);border:1px dashed var(--line)">
+          <div class="outlet" style="color:var(--ink-dim)"><span style="background:var(--ink-dim);width:18px;height:2px;display:inline-block;vertical-align:middle;margin-right:10px"></span>Got coverage?</div>
+          <h3 style="color:var(--ink-mute)">Send us the link.</h3>
+          <p class="lede">If you've written about the Speedrome — magazine, blog, podcast, paper, radio — drop the URL to the office and we'll add it to the wall.</p>
+          <span class="read" style="color:var(--ink-mute)">Email us</span>
+        </a>
+
+      </div>
+
+    </div>
+  </section>
+
+</BaseLayout>
