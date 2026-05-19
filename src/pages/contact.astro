@@ -248,5 +248,12 @@ const socialLabels: Record<string, string> = {
 <script>
   const p = new URLSearchParams(window.location.search);
   if (p.get('sent') === 'true')  document.getElementById('form-success')?.classList.remove('hidden');
-  if (p.get('error'))            document.getElementById('form-error')?.classList.remove('hidden');
+  if (p.get('error')) {
+    const el = document.getElementById('form-error');
+    if (el) {
+      el.classList.remove('hidden');
+      const detail = p.get('detail');
+      if (detail) el.textContent += ` [${decodeURIComponent(detail)}]`;
+    }
+  }
 </script>
