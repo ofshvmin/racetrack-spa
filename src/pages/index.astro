@@ -145,12 +145,19 @@ if (nextEvent) {
       </div>
       <ElmBanner />
       <div class="sponsor-grid">
-        {sponsors.map(s => (
-          <div class:list={['sponsor', s.style && `is-${s.style}`]}>
-            <div class="nm">
-              {s.name}
-              {s.subtitle && <span class="small">— {s.subtitle} —</span>}
-            </div>
+        {sponsors.map((s: any) => (
+          <div class="sponsor">
+            {s.img ? (
+              <>
+                <img src={s.img} alt={s.alt ?? s.name} loading="lazy" />
+                <span class="tag">{s.name}</span>
+              </>
+            ) : (
+              <div class="nm">
+                {s.nm?.split('\n').map((line: string, i: number) => i === 0 ? line : <><br />{line}</>)}
+                {s.small && <span class="small">{s.small}</span>}
+              </div>
+            )}
           </div>
         ))}
       </div>
