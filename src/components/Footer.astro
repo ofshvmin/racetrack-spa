@@ -17,7 +17,8 @@ const year = new Date().getFullYear();
         <h4>Visit</h4>
         <address>
           <strong>{site.trackName}</strong>
-          {site.address}<br />
+          {site.address.split(',')[0]},<br />
+          {site.address.split(',').slice(1).join(',').trim()}<br />
           {site.phone && (
             <a href={`tel:${site.phone.replace(/\D/g, '')}`}>{site.phone}</a>
           )}
