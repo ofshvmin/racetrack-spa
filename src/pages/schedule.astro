@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import schedule from '../content/schedule.json';
+import results from '../content/results.json';
 
 const metaTitle = 'Race Schedule | Chemung Speedrome';
 const metaDescription = 'The full 2026 race schedule for Chemung Speedrome. Dates, divisions, and event details — every Friday night, May through September.';
@@ -12,7 +13,9 @@ const divMap: Record<string, { cls: string; label: string }> = {
   'Super Stocks':{ cls: 'super', label: 'Super'  },
 };
 
-const races = schedule
+const resultDates = new Set((results as any[]).map((r: any) => r.date));
+
+const baseRaces = schedule
   .filter(e => e.type === 'race')
   .map(e => {
     const d = new Date(e.date + 'T12:00:00');
@@ -23,8 +26,19 @@ const races = schedule
     const divTags = e.divisions.map(name => divMap[name]).filter(Boolean);
     const dataClasses = divTags.map(t => t.cls).join(' ');
     const isPast = new Date(e.date + 'T23:59:59') < new Date();
-    return { ...e, dayNum, weekday, month, year, divTags, dataClasses, isPast };
+    const hasResults = resultDates.has(e.date);
+    return { ...e, dayNum, weekday, month, year, divTags, dataClasses, isPast, hasResults };
   });
+
+// Find the index of the first upcoming race and the last past race
+const nextIdx     = baseRaces.findIndex(r => !r.isPast);
+const lastPastIdx = baseRaces.reduce((last, r, i) => r.isPast ? i : last, -1);
+
+const races = baseRaces.map((r, i) => ({
+  ...r,
+  isNext:     i === nextIdx,
+  isLastPast: i === lastPastIdx,
+}));
 
 const raceCount = races.length;
 ---
@@ -66,7 +80,13 @@ const raceCount = races.length;
       <div class="schedule" id="schedule-list">
         {races.map(race => (
           <article
-            class:list={['race-row', race.featured && 'is-special', race.isPast && 'is-past']}
+            class:list={[
+              'race-row',
+              race.featured  && 'is-special',
+              race.isPast    && 'is-past',
+              race.isLastPast && 'is-last-past',
+              race.isNext    && 'is-next',
+            ]}
             data-classes={race.dataClasses}
           >
             <div class="date">
@@ -74,6 +94,7 @@ const raceCount = races.length;
               <div class="day-info"><strong>{race.weekday}</strong>{race.month}<br />{race.year}</div>
             </div>
             <div class="title">
+              {race.isNext && <span class="next-badge">Next Race</span>}
               {race.title}
               {race.notes && <span class="sub">{race.notes}</span>}
             </div>
@@ -87,7 +108,13 @@ const raceCount = races.length;
               <div class="row"><span>Green</span><strong>{race.raceTime}</strong></div>
             </div>
             <div class="ticket">
-              <a href="#" class="buy" data-tickets>Tickets</a>
+              {race.isPast ? (
+                race.hasResults && (
+                  <a href={`/results#race-${race.date}`} class="buy results-link">Results</a>
+                )
+              ) : (
+                <a href="#" class="buy" data-tickets>Tickets</a>
+              )}
             </div>
           </article>
         ))}
