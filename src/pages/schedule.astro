@@ -7,10 +7,11 @@ const metaTitle = 'Race Schedule | Chemung Speedrome';
 const metaDescription = 'The full 2026 race schedule for Chemung Speedrome. Dates, divisions, and event details — every Friday night, May through September.';
 
 const divMap: Record<string, { cls: string; label: string }> = {
-  'Mods':        { cls: 'b-mod', label: 'B-Mod' },
-  'Hobby Stocks':{ cls: 'hobby', label: 'Hobby'  },
-  '4-Cyl':       { cls: '4cyl',  label: '4 Cyl'  },
-  'Super Stocks':{ cls: 'super', label: 'Super'  },
+  'Mods':         { cls: 'b-mod',    label: 'B-Mod'    },
+  'Hobby Stocks': { cls: 'hobby',    label: 'Hobby'    },
+  '4-Cyl':        { cls: '4cyl',     label: '4 Cyl'    },
+  'Super Stocks': { cls: 'super',    label: 'Super'    },
+  'Vintage Mods': { cls: 'vintage',  label: 'Vintage'  },
 };
 
 const resultDates = new Set((results as any[]).map((r: any) => r.date));

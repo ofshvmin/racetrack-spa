@@ -6,9 +6,9 @@
     "name": "B-Mods",
     "description": "Open-tube chassis modifieds. Loud, light, and built to slide. Run under Race of Champions Modified Series technical regulations — the headline feature most Fridays.",
     "specs": {
-      "Weight": "2,650 lb",
-      "Engine": "358ci spec",
-      "Tire": "Hoosier R-500"
+      "Weight": "2,600 lb",
+      "Engine": "358ci",
+      "Tire": "Hoosier 1070"
     }
   },
   {
@@ -18,9 +18,9 @@
     "name": "Hobby Stock",
     "description": "Full-bodied entry class. Where most Speedrome careers begin — and a few never leave.",
     "specs": {
-      "Weight": "2,800 lb",
+      "Weight": "3,000 lb",
       "Engine": "Stock V8",
-      "Tire": "American Racer"
+      "Tire": "DOT"
     }
   },
   {
@@ -30,9 +30,9 @@
     "name": "4 Cylinder",
     "description": "Front-wheel imports and economy steel. Cheapest seat at the dance and twice the door-banging.",
     "specs": {
-      "Weight": "2,200 lb",
       "Engine": "Stock 4-cyl",
-      "Tire": "DOT street"
+      "Tire": "DOT street",
+      "Rules": "See rulebook"
     }
   },
   {
@@ -42,9 +42,9 @@
     "name": "Super Stock",
     "description": "Late-model bodied V8 stockers. The fastest fenders on the property and the closest finishes of the night.",
     "specs": {
-      "Weight": "3,100 lb",
-      "Engine": "Crate 602",
-      "Tire": "Hoosier F-45"
+      "Weight": "3,200 lb",
+      "Engine": "358ci",
+      "Tire": "Hoosier 1070"
     }
   }
 ]

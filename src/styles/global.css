@@ -841,7 +841,8 @@ section.block { padding: 100px 0; }
 .tag-class[data-class="b-mod"] { color: var(--hot); border-color: oklch(0.64 0.22 30 / 0.4); }
 .tag-class[data-class="hobby"] { color: var(--safety); border-color: oklch(0.88 0.17 95 / 0.4); }
 .tag-class[data-class="4cyl"]  { color: var(--sky); border-color: oklch(0.72 0.13 235 / 0.4); }
-.tag-class[data-class="super"] { color: oklch(0.78 0.16 145); border-color: oklch(0.78 0.16 145 / 0.4); }
+.tag-class[data-class="super"]   { color: oklch(0.78 0.16 145); border-color: oklch(0.78 0.16 145 / 0.4); }
+.tag-class[data-class="vintage"] { color: oklch(0.78 0.10 60);  border-color: oklch(0.78 0.10 60 / 0.4); }
 
 .race-row .gates {
   font-family: 'JetBrains Mono', monospace;

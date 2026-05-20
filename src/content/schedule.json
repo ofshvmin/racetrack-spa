@@ -43,81 +43,64 @@
     "featured": false
   },
   {
-    "id": "2026-05-15-season-opener",
+    "id": "2026-05-15-race-night",
     "type": "race",
-    "title": "Season Opener 50",
+    "title": "Race Night",
     "date": "2026-05-15",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": true,
-    "notes": "Twin features. Fireworks after the checkered."
+    "featured": false
   },
   {
     "id": "2026-05-22-memorial-weekend",
     "type": "race",
-    "title": "Memorial Weekend 75",
+    "title": "Memorial Weekend",
     "date": "2026-05-22",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["Hobby Stocks", "4-Cyl", "Super Stocks"],
-    "featured": true,
-    "notes": "Hobby Stock 75-lap feature + support classes."
+    "featured": true
   },
   {
-    "id": "2026-05-29-twin-25s",
+    "id": "2026-05-29-race-night",
     "type": "race",
-    "title": "Twin 25s",
+    "title": "Race Night",
     "date": "2026-05-29",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["Mods", "Hobby Stocks", "4-Cyl"],
-    "featured": false,
-    "notes": "B-Mod twin 25-lap features. Pit Stop Night."
+    "featured": false
   },
   {
-    "id": "2026-06-05-kids-night",
+    "id": "2026-06-05-race-night",
     "type": "race",
-    "title": "Kids Night",
+    "title": "Race Night",
     "date": "2026-06-05",
-    "gateTime": "4:30 PM",
+    "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": true,
-    "notes": "Free admission for 12 & under. Pit walk before feature."
+    "featured": false
   },
   {
-    "id": "2026-06-12-super-stock-50",
+    "id": "2026-06-12-race-night",
     "type": "race",
-    "title": "Super Stock 50",
+    "title": "Race Night",
     "date": "2026-06-12",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["Super Stocks", "4-Cyl"],
-    "featured": false,
-    "notes": "Super Stock 50-lapper. Four Cylinder support."
+    "featured": false
   },
   {
-    "id": "2026-06-19-fan-appreciation",
+    "id": "2026-06-19-race-night",
     "type": "race",
-    "title": "Fan Appreciation Night",
+    "title": "Race Night",
     "date": "2026-06-19",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["Mods", "Hobby Stocks", "Super Stocks"],
-    "featured": true,
-    "notes": "$2 hot dogs · pit passes half-price all night."
-  },
-  {
-    "id": "2026-06-26-independence-100",
-    "type": "race",
-    "title": "Independence 100",
-    "date": "2026-06-26",
-    "gateTime": "4:30 PM",
-    "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": true,
-    "notes": "B-Mod 100-lap feature + fireworks finale."
+    "featured": false
   },
   {
     "id": "2026-07-03-kinters-contracting-night",
@@ -130,14 +113,14 @@
     "featured": true
   },
   {
-    "id": "2026-07-10-race-night",
+    "id": "2026-07-10-vintage-mods-night",
     "type": "race",
-    "title": "Race Night",
+    "title": "Vintage Mods Night",
     "date": "2026-07-10",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": false
+    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods", "Vintage Mods"],
+    "featured": true
   },
   {
     "id": "2026-07-17-race-night",
@@ -190,14 +173,14 @@
     "featured": false
   },
   {
-    "id": "2026-08-21-race-night",
+    "id": "2026-08-21-knappy-auto-body-night",
     "type": "race",
-    "title": "Race Night",
+    "title": "Knappy Auto Body Night",
     "date": "2026-08-21",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": false
+    "featured": true
   },
   {
     "id": "2026-08-28-race-night",
@@ -230,20 +213,10 @@
     "featured": false
   },
   {
-    "id": "2026-09-25-race-night",
+    "id": "2026-09-25-championship-night",
     "type": "race",
-    "title": "Race Night",
+    "title": "Championship Night",
     "date": "2026-09-25",
-    "gateTime": "5:00 PM",
-    "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": false
-  },
-  {
-    "id": "2026-10-02-flynn-propane-night",
-    "type": "race",
-    "title": "Flynn Propane Night",
-    "date": "2026-10-02",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
