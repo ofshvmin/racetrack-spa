@@ -2,13 +2,13 @@
   {
     "slug": "b-mod",
     "num": "01",
-    "type": "FEATURE",
+    "type": "HEADLINE",
     "name": "B-Mods",
-    "description": "Open-tube chassis modifieds. Loud, light, and built to slide. The headline feature most Fridays.",
+    "description": "Open-tube chassis modifieds. Loud, light, and built to slide. Run under Race of Champions Modified Series technical regulations — the headline feature most Fridays.",
     "specs": {
-      "Weight": "2,400 lb",
-      "Engine": "Crate 604",
-      "Tire": "Hoosier WRS-2"
+      "Weight": "2,650 lb",
+      "Engine": "358ci spec",
+      "Tire": "Hoosier R-500"
     }
   },
   {

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import schedule from '../content/schedule.json';
-import site from '../content/site.json';
 
 const metaTitle = 'Race Schedule | Chemung Speedrome';
 const metaDescription = 'The full 2026 race schedule for Chemung Speedrome. Dates, divisions, and event details — every Friday night, May through September.';
@@ -37,7 +36,7 @@ const raceCount = races.length;
     <div class="container status-bar-inner">
       <div class="status">
         <span class="dot"></span>
-        <span><strong>This Friday: ON</strong> · No cancellations · Check back for updates</span>
+        <span><strong>This Friday: ON</strong> · No cancellations · Skies clear · Last updated 11:42 AM today</span>
       </div>
       <div class="pattern">Every Friday · Gates 5:00 · Green 7:00</div>
     </div>
@@ -48,7 +47,7 @@ const raceCount = races.length;
     <div class="container page-header-inner">
       <div class="eyebrow">2026 Season · {raceCount} Features</div>
       <h1>The <span class="hot">Schedule.</span></h1>
-      <p class="lede">We race every Friday night, May through September. Gates at 5:00 PM, green flag at 7:00 PM, rain or shine. Cancellations are posted here by 4:00 PM the day of the race.</p>
+      <p class="lede">We race every Friday night, May through September. Gates at 5:00 PM, green flag at 7:00 PM, rain or shine. Cancellations are posted here and pushed to text-alert subscribers by 4:00 PM the day of the race.</p>
     </div>
   </section>
 
@@ -88,7 +87,6 @@ const raceCount = races.length;
               <div class="row"><span>Green</span><strong>{race.raceTime}</strong></div>
             </div>
             <div class="ticket">
-              <div class="price">{site.admission.adult}<small> / adult</small></div>
               <a href="#" class="buy" data-tickets>Tickets</a>
             </div>
           </article>
@@ -99,7 +97,7 @@ const raceCount = races.length;
         <div class="icon">!</div>
         <div>
           <h3>Rain &amp; Cancellation Policy</h3>
-          <p>If the program is canceled before gates open, all advance tickets are honored at the rescheduled date. Cancellations are posted to the status banner above by 4:00 PM the day of the race. Once the green flag flies, the night is official — no refunds for rain after that.</p>
+          <p>If the program is canceled before gates open, all advance tickets are honored at the rescheduled date. Cancellations are posted to the status banner above by 4:00 PM the day of the race. Sign up for text alerts and you'll know before the gates do. Once the green flag flies, the night is official — no refunds for rain after that.</p>
         </div>
       </div>
 

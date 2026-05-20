@@ -5,9 +5,8 @@ import site from '../content/site.json';
 const metaTitle = 'Visit | Chemung Speedrome';
 const metaDescription = 'Directions and visitor information for Chemung Speedrome. A 3/8-mile asphalt oval in Chemung, NY — easy off Route 17, gates at 5:00 PM every Friday.';
 
-const mapsAddress = encodeURIComponent(site.address);
-const mapsEmbedUrl = `https://www.google.com/maps?q=${mapsAddress}&output=embed`;
-const mapsLinkUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapsAddress}`;
+const mapsEmbedUrl = 'https://www.google.com/maps?q=Chemung+Speedrome,+Chemung,+NY&output=embed';
+const mapsLinkUrl = 'https://www.google.com/maps/dir/?api=1&destination=Chemung+Speedrome,+Chemung,+NY';
 ---
 
 <BaseLayout title={metaTitle} description={metaDescription}>
@@ -136,6 +135,7 @@ const mapsLinkUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapsAd
           <p style="margin-top:10px;color:var(--ink-mute);font-size:14.5px;line-height:1.6">Don't drive in until you check the banner — we'd rather you save the gas than make the trip to find a wet track.</p>
           <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase">
             <a href="/schedule" style="color:var(--hot)">Status &amp; Schedule →</a>
+            <a href="#" style="color:var(--hot)">Text Alert Sign-up →</a>
           </div>
         </div>
       </div>

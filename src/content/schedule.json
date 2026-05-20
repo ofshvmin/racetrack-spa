@@ -43,14 +43,15 @@
     "featured": false
   },
   {
-    "id": "2026-05-15-race-night",
+    "id": "2026-05-15-season-opener",
     "type": "race",
-    "title": "Race Night",
+    "title": "Season Opener 50",
     "date": "2026-05-15",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": false
+    "featured": true,
+    "notes": "Twin features. Fireworks after the checkered."
   },
   {
     "id": "2026-05-22-memorial-weekend",
@@ -106,6 +107,17 @@
     "divisions": ["Mods", "Hobby Stocks", "Super Stocks"],
     "featured": true,
     "notes": "$2 hot dogs · pit passes half-price all night."
+  },
+  {
+    "id": "2026-06-26-independence-100",
+    "type": "race",
+    "title": "Independence 100",
+    "date": "2026-06-26",
+    "gateTime": "4:30 PM",
+    "raceTime": "7:00 PM",
+    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "featured": true,
+    "notes": "B-Mod 100-lap feature + fireworks finale."
   },
   {
     "id": "2026-07-03-kinters-contracting-night",
