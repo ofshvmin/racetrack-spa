@@ -1,8 +1,81 @@
 [
   {
+    "date": "2026-05-01",
+    "title": "Opening Night",
+    "raceNum": 1,
+    "divisions": [
+      {
+        "slug": "b-mod",
+        "name": "Sportsman Mods",
+        "feature": [
+          { "pos": 1,  "driver": "Jimmy Zacharias" },
+          { "pos": 2,  "driver": "Zack Curren" },
+          { "pos": 3,  "driver": "Lee Sharpsteen" },
+          { "pos": 4,  "driver": "TJ Potrzebowski" },
+          { "pos": 5,  "driver": "Kevin Youngs" },
+          { "pos": 6,  "driver": "Jesse Kent" },
+          { "pos": 7,  "driver": "Jody Buckley" },
+          { "pos": 8,  "driver": "Tommy Rought" },
+          { "pos": 9,  "driver": "TJ Zacharias" },
+          { "pos": 10, "driver": "Lucas Bartlett" }
+        ],
+        "heats": [],
+        "dnf": []
+      },
+      {
+        "slug": "super",
+        "name": "Super Stocks",
+        "feature": [
+          { "pos": 1, "driver": "Garrett Zacharias" },
+          { "pos": 2, "driver": "Devin Gullo" },
+          { "pos": 3, "driver": "Tim Gullo" },
+          { "pos": 4, "driver": "Derrick Vogler" }
+        ],
+        "heats": [],
+        "dnf": []
+      },
+      {
+        "slug": "hobby",
+        "name": "Hobby Stocks",
+        "feature": [
+          { "pos": 1,  "driver": "Terry Potrzebowski" },
+          { "pos": 2,  "driver": "Mike Bailey" },
+          { "pos": 3,  "driver": "Mark Taylor" },
+          { "pos": 4,  "driver": "Ethan Roberts" },
+          { "pos": 5,  "driver": "M-R Taylor" },
+          { "pos": 6,  "driver": "Ryan Osgood" },
+          { "pos": 7,  "driver": "Tom Shaffer" },
+          { "pos": 8,  "driver": "John Lane" },
+          { "pos": 9,  "driver": "Thomas Decker" },
+          { "pos": 10, "driver": "Mike Kintner" },
+          { "pos": 11, "driver": "Kamden Wheeler" }
+        ],
+        "heats": [],
+        "dnf": []
+      },
+      {
+        "slug": "4cyl",
+        "name": "4 Cylinder",
+        "feature": [
+          { "pos": 1, "driver": "Nick Robinson" },
+          { "pos": 2, "driver": "Greg Moldt" },
+          { "pos": 3, "driver": "Beau Baker" },
+          { "pos": 4, "driver": "Gary Norconk" },
+          { "pos": 5, "driver": "Chris Norconk" },
+          { "pos": 6, "driver": "Adrianna Purvis" },
+          { "pos": 7, "driver": "Matt Jenkins" },
+          { "pos": 8, "driver": "Brandon Measheaw" },
+          { "pos": 9, "driver": "Troy Hodge" }
+        ],
+        "heats": [],
+        "dnf": []
+      }
+    ]
+  },
+  {
     "date": "2026-05-15",
     "title": "Season Opener 50",
-    "raceNum": 1,
+    "raceNum": 2,
     "divisions": [
       {
         "slug": "b-mod",
