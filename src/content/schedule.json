@@ -59,7 +59,7 @@
     "date": "2026-05-22",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["Hobby Stocks", "4-Cyl", "Super Stocks"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": true
   },
   {
@@ -69,7 +69,7 @@
     "date": "2026-05-29",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["Mods", "Hobby Stocks", "4-Cyl"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -79,7 +79,7 @@
     "date": "2026-06-05",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -89,7 +89,7 @@
     "date": "2026-06-12",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["Super Stocks", "4-Cyl"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -99,7 +99,7 @@
     "date": "2026-06-19",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["Mods", "Hobby Stocks", "Super Stocks"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -109,7 +109,7 @@
     "date": "2026-07-03",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": true
   },
   {
@@ -119,7 +119,7 @@
     "date": "2026-07-10",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods", "Vintage Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods", "Vintage Mods"],
     "featured": true
   },
   {
@@ -129,7 +129,7 @@
     "date": "2026-07-17",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -139,7 +139,7 @@
     "date": "2026-07-24",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -149,7 +149,7 @@
     "date": "2026-07-31",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -159,7 +159,7 @@
     "date": "2026-08-07",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -169,7 +169,7 @@
     "date": "2026-08-14",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -179,7 +179,7 @@
     "date": "2026-08-21",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": true
   },
   {
@@ -189,7 +189,7 @@
     "date": "2026-08-28",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -199,7 +199,7 @@
     "date": "2026-09-11",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -209,7 +209,7 @@
     "date": "2026-09-18",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
     "featured": false
   },
   {
@@ -219,7 +219,8 @@
     "date": "2026-09-25",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
-    "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
-    "featured": true
+    "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
+    "featured": true,
+    "notes": "Brought to you by Flynn Energy & Propane"
   }
 ]
