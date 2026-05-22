@@ -98,6 +98,11 @@ const raceCount = races.length;
               {race.isNext && <span class="next-badge">Next Race</span>}
               {race.title}
               {race.notes && <span class="sub">{race.notes}</span>}
+              {(race as any).sponsor && (
+                <span class="sponsor-note">
+                  <span class="presented-by">Presented by</span>{(race as any).sponsor}
+                </span>
+              )}
             </div>
             <div class="classes">
               {race.divTags.map(t => (

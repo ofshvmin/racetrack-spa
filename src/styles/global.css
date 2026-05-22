@@ -917,6 +917,21 @@ section.block { padding: 100px 0; }
   margin-bottom: 10px;
 }
 
+/* Sponsor tagline — elevated but restrained */
+.sponsor-note {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: oklch(0.74 0.07 55);
+  margin-top: 9px;
+}
+.sponsor-note .presented-by {
+  color: var(--ink-mute);
+  margin-right: 7px;
+}
+
 /* Results link — green to distinguish from Tickets (orange) */
 .race-row .ticket .buy.results-link { color: oklch(0.78 0.16 145); }
 
