@@ -16,30 +16,19 @@ const divMap: Record<string, { cls: string; label: string }> = {
 
 const resultDates = new Set((results as any[]).map((r: any) => r.date));
 
-const baseRaces = schedule
+const races = schedule
   .filter(e => e.type === 'race')
   .map(e => {
     const d = new Date(e.date + 'T12:00:00');
-    const dayNum = String(d.getDate()).padStart(2, '0');
+    const dayNum  = String(d.getDate()).padStart(2, '0');
     const weekday = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
-    const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
-    const year = d.getFullYear();
+    const month   = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+    const year    = d.getFullYear();
     const divTags = e.divisions.map(name => divMap[name]).filter(Boolean);
     const dataClasses = divTags.map(t => t.cls).join(' ');
-    const isPast = new Date(e.date + 'T23:59:59') < new Date();
-    const hasResults = resultDates.has(e.date);
-    return { ...e, dayNum, weekday, month, year, divTags, dataClasses, isPast, hasResults };
+    const hasResults  = resultDates.has(e.date);
+    return { ...e, dayNum, weekday, month, year, divTags, dataClasses, hasResults };
   });
-
-// Find the index of the first upcoming race and the last past race
-const nextIdx     = baseRaces.findIndex(r => !r.isPast);
-const lastPastIdx = baseRaces.reduce((last, r, i) => r.isPast ? i : last, -1);
-
-const races = baseRaces.map((r, i) => ({
-  ...r,
-  isNext:     i === nextIdx,
-  isLastPast: i === lastPastIdx,
-}));
 
 const raceCount = races.length;
 ---
@@ -81,13 +70,8 @@ const raceCount = races.length;
       <div class="schedule" id="schedule-list">
         {races.map(race => (
           <article
-            class:list={[
-              'race-row',
-              race.featured  && 'is-special',
-              race.isPast    && 'is-past',
-              race.isLastPast && 'is-last-past',
-              race.isNext    && 'is-next',
-            ]}
+            class:list={['race-row', race.featured && 'is-special']}
+            data-date={race.date}
             data-classes={race.dataClasses}
           >
             <div class="date">
@@ -95,7 +79,6 @@ const raceCount = races.length;
               <div class="day-info"><strong>{race.weekday}</strong>{race.month}<br />{race.year}</div>
             </div>
             <div class="title">
-              {race.isNext && <span class="next-badge">Next Race</span>}
               {race.title}
               {race.notes && <span class="sub">{race.notes}</span>}
               {(race as any).sponsor && (
@@ -114,12 +97,9 @@ const raceCount = races.length;
               <div class="row"><span>Green</span><strong>{race.raceTime}</strong></div>
             </div>
             <div class="ticket">
-              {race.isPast ? (
-                race.hasResults && (
-                  <a href={`/results#race-${race.date}`} class="buy results-link">Results</a>
-                )
-              ) : (
-                <a href="#" class="buy" data-tickets>Tickets</a>
+              <a href="#" class="buy" data-tickets>Tickets</a>
+              {race.hasResults && (
+                <a href={`/results#race-${race.date}`} class="buy results-link" data-results style="display:none">Results</a>
               )}
             </div>
           </article>
@@ -140,6 +120,51 @@ const raceCount = races.length;
 </BaseLayout>
 
 <script>
+  // --- Past / next classification (runs in browser against real current time) ---
+  (function () {
+    const rows = Array.from(document.querySelectorAll<HTMLElement>('.race-row[data-date]'));
+
+    // Today's date in Eastern Time (track timezone)
+    const etStr = new Date().toLocaleDateString('en-US', {
+      timeZone: 'America/New_York',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+    });
+    const [etM, etD, etY] = etStr.split('/').map(Number);
+    const today = new Date(etY, etM - 1, etD);
+
+    const past: HTMLElement[]   = [];
+    const future: HTMLElement[] = [];
+
+    rows.forEach(row => {
+      const [ry, rm, rd] = (row.dataset.date ?? '').split('-').map(Number);
+      const raceDate = new Date(ry, rm - 1, rd);
+      if (raceDate < today) past.push(row);
+      else future.push(row);
+    });
+
+    past.forEach((row, i) => {
+      row.classList.add('is-past');
+      if (i === past.length - 1) row.classList.add('is-last-past');
+      const ticketsLink = row.querySelector<HTMLElement>('[data-tickets]');
+      const resultsLink = row.querySelector<HTMLElement>('[data-results]');
+      if (ticketsLink) ticketsLink.style.display = 'none';
+      if (resultsLink) resultsLink.style.display = '';
+    });
+
+    if (future.length > 0) {
+      const next = future[0];
+      next.classList.add('is-next');
+      const titleEl = next.querySelector('.title');
+      if (titleEl && !titleEl.querySelector('.next-badge')) {
+        const badge = document.createElement('span');
+        badge.className = 'next-badge';
+        badge.textContent = 'Next Race';
+        titleEl.insertBefore(badge, titleEl.firstChild);
+      }
+    }
+  })();
+
+  // --- Division filter chips ---
   const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
   const rows  = document.querySelectorAll<HTMLElement>('.race-row');
   chips.forEach(chip => {
