@@ -8,26 +8,36 @@ const metaDescription = 'Official race results for Chemung Speedrome 2026. Featu
 
 const resultDates = new Set(results.map(r => r.date));
 
-const nights = results.map(night => {
+const resultNights = results.map(night => {
   const d = new Date(night.date + 'T12:00:00');
-  const fullDate = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  const shortDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const totalEntries = night.divisions.reduce((s, div) => s + div.feature.length + div.dnf.length, 0);
-  return { ...night, fullDate, shortDate, totalEntries };
-}).reverse();
+  return {
+    kind: 'results' as const,
+    date: night.date,
+    fullDate: d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+    shortDate: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    totalEntries: night.divisions.reduce((s: number, div: any) => s + div.feature.length + div.dnf.length, 0),
+    divisions: night.divisions,
+    title: night.title,
+  };
+});
 
-const nextRace = (schedule as any[])
+// Scheduled races with no results — split into canceled (static) and pending (JS-classified)
+const noResultRaces = (schedule as any[])
   .filter(e => e.type === 'race' && !resultDates.has(e.date))
-  .sort((a, b) => a.date.localeCompare(b.date))
-  .slice(0, 1)
   .map(e => {
     const d = new Date(e.date + 'T12:00:00');
     return {
+      kind: (e.canceled ? 'canceled' : 'pending') as 'canceled' | 'pending',
       date: e.date,
-      fullDate: d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' }),
       title: e.title,
+      fullDate: d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' }),
+      shortDate: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     };
-  })[0] ?? null;
+  });
+
+// Unified feed sorted newest first
+const feedItems = ([...resultNights, ...noResultRaces] as any[])
+  .sort((a, b) => (b.date as string).localeCompare(a.date as string));
 
 const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
 ---
@@ -48,18 +58,17 @@ const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
       <!-- Jump rail -->
       <aside class="jump-rail" aria-label="Jump to race night">
         <div class="head">Race Night</div>
-        {nights.map((night, i) => (
-          <a href={`#race-${night.date}`} class={i === 0 ? 'is-active' : ''}>
-            {night.shortDate}
-            <span class="sub">{night.title}</span>
+        {feedItems.map((item, i) => (
+          <a
+            href={`#race-${item.date}`}
+            class={i === 0 && item.kind === 'results' ? 'is-active' : ''}
+            style={item.kind !== 'results' ? 'opacity:0.45' : ''}
+            data-rail-date={item.date}
+          >
+            {item.shortDate}
+            <span class="sub">{item.title}</span>
           </a>
         ))}
-        {nextRace && (
-          <a href={`#race-${nextRace.date}`} style="opacity:0.45">
-            {new Date(nextRace.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-            <span class="sub">{nextRace.title}</span>
-          </a>
-        )}
       </aside>
 
       <!-- Results feed -->
@@ -72,23 +81,38 @@ const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
           <span class="count" id="driver-count" aria-live="polite"></span>
         </div>
 
-        {nights.map(night => (
-          <article class="race-night" id={`race-${night.date}`}>
+        <!-- Driver season summary — populated by JS when a search matches -->
+        <div class="driver-summary" id="driver-summary" hidden aria-live="polite">
+          <div class="ds-header">
+            <div class="ds-name" id="ds-name"></div>
+            <div class="ds-classes" id="ds-classes"></div>
+          </div>
+          <div class="ds-stats" id="ds-stats">
+            <div class="ds-stat"><span class="ds-val" id="ds-starts">—</span><span class="ds-lbl">Starts</span></div>
+            <div class="ds-stat"><span class="ds-val" id="ds-wins">—</span><span class="ds-lbl">Wins</span></div>
+            <div class="ds-stat"><span class="ds-val" id="ds-podiums">—</span><span class="ds-lbl">Podiums</span></div>
+            <div class="ds-stat"><span class="ds-val" id="ds-best">—</span><span class="ds-lbl">Best Finish</span></div>
+          </div>
+          <p class="ds-hint" id="ds-hint"></p>
+        </div>
+
+        {feedItems.map(item => item.kind === 'results' ? (
+          <article class="race-night" id={`race-${item.date}`}>
 
             <header class="race-night-head">
               <div>
-                <div class="date"><span class="day">Fri,</span> {night.fullDate}</div>
-                <div class="feature">{night.title}</div>
+                <div class="date"><span class="day">Fri,</span> {item.fullDate}</div>
+                <div class="feature">{item.title}</div>
               </div>
               <div></div>
               <div class="meta">
-                <strong>{night.divisions.length} classes</strong> &middot; {night.totalEntries} entries<br />
-                Gates {night.divisions[0]?.feature ? '5:00' : '—'} &middot; Green 7:00
+                <strong>{item.divisions.length} classes</strong> &middot; {item.totalEntries} entries<br />
+                Gates 5:00 &middot; Green 7:00
               </div>
             </header>
 
             <div class="class-grid">
-              {night.divisions.map(div => (
+              {item.divisions.map((div: any) => (
                 <section class="class-panel" data-c={divCss(div.slug)}>
                   <div class="cls-head">
                     <div class="cls-name">{div.name}</div>
@@ -98,12 +122,12 @@ const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
                     <div class="heats">
                       <span class="lbl">Heat{div.heats.length > 1 ? 's' : ''}</span>
                       <span class="winners">
-                        {div.heats.map(h => <span>{h}</span>)}
+                        {div.heats.map((h: string) => <span>{h}</span>)}
                       </span>
                     </div>
                   )}
                   <ol class="field">
-                    {div.feature.map(f => (
+                    {div.feature.map((f: any) => (
                       <li class:list={[f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd']}>
                         <span class="pos">{f.pos}</span>
                         <span class="nm">{f.driver}</span>
@@ -112,7 +136,7 @@ const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
                   </ol>
                   {div.dnf.length > 0 && (
                     <div class="notes">
-                      {div.dnf.map(driver => (
+                      {div.dnf.map((driver: string) => (
                         <div class="row">
                           <span class="tag">DNF</span>
                           <span class="nm">{driver}</span>
@@ -125,24 +149,40 @@ const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
             </div>
 
           </article>
-        ))}
 
-        {nextRace && (
-          <article class="race-night is-placeholder" id={`race-${nextRace.date}`}>
+        ) : item.kind === 'canceled' ? (
+
+          <article class="race-night is-placeholder is-rained-out" id={`race-${item.date}`}>
             <header class="race-night-head">
               <div>
-                <div class="date" style="color:var(--ink-mute)">{nextRace.fullDate}</div>
-                <div class="feature" style="color:var(--ink-dim)">{nextRace.title}</div>
+                <div class="date" style="color:var(--ink-mute)">{item.fullDate}</div>
+                <div class="feature" style="color:var(--ink-dim)">{item.title}</div>
               </div>
               <div></div>
-              <div class="meta">Results pending</div>
+              <div class="meta">Rained out</div>
             </header>
             <div class="placeholder-body">
-              <strong>Race not yet run</strong>
-              Results posted here after the checkered flag.
+              <strong>Rained out</strong>
+              This race was canceled due to weather.
             </div>
           </article>
-        )}
+
+        ) : (
+
+          /* pending — JS will set label based on whether date is past or future */
+          <article class="race-night is-placeholder" id={`race-${item.date}`} data-pending data-date={item.date} style="display:none">
+            <header class="race-night-head">
+              <div>
+                <div class="date" style="color:var(--ink-mute)">{item.fullDate}</div>
+                <div class="feature" style="color:var(--ink-dim)">{item.title}</div>
+              </div>
+              <div></div>
+              <div class="meta pending-meta">—</div>
+            </header>
+            <div class="placeholder-body pending-body">—</div>
+          </article>
+
+        ))}
 
       </div>
     </div>
@@ -151,10 +191,110 @@ const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
 </BaseLayout>
 
 <script>
-  // Driver search — highlights matches, dims unmatched race cards
   (function () {
+    // --- Classify pending placeholders as past (results pending) or future (next race) ---
+    const etStr = new Date().toLocaleDateString('en-US', {
+      timeZone: 'America/New_York',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+    });
+    const [etM, etD, etY] = etStr.split('/').map(Number);
+    const today = new Date(etY, etM - 1, etD);
+
+    const pendingCards = Array.from(
+      document.querySelectorAll<HTMLElement>('.race-night.is-placeholder[data-pending]')
+    );
+
+    const pastPending: HTMLElement[]   = [];
+    const futurePending: HTMLElement[] = [];
+
+    pendingCards.forEach(card => {
+      const [ry, rm, rd] = (card.dataset.date ?? '').split('-').map(Number);
+      const raceDate = new Date(ry, rm - 1, rd);
+      if (raceDate < today) pastPending.push(card);
+      else futurePending.push(card);
+    });
+
+    // Past races with no results → "Results Pending"
+    pastPending.forEach(card => {
+      card.style.display = '';
+      const meta = card.querySelector('.pending-meta');
+      const body = card.querySelector('.pending-body');
+      if (meta) meta.textContent = 'Results pending';
+      if (body) {
+        body.innerHTML = '<strong>Results pending</strong> Full results will be posted shortly.';
+      }
+    });
+
+    // Future races stay hidden in the feed — upcoming races belong on /schedule
+
+    // --- Rebuild jump rail: past races first (newest → oldest), then one upcoming ---
+    const rail = document.querySelector<HTMLElement>('.jump-rail');
+    if (rail) {
+      const allRailLinks = Array.from(rail.querySelectorAll<HTMLElement>('a[data-rail-date]'));
+
+      const pastRailLinks: HTMLElement[] = [];
+      const futureRailLinks: HTMLElement[] = [];
+
+      allRailLinks.forEach(link => {
+        const date = link.dataset.railDate ?? '';
+        const card = document.getElementById('race-' + date);
+
+        // Drop entries whose cards are hidden (far-future races)
+        if (!card || card.style.display === 'none') {
+          link.remove();
+          return;
+        }
+
+        const [ry, rm, rd] = date.split('-').map(Number);
+        const raceDate = new Date(ry, rm - 1, rd);
+        if (raceDate < today) pastRailLinks.push(link);
+        else futureRailLinks.push(link);
+      });
+
+      // Sort future links ascending so index 0 is the nearest upcoming race
+      futureRailLinks.sort((a, b) =>
+        (a.dataset.railDate ?? '').localeCompare(b.dataset.railDate ?? '')
+      );
+      const nextRailLink = futureRailLinks[0] ?? null;
+      // Remove any extras (shouldn't exist since hidden cards were already dropped above,
+      // but guard anyway)
+      futureRailLinks.slice(1).forEach(l => l.remove());
+
+      // Sort past entries newest first
+      pastRailLinks.sort((a, b) =>
+        (b.dataset.railDate ?? '').localeCompare(a.dataset.railDate ?? '')
+      );
+
+      // Detach all, re-append in desired order
+      pastRailLinks.forEach(l => l.remove());
+      if (nextRailLink) (nextRailLink as HTMLElement).remove();
+
+      pastRailLinks.forEach(l => rail.appendChild(l));
+
+      if (nextRailLink) {
+        const sep = document.createElement('div');
+        sep.className = 'rail-sep';
+        sep.textContent = 'Upcoming';
+        rail.appendChild(sep);
+        (nextRailLink as HTMLAnchorElement).href = '/schedule';
+        rail.appendChild(nextRailLink as HTMLElement);
+      }
+
+      // Set initial active on most recent past race
+      if (pastRailLinks.length > 0) pastRailLinks[0].classList.add('is-active');
+    }
+
+    // --- Driver search + season summary ---
     const q = document.getElementById('driver-q') as HTMLInputElement | null;
-    const countEl = document.getElementById('driver-count');
+    const countEl       = document.getElementById('driver-count');
+    const summaryEl     = document.getElementById('driver-summary');
+    const dsName        = document.getElementById('ds-name');
+    const dsClasses     = document.getElementById('ds-classes');
+    const dsStarts      = document.getElementById('ds-starts');
+    const dsWins        = document.getElementById('ds-wins');
+    const dsPodiums     = document.getElementById('ds-podiums');
+    const dsBest        = document.getElementById('ds-best');
+    const dsHint        = document.getElementById('ds-hint');
     if (!q) return;
 
     const cards = document.querySelectorAll<HTMLElement>('.race-night:not(.is-placeholder)');
@@ -162,10 +302,90 @@ const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
     const originals = new WeakMap<HTMLElement, string>();
     nameNodes.forEach(n => originals.set(n, n.textContent ?? ''));
 
+    // Class slug → display label
+    const classLabels: Record<string, string> = {
+      mod: 'Modifieds', hobby: 'Hobby Stocks', '4cyl': '4 Cylinder', super: 'Super Stocks', vintage: 'Vintage Mods',
+    };
+
+    const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    function hideSummary() {
+      summaryEl?.setAttribute('hidden', '');
+    }
+
+    function showSummary(term: string) {
+      const re = new RegExp(esc(term), 'i');
+
+      // Collect every distinct full driver name the term touches
+      const matchedNames = new Set<string>();
+      nameNodes.forEach(n => {
+        const orig = originals.get(n) ?? '';
+        if (re.test(orig)) matchedNames.add(orig);
+      });
+
+      if (matchedNames.size === 0) { hideSummary(); return; }
+
+      if (matchedNames.size > 1) {
+        // Disambiguation — don't mix stats across different people
+        summaryEl?.setAttribute('data-state', 'multi');
+        if (dsName) dsName.textContent = `${matchedNames.size} drivers matched`;
+        if (dsClasses) {
+          dsClasses.innerHTML = '';
+          [...matchedNames].sort().forEach(name => {
+            const btn = document.createElement('button');
+            btn.className = 'ds-class-tag ds-name-btn';
+            btn.textContent = name;
+            btn.addEventListener('click', () => {
+              if (q) { q.value = name; q.dispatchEvent(new Event('input')); q.focus(); }
+            });
+            dsClasses.appendChild(btn);
+          });
+        }
+        if (dsHint) dsHint.textContent = 'Select a name to see their season card.';
+        summaryEl?.removeAttribute('hidden');
+        return;
+      }
+
+      // Exactly one driver — compute stats using an exact full-name match
+      const driverName = [...matchedNames][0];
+      const exactRe = new RegExp('^' + esc(driverName) + '$', 'i');
+      let starts = 0, wins = 0, podiums = 0, bestFinish = Infinity;
+      const classesSeen = new Set<string>();
+
+      nameNodes.forEach(n => {
+        const orig = originals.get(n) ?? '';
+        if (!exactRe.test(orig)) return;
+        const li = n.closest('li');
+        if (li) {
+          starts++;
+          const pos = parseInt(li.querySelector('.pos')?.textContent ?? '99', 10);
+          if (!isNaN(pos)) {
+            if (pos === 1) wins++;
+            if (pos <= 3) podiums++;
+            if (pos < bestFinish) bestFinish = pos;
+          }
+        }
+        const panel = n.closest<HTMLElement>('.class-panel');
+        if (panel?.dataset.c) classesSeen.add(panel.dataset.c);
+      });
+
+      summaryEl?.setAttribute('data-state', 'single');
+      if (dsName)    dsName.textContent    = driverName;
+      if (dsClasses) dsClasses.innerHTML   = [...classesSeen]
+        .map(c => `<span class="ds-class-tag">${classLabels[c] ?? c}</span>`).join('');
+      if (dsStarts)  dsStarts.textContent  = String(starts);
+      if (dsWins)    dsWins.textContent    = String(wins);
+      if (dsPodiums) dsPodiums.textContent = String(podiums);
+      if (dsBest)    dsBest.textContent    = bestFinish === Infinity ? '—' : `P${bestFinish}`;
+      if (dsHint)    dsHint.textContent    = '';
+      summaryEl?.removeAttribute('hidden');
+    }
+
     function reset() {
       nameNodes.forEach(n => { n.textContent = originals.get(n) ?? ''; });
       cards.forEach(c => c.classList.remove('is-dimmed'));
       if (countEl) countEl.textContent = '';
+      hideSummary();
     }
 
     q.addEventListener('input', () => {
@@ -189,16 +409,17 @@ const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
       });
       cards.forEach(c => c.classList.toggle('is-dimmed', !cardHits.has(c)));
       if (countEl) countEl.textContent = hits + (hits === 1 ? ' result' : ' results');
+      showSummary(term);
     });
 
-    // Scroll-based jump rail active state
-    const rail = document.querySelectorAll<HTMLAnchorElement>('.jump-rail a[href^="#race-"]');
-    if (rail.length) {
+    // --- Scroll-based jump rail active state ---
+    const railLinks = document.querySelectorAll<HTMLAnchorElement>('.jump-rail a[href^="#race-"]');
+    if (railLinks.length) {
       const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             const id = '#' + entry.target.id;
-            rail.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === id));
+            railLinks.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === id));
           }
         });
       }, { rootMargin: '-20% 0px -70% 0px' });

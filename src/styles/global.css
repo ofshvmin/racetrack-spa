@@ -902,6 +902,31 @@ section.block { padding: 100px 0; }
 .race-row.is-next::before { background: var(--hot); }
 .race-row.is-next .day-num { color: var(--hot); }
 
+/* Canceled race row */
+.race-row.is-canceled {
+  opacity: 0.45;
+}
+.race-row.is-canceled:hover {
+  background: transparent;
+  padding-left: 12px;
+}
+.race-row.is-canceled:hover::before { background: transparent; }
+
+/* "Rained Out" badge chip */
+.canceled-badge {
+  display: block;
+  width: fit-content;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  background: oklch(0.45 0.05 250);
+  color: oklch(0.85 0.02 250);
+  margin-bottom: 10px;
+}
+
 /* "Next Race" badge chip inside title column */
 .next-badge {
   display: block;
@@ -2083,6 +2108,17 @@ section.sponsors { background: var(--bg-2); }
 }
 .jump-rail a:hover { color: var(--ink); }
 .jump-rail a.is-active { color: var(--ink); border-left-color: var(--hot); }
+.jump-rail .rail-sep {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  padding: 14px 0 6px 12px;
+  border-top: 1px solid var(--line);
+  margin-top: 6px;
+}
 .jump-rail a .sub {
   display: block;
   font-family: 'JetBrains Mono', monospace;
@@ -2103,6 +2139,7 @@ section.sponsors { background: var(--bg-2); }
   .jump-rail a { border-left: 0; padding: 6px 12px; border: 1px solid var(--line); margin: 0; }
   .jump-rail a.is-active { border-color: var(--hot); }
   .jump-rail a .sub { display: none; }
+  .jump-rail .rail-sep { width: 100%; padding: 8px 0 4px; border-top: 0; border-bottom: 1px solid var(--line); margin: 4px 0; }
 }
 
 .driver-search {
@@ -2142,6 +2179,102 @@ section.sponsors { background: var(--bg-2); }
   min-width: 12ch;
   text-align: right;
   white-space: nowrap;
+}
+
+/* Driver season summary card */
+.driver-summary {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--hot);
+  background: var(--surface);
+  margin-bottom: 36px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.driver-summary[hidden] { display: none; }
+.driver-summary[data-state="multi"] #ds-stats { display: none; }
+.driver-summary[data-state="single"] .ds-hint { display: none; }
+.ds-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 0;
+}
+.ds-header { display: flex; flex-direction: column; gap: 6px; }
+.ds-name {
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(22px, 3vw, 32px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  line-height: 1;
+}
+.ds-classes { display: flex; flex-wrap: wrap; gap: 6px; }
+.ds-class-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+}
+button.ds-class-tag {
+  cursor: pointer;
+  background: transparent;
+  transition: background .12s, color .12s, border-color .12s;
+}
+button.ds-class-tag:hover,
+button.ds-class-tag:focus-visible {
+  background: var(--hot);
+  color: #0a0a0c;
+  border-color: var(--hot);
+  outline: none;
+}
+.ds-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.ds-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px;
+  background: var(--surface);
+}
+.ds-val {
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(28px, 4vw, 40px);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  line-height: 1;
+}
+.ds-stat:first-child .ds-val { color: var(--ink); }
+.ds-stat:nth-child(2) .ds-val,
+.ds-stat:nth-child(3) .ds-val { color: var(--hot); }
+.ds-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+@media (max-width: 540px) {
+  .ds-stats { grid-template-columns: repeat(2, 1fr); }
 }
 
 .race-night {

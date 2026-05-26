@@ -27,7 +27,8 @@ const races = schedule
     const divTags = e.divisions.map(name => divMap[name]).filter(Boolean);
     const dataClasses = divTags.map(t => t.cls).join(' ');
     const hasResults  = resultDates.has(e.date);
-    return { ...e, dayNum, weekday, month, year, divTags, dataClasses, hasResults };
+    const canceled    = (e as any).canceled === true;
+    return { ...e, dayNum, weekday, month, year, divTags, dataClasses, hasResults, canceled };
   });
 
 const raceCount = races.length;
@@ -70,7 +71,7 @@ const raceCount = races.length;
       <div class="schedule" id="schedule-list">
         {races.map(race => (
           <article
-            class:list={['race-row', race.featured && 'is-special']}
+            class:list={['race-row', race.featured && 'is-special', race.canceled && 'is-canceled']}
             data-date={race.date}
             data-classes={race.dataClasses}
           >
@@ -79,8 +80,9 @@ const raceCount = races.length;
               <div class="day-info"><strong>{race.weekday}</strong>{race.month}<br />{race.year}</div>
             </div>
             <div class="title">
+              {race.canceled && <span class="canceled-badge">Rained Out</span>}
               {race.title}
-              {race.notes && <span class="sub">{race.notes}</span>}
+              {race.notes && !race.canceled && <span class="sub">{race.notes}</span>}
               {(race as any).sponsor && (
                 <span class="sponsor-note">
                   <span class="presented-by">Presented by</span>{(race as any).sponsor}
@@ -97,7 +99,7 @@ const raceCount = races.length;
               <div class="row"><span>Green</span><strong>{race.raceTime}</strong></div>
             </div>
             <div class="ticket">
-              <a href="#" class="buy" data-tickets>Tickets</a>
+              {!race.canceled && <a href="#" class="buy" data-tickets>Tickets</a>}
               {race.hasResults && (
                 <a href={`/results#race-${race.date}`} class="buy results-link" data-results style="display:none">Results</a>
               )}

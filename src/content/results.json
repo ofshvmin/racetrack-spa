@@ -146,5 +146,69 @@
         "dnf": []
       }
     ]
+  },
+  {
+    "date": "2026-05-22",
+    "title": "Memorial Weekend",
+    "raceNum": 3,
+    "divisions": [
+      {
+        "slug": "b-mod",
+        "name": "Modifieds",
+        "feature": [
+          { "pos": 1, "driver": "Jesse Kent" },
+          { "pos": 2, "driver": "Lee Sharpsteen" },
+          { "pos": 3, "driver": "Zack Knowlden" },
+          { "pos": 4, "driver": "TJ Potrzebowski" },
+          { "pos": 5, "driver": "Tommy Rought" },
+          { "pos": 6, "driver": "Joey Bevacqua" },
+          { "pos": 7, "driver": "Lucas Bartlett" }
+        ],
+        "heats": ["Rought", "Sharpsteen"],
+        "dnf": []
+      },
+      {
+        "slug": "hobby",
+        "name": "Hobby Stocks",
+        "feature": [
+          { "pos": 1,  "driver": "Cullen Sharpsteen" },
+          { "pos": 2,  "driver": "Nick Robinson" },
+          { "pos": 3,  "driver": "Terry Potrzebowski" },
+          { "pos": 4,  "driver": "Ethan Roberts" },
+          { "pos": 5,  "driver": "Cody Marshall" },
+          { "pos": 6,  "driver": "Tom Shaffer" },
+          { "pos": 7,  "driver": "Ryan Osgood" },
+          { "pos": 8,  "driver": "RJ Mathews" },
+          { "pos": 9,  "driver": "Mike Bailey" },
+          { "pos": 10, "driver": "Josh Parker" },
+          { "pos": 11, "driver": "Chad Lane" },
+          { "pos": 12, "driver": "Thomas Decker" },
+          { "pos": 13, "driver": "M-R Taylor" },
+          { "pos": 14, "driver": "Mike Kintner" },
+          { "pos": 15, "driver": "Paul Bailey" },
+          { "pos": 16, "driver": "John Lane" }
+        ],
+        "heats": ["Sharpsteen", "Marshall", "Robinson"],
+        "dnf": []
+      },
+      {
+        "slug": "4cyl",
+        "name": "4 Cylinder",
+        "feature": [
+          { "pos": 1,  "driver": "Nick Robinson" },
+          { "pos": 2,  "driver": "Chris Norconk" },
+          { "pos": 3,  "driver": "Gene Purvis" },
+          { "pos": 4,  "driver": "Adriana Purvis" },
+          { "pos": 5,  "driver": "Matt Jenkins" },
+          { "pos": 6,  "driver": "Greg Moldt" },
+          { "pos": 7,  "driver": "Beau Baker" },
+          { "pos": 8,  "driver": "RJ Manwaring" },
+          { "pos": 9,  "driver": "Brandon Measheau" },
+          { "pos": 10, "driver": "Troy Hodge" }
+        ],
+        "heats": ["Moldt", "Purvis"],
+        "dnf": []
+      }
+    ]
   }
 ]
