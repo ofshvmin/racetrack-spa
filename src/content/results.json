@@ -210,5 +210,134 @@
         "dnf": []
       }
     ]
+  },
+  {
+    "date": "2026-05-29",
+    "title": "Race Night",
+    "raceNum": 4,
+    "divisions": [
+      {
+        "slug": "b-mod",
+        "name": "Modifieds",
+        "feature": [
+          { "pos": 1, "driver": "Kevin Youngs" },
+          { "pos": 2, "driver": "Lee Sharpsteen" },
+          { "pos": 3, "driver": "Zack Curren" },
+          { "pos": 4, "driver": "TJ Potrzebowski" },
+          { "pos": 5, "driver": "Jesse Kent" },
+          { "pos": 6, "driver": "Zack Knowlden" },
+          { "pos": 7, "driver": "Jody Buckley" },
+          { "pos": 8, "driver": "Dave Yehl" },
+          { "pos": 9, "driver": "Lucas Bartlett" }
+        ],
+        "heats": [],
+        "dnf": []
+      },
+      {
+        "slug": "hobby",
+        "name": "Hobby Stocks",
+        "feature": [
+          { "pos": 1,  "driver": "Anthony Gullo" },
+          { "pos": 2,  "driver": "Terry Potrzebowski" },
+          { "pos": 3,  "driver": "Michael Bast" },
+          { "pos": 4,  "driver": "Cullen Sharpsteen" },
+          { "pos": 5,  "driver": "Mark Taylor" },
+          { "pos": 6,  "driver": "Ethan Roberts" },
+          { "pos": 7,  "driver": "M-R Taylor" },
+          { "pos": 8,  "driver": "Tom Shaffer" },
+          { "pos": 9,  "driver": "Chad Lane" },
+          { "pos": 10, "driver": "Thomas Decker" },
+          { "pos": 11, "driver": "Ryan Osgood" },
+          { "pos": 12, "driver": "Mike Bailey" },
+          { "pos": 13, "driver": "Paul Bailey" },
+          { "pos": 14, "driver": "Cody Marshall" },
+          { "pos": 15, "driver": "Dale Randall" },
+          { "pos": 16, "driver": "Dustin Pruyre" }
+        ],
+        "heats": [],
+        "dnf": [
+          { "driver": "Kamden Wheeler", "tag": "DNS" },
+          { "driver": "Josh Parker", "tag": "DNS" },
+          { "driver": "John Lane", "tag": "DNS" }
+        ]
+      },
+      {
+        "slug": "4cyl",
+        "name": "4 Cylinder",
+        "feature": [
+          { "pos": 1,  "driver": "Chris Norconk" },
+          { "pos": 2,  "driver": "Adriana Purvis" },
+          { "pos": 3,  "driver": "Brandon Measheaw" },
+          { "pos": 4,  "driver": "Beau Baker" },
+          { "pos": 5,  "driver": "Conner Marvin" },
+          { "pos": 6,  "driver": "Ronald Manwaring Jr" },
+          { "pos": 7,  "driver": "Troy Hodge" },
+          { "pos": 8,  "driver": "Kyle Mortimer (BF)" },
+          { "pos": 9,  "driver": "Greg Moldt (BF)" },
+          { "pos": 10, "driver": "Nick Robinson (DQ)" }
+        ],
+        "heats": [],
+        "dnf": []
+      }
+    ]
+  },
+  {
+    "date": "2026-06-05",
+    "title": "Race Night",
+    "raceNum": 5,
+    "divisions": [
+      {
+        "slug": "b-mod",
+        "name": "Modifieds",
+        "feature": [
+          { "pos": 1,  "driver": "Lee Sharpsteen" },
+          { "pos": 2,  "driver": "TJ Potrzebowski" },
+          { "pos": 3,  "driver": "Kevin Youngs" },
+          { "pos": 4,  "driver": "Zack Curren" },
+          { "pos": 5,  "driver": "Jesse Kent" },
+          { "pos": 6,  "driver": "Jody Buckley" },
+          { "pos": 7,  "driver": "Garrett Zacharias" },
+          { "pos": 8,  "driver": "Joey Bevacqua" },
+          { "pos": 9,  "driver": "David Yehl" },
+          { "pos": 10, "driver": "Lucas Bartlett" },
+          { "pos": 11, "driver": "Jimmy Zacharias" }
+        ],
+        "heats": ["Sharpsteen", "Potrzebowski"],
+        "dnf": []
+      },
+      {
+        "slug": "hobby",
+        "name": "Hobby Stocks",
+        "feature": [
+          { "pos": 1,  "driver": "Cullen Sharpsteen" },
+          { "pos": 2,  "driver": "Michael Bast" },
+          { "pos": 3,  "driver": "Cody Marshall" },
+          { "pos": 4,  "driver": "Tom Shaffer" },
+          { "pos": 5,  "driver": "Terry Potrzebowski" },
+          { "pos": 6,  "driver": "Josh Parker" },
+          { "pos": 7,  "driver": "Ethan Roberts" },
+          { "pos": 8,  "driver": "Mike Bailey" },
+          { "pos": 9,  "driver": "Thomas Decker" },
+          { "pos": 10, "driver": "Chad Lane" },
+          { "pos": 11, "driver": "Paul Bailey Jr" },
+          { "pos": 12, "driver": "Mike Kintner" },
+          { "pos": 13, "driver": "Ryan Osgood" },
+          { "pos": 14, "driver": "M-R Taylor" },
+          { "pos": 15, "driver": "Kamden Wheeler" }
+        ],
+        "heats": ["Potrzebowski", "Sharpsteen"],
+        "dnf": []
+      },
+      {
+        "slug": "4cyl",
+        "name": "4 Cylinder",
+        "feature": [
+          { "pos": 1, "driver": "RJ Manwaring" },
+          { "pos": 2, "driver": "Greg Moldt" }
+        ],
+        "heats": [],
+        "dnf": []
+      }
+    ]
   }
 ]

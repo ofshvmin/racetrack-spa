@@ -136,12 +136,16 @@ const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
                   </ol>
                   {div.dnf.length > 0 && (
                     <div class="notes">
-                      {div.dnf.map((driver: string) => (
-                        <div class="row">
-                          <span class="tag">DNF</span>
-                          <span class="nm">{driver}</span>
-                        </div>
-                      ))}
+                      {div.dnf.map((entry: any) => {
+                        const driver = typeof entry === 'string' ? entry : entry.driver;
+                        const tag = typeof entry === 'string' ? 'DNF' : (entry.tag ?? 'DNF');
+                        return (
+                          <div class="row">
+                            <span class="tag">{tag}</span>
+                            <span class="nm">{driver}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </section>
