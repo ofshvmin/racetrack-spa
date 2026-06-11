@@ -14,5 +14,6 @@
   { "name": "Chemung Soft Water",           "nm": "Chemung\nSoft Water",                 "small": "— Treating You Softly Since 1964 —" },
   { "name": "Benjamin's Garage",            "nm": "Benjamin's\nGarage",                  "small": "— Randy & Judy Davenport —" },
   { "name": "Kintner's Contracting",        "nm": "Kintner's\nContracting",              "small": "— (570) 423-3365 —" },
-  { "name": "Ward Apparatus",               "img": "/images/sponsors/ward.png",          "alt": "Ward Apparatus" }
+  { "name": "Ward Apparatus",               "img": "/images/sponsors/ward.png",          "alt": "Ward Apparatus" },
+  { "name": "Elmira Heat Treating, Inc.",   "img": "/images/sponsors/elmira-heat-treating.jpg", "alt": "Elmira Heat Treating, Inc. — Quality, Service, Innovation" }
 ]
