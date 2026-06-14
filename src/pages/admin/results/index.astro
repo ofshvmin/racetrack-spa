@@ -1,0 +1,56 @@
+---
+export const prerender = false;
+import AdminShell from '../../../layouts/AdminShell.astro';
+import { requireSession } from '../../../../api/_lib/session.js';
+import schedule from '../../../content/schedule.json';
+import results from '../../../content/results.json';
+
+const session = requireSession({ headers: { cookie: Astro.request.headers.get('cookie') ?? '' } } as any);
+if (!session) return Astro.redirect('/admin');
+
+const resultDates = new Set(results.map((r: any) => r.date));
+
+const races = (schedule as any[])
+  .filter(e => e.type === 'race')
+  .sort((a, b) => b.date.localeCompare(a.date))
+  .map(e => {
+    const d = new Date(e.date + 'T12:00:00');
+    return {
+      ...e,
+      hasResults: resultDates.has(e.date),
+      label: d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' }),
+    };
+  });
+---
+
+<AdminShell title="Results" email={session.email}>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
+    <div>
+      <h1 style="font-size:28px;font-weight:800;margin:0 0 4px">Race Results</h1>
+      <p style="color:#a3a09a;margin:0;font-size:15px">Select a race night to post or edit results.</p>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    {races.map(race => (
+      <a
+        href={`/admin/results/${race.date}`}
+        style={`display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#1a1a1e;border:1px solid ${race.hasResults ? '#2a4a2a' : '#222'};border-radius:6px;text-decoration:none;gap:16px`}
+      >
+        <div style="display:flex;align-items:center;gap:14px;min-width:0">
+          <span style={`width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${race.canceled ? '#666' : race.hasResults ? '#4caf50' : '#555'}`}></span>
+          <div>
+            <div style="font-size:15px;font-weight:600;color:#f5f3ef">{race.title}</div>
+            <div style="font-size:13px;color:#a3a09a;margin-top:2px">{race.label}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-shrink:0">
+          {race.canceled && <span style="font-size:11px;background:#333;color:#888;padding:3px 8px;border-radius:4px">Rained out</span>}
+          {race.hasResults && <span style="font-size:11px;background:#1a3a1a;color:#81c784;padding:3px 8px;border-radius:4px">Results posted</span>}
+          {!race.hasResults && !race.canceled && <span style="font-size:11px;background:#222;color:#888;padding:3px 8px;border-radius:4px">No results yet</span>}
+          <span style="color:#555;font-size:18px">›</span>
+        </div>
+      </a>
+    ))}
+  </div>
+</AdminShell>

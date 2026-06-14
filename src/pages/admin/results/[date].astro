@@ -1,0 +1,457 @@
+---
+export const prerender = false;
+import AdminShell from '../../../layouts/AdminShell.astro';
+import ResultsCardPreview from '../../../components/admin/ResultsCardPreview.astro';
+import { requireSession } from '../../../../api/_lib/session.js';
+import schedule from '../../../content/schedule.json';
+import results from '../../../content/results.json';
+
+const session = requireSession({ headers: { cookie: Astro.request.headers.get('cookie') ?? '' } } as any);
+if (!session) return Astro.redirect('/admin');
+
+const { date } = Astro.params;
+const scheduleEntry = (schedule as any[]).find(e => e.date === date && e.type === 'race');
+if (!scheduleEntry) return Astro.redirect('/admin/results');
+
+const existing = (results as any[]).find(r => r.date === date);
+
+const d = new Date(date + 'T12:00:00');
+const fullDate = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+// Derive the next raceNum
+const maxRaceNum = (results as any[]).reduce((m: number, r: any) => Math.max(m, r.raceNum ?? 0), 0);
+const raceNum = existing?.raceNum ?? (maxRaceNum + 1);
+
+// Collect all driver names from history for autocomplete
+const allDrivers = [...new Set((results as any[]).flatMap((r: any) =>
+  r.divisions.flatMap((d: any) => [
+    ...d.feature.map((f: any) => f.driver),
+    ...d.dnf.map((e: any) => typeof e === 'string' ? e : e.driver),
+  ])
+))].sort();
+
+const DIVISIONS = [
+  { slug: 'b-mod', name: 'Modifieds' },
+  { slug: 'hobby', name: 'Hobby Stocks' },
+  { slug: '4cyl',  name: '4 Cylinder' },
+];
+
+const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
+---
+
+<AdminShell title={`${scheduleEntry.title} — ${date}`} email={session.email}>
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:32px">
+    <div>
+      <a href="/admin/results" style="font-size:13px;color:#a3a09a;text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px">‹ All races</a>
+      <h1 style="font-size:26px;font-weight:800;margin:0 0 4px">{scheduleEntry.title}</h1>
+      <p style="color:#a3a09a;margin:0;font-size:15px">{fullDate}</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-shrink:0">
+      <button id="preview-btn" type="button" style="background:none;border:1px solid #444;color:#f5f3ef;padding:10px 18px;border-radius:4px;cursor:pointer;font-size:14px;font-family:inherit">Preview</button>
+      <button id="publish-btn" type="button" style="background:#e8552a;border:none;color:#fff;padding:10px 20px;border-radius:4px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Save & Publish</button>
+    </div>
+  </div>
+
+  <!-- Status banner -->
+  <div id="status-banner" hidden style="margin-bottom:24px;padding:14px 18px;border-radius:4px;font-size:14px;line-height:1.5"></div>
+
+  <!-- Preview pane -->
+  <div id="preview-pane" hidden style="margin-bottom:32px">
+    <h2 style="font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#a3a09a;margin:0 0 16px">Preview</h2>
+    <div id="preview-content" style="border:1px solid #333;border-radius:8px;padding:24px;background:#111113"></div>
+    <div style="margin-top:12px;display:flex;gap:12px">
+      <button id="preview-close" type="button" style="background:none;border:1px solid #444;color:#a3a09a;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:13px;font-family:inherit">Close preview</button>
+      <button id="publish-from-preview" type="button" style="background:#e8552a;border:none;color:#fff;padding:8px 18px;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit">Save & Publish</button>
+    </div>
+  </div>
+
+  <!-- Editor form -->
+  <div id="editor-form">
+    {DIVISIONS.map(div => {
+      const existingDiv = existing?.divisions?.find((d: any) => d.slug === div.slug);
+      return (
+        <div class="division-block" data-slug={div.slug} data-name={div.name} style="margin-bottom:32px;background:#1a1a1e;border:1px solid #2a2a2e;border-radius:8px;padding:24px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+            <h2 style="font-size:17px;font-weight:700;margin:0">{div.name}</h2>
+          </div>
+
+          <!-- Heat winners -->
+          <div style="margin-bottom:20px">
+            <label style="display:block;font-size:12px;color:#a3a09a;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Heat winners <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional, comma-separated last names)</span></label>
+            <input
+              type="text"
+              class="heat-input"
+              value={existingDiv?.heats?.join(', ') ?? ''}
+              placeholder="e.g. Sharpsteen, Potrzebowski"
+              style="width:100%;padding:10px 12px;background:#0a0a0c;border:1px solid #333;border-radius:4px;color:#f5f3ef;font-size:14px;font-family:inherit"
+            />
+          </div>
+
+          <!-- Driver rows -->
+          <div>
+            <label style="display:block;font-size:12px;color:#a3a09a;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Finishing order</label>
+            <div class="driver-list" style="display:flex;flex-direction:column;gap:6px">
+              {(existingDiv?.feature ?? []).map((f: any) => (
+                <div class="driver-row" draggable="true" style="display:flex;align-items:center;gap:8px;background:#0d0d10;border:1px solid #2a2a2e;border-radius:4px;padding:8px 10px">
+                  <span class="drag-handle" style="color:#555;cursor:grab;user-select:none;font-size:16px;line-height:1">⠿</span>
+                  <span class="pos-num" style="min-width:24px;font-size:13px;color:#a3a09a;font-variant-numeric:tabular-nums">{f.pos}.</span>
+                  <input type="text" class="driver-name" value={f.driver} list="driver-datalist" autocomplete="off"
+                    placeholder="Driver name"
+                    style="flex:1;background:none;border:none;color:#f5f3ef;font-size:14px;font-family:inherit;outline:none;min-width:0" />
+                  <button type="button" class="tag-btn" data-tag="" style="font-size:11px;background:#222;border:1px solid #333;color:#888;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;white-space:nowrap">+ tag</button>
+                  <button type="button" class="remove-row" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px;padding:0;line-height:1" title="Remove">×</button>
+                </div>
+              ))}
+            </div>
+            <button type="button" class="add-driver-btn" style="margin-top:10px;background:none;border:1px dashed #333;color:#a3a09a;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:13px;font-family:inherit;width:100%">+ Add driver</button>
+          </div>
+
+          <!-- DNS/DQ section -->
+          <div style="margin-top:20px">
+            <label style="display:block;font-size:12px;color:#a3a09a;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">DNF / DNS / DQ <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+            <div class="dnf-list" style="display:flex;flex-direction:column;gap:6px">
+              {(existingDiv?.dnf ?? []).map((entry: any) => {
+                const driver = typeof entry === 'string' ? entry : entry.driver;
+                const tag = typeof entry === 'string' ? 'DNF' : (entry.tag ?? 'DNF');
+                return (
+                  <div class="dnf-row" style="display:flex;align-items:center;gap:8px;background:#0d0d10;border:1px solid #2a2a2e;border-radius:4px;padding:8px 10px">
+                    <select class="dnf-tag" style="background:#222;border:1px solid #333;color:#f5f3ef;padding:4px 6px;border-radius:4px;font-family:inherit;font-size:13px">
+                      <option value="DNF" selected={tag === 'DNF'}>DNF</option>
+                      <option value="DNS" selected={tag === 'DNS'}>DNS</option>
+                      <option value="DQ" selected={tag === 'DQ'}>DQ</option>
+                      <option value="BF" selected={tag === 'BF'}>BF</option>
+                    </select>
+                    <input type="text" class="dnf-name" value={driver} list="driver-datalist" autocomplete="off"
+                      placeholder="Driver name"
+                      style="flex:1;background:none;border:none;color:#f5f3ef;font-size:14px;font-family:inherit;outline:none;min-width:0" />
+                    <button type="button" class="remove-dnf" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px;padding:0;line-height:1" title="Remove">×</button>
+                  </div>
+                );
+              })}
+            </div>
+            <button type="button" class="add-dnf-btn" style="margin-top:8px;background:none;border:1px dashed #333;color:#a3a09a;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:12px;font-family:inherit">+ Add DNF/DNS/DQ</button>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- Driver autocomplete datalist -->
+  <datalist id="driver-datalist">
+    {allDrivers.map(name => <option value={name} />)}
+  </datalist>
+
+  <!-- Tag picker dialog -->
+  <dialog id="tag-dialog" style="background:#1a1a1e;border:1px solid #333;border-radius:8px;padding:20px;color:#f5f3ef;min-width:200px">
+    <p style="margin:0 0 14px;font-size:14px;font-weight:600">Finish status</p>
+    <div style="display:flex;flex-direction:column;gap:8px" id="tag-options">
+      {['', 'BF', 'DQ'].map(t => (
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px">
+          <input type="radio" name="tag-pick" value={t} />
+          {t === '' ? 'Normal finish' : t === 'BF' ? 'BF — Black flagged' : 'DQ — Disqualified'}
+        </label>
+      ))}
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button id="tag-apply" type="button" style="background:#e8552a;border:none;color:#fff;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit">Apply</button>
+      <button id="tag-cancel" type="button" style="background:none;border:1px solid #444;color:#a3a09a;padding:8px 14px;border-radius:4px;cursor:pointer;font-size:13px;font-family:inherit">Cancel</button>
+    </div>
+  </dialog>
+
+  <!-- Confirm dialog -->
+  <dialog id="confirm-dialog" style="background:#1a1a1e;border:1px solid #333;border-radius:8px;padding:28px;color:#f5f3ef;min-width:320px;max-width:480px">
+    <h3 style="margin:0 0 12px;font-size:18px">Publish results?</h3>
+    <p id="confirm-msg" style="margin:0 0 24px;font-size:14px;color:#a3a09a;line-height:1.6"></p>
+    <div style="display:flex;gap:10px">
+      <button id="confirm-yes" type="button" style="background:#e8552a;border:none;color:#fff;padding:11px 22px;border-radius:4px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Yes, publish</button>
+      <button id="confirm-no" type="button" style="background:none;border:1px solid #444;color:#a3a09a;padding:11px 18px;border-radius:4px;cursor:pointer;font-size:14px;font-family:inherit">Cancel</button>
+    </div>
+  </dialog>
+
+</AdminShell>
+
+<script define:vars={{ date, scheduleTitle: scheduleEntry.title, raceNum, existing, SITE }}>
+(function () {
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
+  function makeDriverRow(name = '', tag = '') {
+    const div = document.createElement('div');
+    div.className = 'driver-row';
+    div.draggable = true;
+    div.style.cssText = 'display:flex;align-items:center;gap:8px;background:#0d0d10;border:1px solid #2a2a2e;border-radius:4px;padding:8px 10px';
+    const tagLabel = tag ? ` (${tag})` : '';
+    div.innerHTML = `
+      <span class="drag-handle" style="color:#555;cursor:grab;user-select:none;font-size:16px;line-height:1">⠿</span>
+      <span class="pos-num" style="min-width:24px;font-size:13px;color:#a3a09a;font-variant-numeric:tabular-nums"></span>
+      <input type="text" class="driver-name" value="${name.replace(/"/g,'&quot;')}" list="driver-datalist" autocomplete="off"
+        placeholder="Driver name"
+        style="flex:1;background:none;border:none;color:#f5f3ef;font-size:14px;font-family:inherit;outline:none;min-width:0" />
+      <button type="button" class="tag-btn" data-tag="${tag}"
+        style="font-size:11px;background:#222;border:1px solid #333;color:${tag ? '#e8552a' : '#888'};padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;white-space:nowrap">
+        ${tag ? tag : '+ tag'}
+      </button>
+      <button type="button" class="remove-row" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px;padding:0;line-height:1" title="Remove">×</button>
+    `;
+    return div;
+  }
+
+  function makeDnfRow(driver = '', tag = 'DNF') {
+    const div = document.createElement('div');
+    div.className = 'dnf-row';
+    div.style.cssText = 'display:flex;align-items:center;gap:8px;background:#0d0d10;border:1px solid #2a2a2e;border-radius:4px;padding:8px 10px';
+    div.innerHTML = `
+      <select class="dnf-tag" style="background:#222;border:1px solid #333;color:#f5f3ef;padding:4px 6px;border-radius:4px;font-family:inherit;font-size:13px">
+        <option value="DNF"${tag==='DNF'?' selected':''}>DNF</option>
+        <option value="DNS"${tag==='DNS'?' selected':''}>DNS</option>
+        <option value="DQ"${tag==='DQ'?' selected':''}>DQ</option>
+        <option value="BF"${tag==='BF'?' selected':''}>BF</option>
+      </select>
+      <input type="text" class="dnf-name" value="${driver.replace(/"/g,'&quot;')}" list="driver-datalist" autocomplete="off"
+        placeholder="Driver name"
+        style="flex:1;background:none;border:none;color:#f5f3ef;font-size:14px;font-family:inherit;outline:none;min-width:0" />
+      <button type="button" class="remove-dnf" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px;padding:0;line-height:1" title="Remove">×</button>
+    `;
+    return div;
+  }
+
+  function renumberRows(list) {
+    list.querySelectorAll('.driver-row').forEach((row, i) => {
+      const span = row.querySelector('.pos-num');
+      if (span) span.textContent = (i + 1) + '.';
+    });
+  }
+
+  // ── Wire up each division block ────────────────────────────────────────────
+
+  document.querySelectorAll('.division-block').forEach(block => {
+    const list = block.querySelector('.driver-list');
+    const dnfList = block.querySelector('.dnf-list');
+
+    renumberRows(list);
+
+    // Add driver
+    block.querySelector('.add-driver-btn').addEventListener('click', () => {
+      const row = makeDriverRow();
+      list.appendChild(row);
+      renumberRows(list);
+      row.querySelector('.driver-name').focus();
+    });
+
+    // Add DNF row
+    block.querySelector('.add-dnf-btn').addEventListener('click', () => {
+      const row = makeDnfRow();
+      dnfList.appendChild(row);
+      row.querySelector('.dnf-name').focus();
+    });
+
+    // Remove driver row (delegated)
+    list.addEventListener('click', e => {
+      if (e.target.classList.contains('remove-row')) {
+        e.target.closest('.driver-row').remove();
+        renumberRows(list);
+      }
+    });
+
+    // Remove DNF row (delegated)
+    dnfList.addEventListener('click', e => {
+      if (e.target.classList.contains('remove-dnf')) {
+        e.target.closest('.dnf-row').remove();
+      }
+    });
+
+    // Tag button (opens dialog)
+    list.addEventListener('click', e => {
+      if (!e.target.classList.contains('tag-btn')) return;
+      const btn = e.target;
+      const dialog = document.getElementById('tag-dialog');
+      const current = btn.dataset.tag ?? '';
+      dialog.querySelectorAll('input[name="tag-pick"]').forEach(r => { r.checked = r.value === current; });
+      dialog.showModal();
+      document.getElementById('tag-apply').onclick = () => {
+        const picked = dialog.querySelector('input[name="tag-pick"]:checked')?.value ?? '';
+        btn.dataset.tag = picked;
+        btn.textContent = picked || '+ tag';
+        btn.style.color = picked ? '#e8552a' : '#888';
+        dialog.close();
+      };
+      document.getElementById('tag-cancel').onclick = () => dialog.close();
+    });
+
+    // Drag-to-reorder
+    let dragSrc = null;
+    list.addEventListener('dragstart', e => {
+      dragSrc = e.target.closest('.driver-row');
+      if (dragSrc) e.dataTransfer.effectAllowed = 'move';
+    });
+    list.addEventListener('dragover', e => {
+      e.preventDefault();
+      const target = e.target.closest('.driver-row');
+      if (target && target !== dragSrc) {
+        const rect = target.getBoundingClientRect();
+        const after = e.clientY > rect.top + rect.height / 2;
+        list.insertBefore(dragSrc, after ? target.nextSibling : target);
+        renumberRows(list);
+      }
+    });
+    list.addEventListener('dragend', () => { dragSrc = null; renumberRows(list); });
+  });
+
+  // ── Collect form data ──────────────────────────────────────────────────────
+
+  function collectData() {
+    const divisions = [];
+    document.querySelectorAll('.division-block').forEach(block => {
+      const slug = block.dataset.slug;
+      const name = block.dataset.name;
+      const heatsRaw = block.querySelector('.heat-input').value.trim();
+      const heats = heatsRaw ? heatsRaw.split(',').map(h => h.trim()).filter(Boolean) : [];
+      const feature = [];
+      block.querySelectorAll('.driver-row').forEach((row, i) => {
+        const driver = row.querySelector('.driver-name').value.trim();
+        const tag = row.querySelector('.tag-btn').dataset.tag ?? '';
+        if (driver) feature.push({ pos: i + 1, driver: tag ? `${driver} (${tag})` : driver });
+      });
+      const dnf = [];
+      block.querySelectorAll('.dnf-row').forEach(row => {
+        const driver = row.querySelector('.dnf-name').value.trim();
+        const tag = row.querySelector('.dnf-tag').value;
+        if (driver) dnf.push({ driver, tag });
+      });
+      if (feature.length > 0 || dnf.length > 0 || heats.length > 0) {
+        divisions.push({ slug, name, feature, heats, dnf });
+      }
+    });
+    return { date, title: scheduleTitle, raceNum, divisions };
+  }
+
+  // ── Preview ────────────────────────────────────────────────────────────────
+
+  function renderPreview(data) {
+    const d = new Date(data.date + 'T12:00:00');
+    const fullDate = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    const totalEntries = data.divisions.reduce((s, div) => s + div.feature.length + div.dnf.length, 0);
+    const divCss = slug => slug === 'b-mod' ? 'mod' : slug;
+
+    const divHtml = data.divisions.map(div => {
+      const heatsHtml = div.heats.length > 0
+        ? `<div class="heats"><span class="lbl">Heat${div.heats.length > 1 ? 's' : ''}</span><span class="winners">${div.heats.map(h => `<span>${h}</span>`).join('')}</span></div>`
+        : '';
+      const featureHtml = div.feature.map(f => {
+        const cls = [f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd'].filter(Boolean).join(' ');
+        return `<li class="${cls}"><span class="pos">${f.pos}</span><span class="nm">${f.driver}</span></li>`;
+      }).join('');
+      const dnfHtml = div.dnf.length > 0
+        ? `<div class="notes">${div.dnf.map(e => {
+            const driver = typeof e === 'string' ? e : e.driver;
+            const tag = typeof e === 'string' ? 'DNF' : (e.tag ?? 'DNF');
+            return `<div class="row"><span class="tag">${tag}</span><span class="nm">${driver}</span></div>`;
+          }).join('')}</div>`
+        : '';
+      return `<section class="class-panel" data-c="${divCss(div.slug)}">
+        <div class="cls-head"><div class="cls-name">${div.name}</div><div class="cls-entries"><strong>${div.feature.length + div.dnf.length}</strong> entries</div></div>
+        ${heatsHtml}<ol class="field">${featureHtml}</ol>${dnfHtml}
+      </section>`;
+    }).join('');
+
+    return `<article class="race-night">
+      <header class="race-night-head">
+        <div>
+          <div class="date"><span class="day">Fri,</span> ${fullDate}</div>
+          <div class="feature">${data.title}</div>
+        </div>
+        <div></div>
+        <div class="meta"><strong>${data.divisions.length} classes</strong> &middot; ${totalEntries} entries<br />Gates 5:00 &middot; Green 7:00</div>
+      </header>
+      <div class="class-grid">${divHtml}</div>
+    </article>`;
+  }
+
+  document.getElementById('preview-btn').addEventListener('click', () => {
+    const data = collectData();
+    document.getElementById('preview-content').innerHTML = renderPreview(data);
+    document.getElementById('preview-pane').hidden = false;
+    document.getElementById('preview-pane').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  document.getElementById('preview-close').addEventListener('click', () => {
+    document.getElementById('preview-pane').hidden = true;
+  });
+
+  // ── Publish ────────────────────────────────────────────────────────────────
+
+  function showBanner(msg, type) {
+    const b = document.getElementById('status-banner');
+    b.textContent = '';
+    b.innerHTML = msg;
+    b.style.background = type === 'success' ? '#1a3a1a' : type === 'error' ? '#3a1a1a' : '#1a1a2e';
+    b.style.border = `1px solid ${type === 'success' ? '#4caf50' : type === 'error' ? '#e8552a' : '#444'}`;
+    b.style.color = type === 'success' ? '#a5d6a7' : type === 'error' ? '#f5c0b0' : '#a3b0c0';
+    b.hidden = false;
+    b.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  async function doPublish() {
+    const data = collectData();
+    if (data.divisions.length === 0) {
+      showBanner('Please add at least one driver before publishing.', 'error');
+      return;
+    }
+    const publishBtn = document.getElementById('publish-btn');
+    const publishFromPreview = document.getElementById('publish-from-preview');
+    publishBtn.disabled = true;
+    publishBtn.textContent = 'Saving…';
+    publishFromPreview.disabled = true;
+    publishFromPreview.textContent = 'Saving…';
+
+    try {
+      const res = await fetch('/api/admin/results/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'fetch',
+          'Origin': SITE || window.location.origin,
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        const detail = json.errors ? json.errors.map(e => e.message).join(', ') : (json.error ?? 'Unknown error');
+        showBanner(`Failed to save: ${detail}`, 'error');
+      } else {
+        document.getElementById('preview-pane').hidden = true;
+        showBanner(
+          `Posted! Site will update in about 30 seconds. <a href="${json.commitUrl}" target="_blank" rel="noopener" style="color:#81c784">View commit →</a>`,
+          'success'
+        );
+      }
+    } catch (err) {
+      showBanner('Network error — check your connection and try again.', 'error');
+    } finally {
+      publishBtn.disabled = false;
+      publishBtn.textContent = 'Save & Publish';
+      publishFromPreview.disabled = false;
+      publishFromPreview.textContent = 'Save & Publish';
+    }
+  }
+
+  function confirmThenPublish() {
+    const data = collectData();
+    if (data.divisions.length === 0) {
+      showBanner('Please add at least one driver before publishing.', 'error');
+      return;
+    }
+    const dialog = document.getElementById('confirm-dialog');
+    const totalDrivers = data.divisions.reduce((s, d) => s + d.feature.length, 0);
+    document.getElementById('confirm-msg').textContent =
+      `Publish results for ${scheduleTitle} (${date})? ${totalDrivers} drivers across ${data.divisions.length} class${data.divisions.length !== 1 ? 'es' : ''}.`;
+    dialog.showModal();
+    document.getElementById('confirm-yes').onclick = () => { dialog.close(); doPublish(); };
+    document.getElementById('confirm-no').onclick = () => dialog.close();
+  }
+
+  document.getElementById('publish-btn').addEventListener('click', confirmThenPublish);
+  document.getElementById('publish-from-preview').addEventListener('click', confirmThenPublish);
+
+})();
+</script>
