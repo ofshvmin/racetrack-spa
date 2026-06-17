@@ -1,24 +1,5 @@
 [
   {
-    "date": "2026-06-12",
-    "title": "Race Night",
-    "raceNum": 6,
-    "divisions": [
-      {
-        "slug": "hobby",
-        "name": "Hobby Stocks",
-        "feature": [
-          {
-            "pos": 1,
-            "driver": "Cody Marshall"
-          }
-        ],
-        "heats": [],
-        "dnf": []
-      }
-    ]
-  },
-  {
     "date": "2026-06-05",
     "title": "Race Night",
     "raceNum": 5,
