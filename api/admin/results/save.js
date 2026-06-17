@@ -2,7 +2,7 @@ import { requireSession } from '../../_lib/session.js';
 import { requireCsrf } from '../../_lib/csrf.js';
 import { validateResultsEntry } from '../../_lib/schema-results.js';
 import { upsertJsonArray } from '../../_lib/github.js';
-import schedule from '../../../src/content/schedule.json' assert { type: 'json' };
+import schedule from '../../../src/content/schedule.json' with { type: 'json' };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end('Method Not Allowed');

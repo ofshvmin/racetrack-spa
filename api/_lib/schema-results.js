@@ -1,4 +1,4 @@
-import schedule from '../../src/content/schedule.json' assert { type: 'json' };
+import schedule from '../../src/content/schedule.json' with { type: 'json' };
 
 const VALID_SLUGS = new Set(['b-mod', 'hobby', '4cyl', 'super', 'vintage']);
 const VALID_TAGS = new Set(['DNS', 'DQ', 'BF', 'DNF']);
