@@ -52,3 +52,16 @@ export async function upsertJsonArray(path, key, newEntry, message, authorEmail)
   }
   return { conflict: true };
 }
+
+// Remove the entry matching key === keyValue. Returns { removed: false } if absent.
+export async function removeJsonArrayEntry(path, key, keyValue, message, authorEmail) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const { data, sha } = await readJsonFile(path);
+    const idx = data.findIndex(e => e[key] === keyValue);
+    if (idx < 0) return { removed: false };
+    data.splice(idx, 1);
+    const result = await writeJsonFile(path, data, sha, message, authorEmail);
+    if (!result.conflict) return { ...result, removed: true };
+  }
+  return { conflict: true };
+}

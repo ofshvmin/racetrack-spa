@@ -4,6 +4,10 @@ const VALID_SLUGS = new Set(['b-mod', 'hobby', '4cyl', 'super', 'vintage']);
 const VALID_TAGS = new Set(['DNS', 'DQ', 'BF', 'DNF']);
 const RACE_DATES = new Set(schedule.filter(e => e.type === 'race').map(e => e.date));
 
+export function isValidRaceDate(date) {
+  return RACE_DATES.has(date);
+}
+
 export function validateResultsEntry(entry) {
   const errors = [];
 

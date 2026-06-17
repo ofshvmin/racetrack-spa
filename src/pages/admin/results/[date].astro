@@ -160,7 +160,7 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
 
   <!-- Confirm dialog -->
   <dialog id="confirm-dialog" style="background:#1a1a1e;border:1px solid #333;border-radius:8px;padding:28px;color:#f5f3ef;min-width:320px;max-width:480px">
-    <h3 style="margin:0 0 12px;font-size:18px">Publish results?</h3>
+    <h3 id="confirm-title" style="margin:0 0 12px;font-size:18px">Publish results?</h3>
     <p id="confirm-msg" style="margin:0 0 24px;font-size:14px;color:#a3a09a;line-height:1.6"></p>
     <div style="display:flex;gap:10px">
       <button id="confirm-yes" type="button" style="background:#e8552a;border:none;color:#fff;padding:11px 22px;border-radius:4px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Yes, publish</button>
@@ -390,18 +390,20 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
     b.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  async function doPublish() {
+  async function doPublish(clear = false) {
     const data = collectData();
-    if (data.divisions.length === 0) {
+    if (!clear && data.divisions.length === 0) {
       showBanner('Please add at least one driver before publishing.', 'error');
       return;
     }
+    const payload = clear ? { date, clear: true } : data;
     const publishBtn = document.getElementById('publish-btn');
     const publishFromPreview = document.getElementById('publish-from-preview');
+    const busyLabel = clear ? 'Clearing…' : 'Saving…';
     publishBtn.disabled = true;
-    publishBtn.textContent = 'Saving…';
+    publishBtn.textContent = busyLabel;
     publishFromPreview.disabled = true;
-    publishFromPreview.textContent = 'Saving…';
+    publishFromPreview.textContent = busyLabel;
 
     try {
       const res = await fetch('/api/admin/results/save', {
@@ -412,12 +414,22 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
           'Origin': SITE || window.location.origin,
         },
         credentials: 'same-origin',
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       const json = await res.json();
       if (!res.ok) {
         const detail = json.errors ? json.errors.map(e => e.message).join(', ') : (json.error ?? 'Unknown error');
-        showBanner(`Failed to save: ${detail}`, 'error');
+        showBanner(`Failed to ${clear ? 'clear' : 'save'}: ${detail}`, 'error');
+      } else if (clear) {
+        document.getElementById('preview-pane').hidden = true;
+        if (json.removed === false) {
+          showBanner('There were no published results for this date — nothing to clear.', 'info');
+        } else {
+          showBanner(
+            `Results cleared. Site will update in about 30 seconds. <a href="${json.commitUrl}" target="_blank" rel="noopener" style="color:#81c784">View commit →</a>`,
+            'success'
+          );
+        }
       } else {
         document.getElementById('preview-pane').hidden = true;
         showBanner(
@@ -437,16 +449,34 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
 
   function confirmThenPublish() {
     const data = collectData();
+    const dialog = document.getElementById('confirm-dialog');
+    const titleEl = document.getElementById('confirm-title');
+    const msgEl = document.getElementById('confirm-msg');
+    const yesBtn = document.getElementById('confirm-yes');
+
     if (data.divisions.length === 0) {
-      showBanner('Please add at least one driver before publishing.', 'error');
+      // Empty form. If results exist for this date, treat publish as a "clear" action.
+      if (!existing) {
+        showBanner('Add at least one driver before publishing — there are no results to clear.', 'error');
+        return;
+      }
+      titleEl.textContent = 'Clear results?';
+      msgEl.textContent =
+        `You are about to clear all results for ${scheduleTitle} (${date}). This removes the night's results from the public site. You can re-enter them later if needed.`;
+      yesBtn.textContent = 'Yes, clear results';
+      dialog.showModal();
+      yesBtn.onclick = () => { dialog.close(); doPublish(true); };
+      document.getElementById('confirm-no').onclick = () => dialog.close();
       return;
     }
-    const dialog = document.getElementById('confirm-dialog');
+
     const totalDrivers = data.divisions.reduce((s, d) => s + d.feature.length, 0);
-    document.getElementById('confirm-msg').textContent =
+    titleEl.textContent = 'Publish results?';
+    msgEl.textContent =
       `Publish results for ${scheduleTitle} (${date})? ${totalDrivers} drivers across ${data.divisions.length} class${data.divisions.length !== 1 ? 'es' : ''}.`;
+    yesBtn.textContent = 'Yes, publish';
     dialog.showModal();
-    document.getElementById('confirm-yes').onclick = () => { dialog.close(); doPublish(); };
+    yesBtn.onclick = () => { dialog.close(); doPublish(false); };
     document.getElementById('confirm-no').onclick = () => dialog.close();
   }
 

@@ -1,7 +1,7 @@
 import { requireSession } from '../../_lib/session.js';
 import { requireCsrf } from '../../_lib/csrf.js';
-import { validateResultsEntry } from '../../_lib/schema-results.js';
-import { upsertJsonArray } from '../../_lib/github.js';
+import { validateResultsEntry, isValidRaceDate } from '../../_lib/schema-results.js';
+import { upsertJsonArray, removeJsonArrayEntry } from '../../_lib/github.js';
 import schedule from '../../../src/content/schedule.json' with { type: 'json' };
 
 export default async function handler(req, res) {
@@ -16,6 +16,32 @@ export default async function handler(req, res) {
   catch (err) {
     console.error('[save] invalid JSON from', session.email, '—', err?.message);
     return res.status(400).json({ error: 'Invalid JSON' });
+  }
+
+  // Clear path: remove the night's results entirely.
+  if (body?.clear === true) {
+    if (!isValidRaceDate(body.date)) {
+      console.warn('[save] clear rejected — invalid date', body?.date, 'by', session.email);
+      return res.status(400).json({ error: 'Validation failed', errors: [{ field: 'date', message: 'Not a scheduled race date' }] });
+    }
+    const title = schedule.find(e => e.date === body.date && e.type === 'race')?.title ?? 'Race Night';
+    const message = `Results: clear ${title} (${body.date}) — via admin (${session.email})`;
+    try {
+      const result = await removeJsonArrayEntry('src/content/results.json', 'date', body.date, message, session.email);
+      if (result.conflict) {
+        console.warn('[save] clear conflict on', body.date, 'for', session.email);
+        return res.status(409).json({ error: 'Someone else just saved — please reload and try again.' });
+      }
+      if (!result.removed) {
+        console.log('[save] clear no-op — no existing results for', body.date);
+        return res.status(200).json({ removed: false });
+      }
+      console.log('[save] cleared', body.date, 'by', session.email, '— commit:', result.commitSha);
+      return res.status(200).json({ commitSha: result.commitSha, commitUrl: result.commitUrl, removed: true });
+    } catch (err) {
+      console.error('[save] github clear error for', body.date, 'by', session.email, '—', err?.message ?? err);
+      return res.status(500).json({ error: 'Failed to clear. Please try again.' });
+    }
   }
 
   const validation = validateResultsEntry(body);
