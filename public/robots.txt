@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 
-Sitemap: https://thunderridgespeedway.com/sitemap-index.xml
+Sitemap: https://chemungspeedrome.com/sitemap-index.xml

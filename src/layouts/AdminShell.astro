@@ -1,0 +1,84 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  email?: string;
+}
+
+const { title = 'Admin', email } = Astro.props;
+const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | Chemung Speedrome Admin</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+      body { margin: 0; font-family: system-ui, sans-serif; background: #0a0a0c; color: #f5f3ef; min-height: 100vh; }
+      .admin-topbar {
+        background: #111113;
+        border-bottom: 2px solid #e8552a;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .admin-topbar .brand { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #e8552a; text-decoration: none; }
+      .admin-topbar .brand span { color: #a3a09a; font-weight: 400; margin-left: 8px; }
+      .admin-topbar .right { display: flex; align-items: center; gap: 16px; font-size: 13px; color: #a3a09a; }
+      .admin-topbar .site-link { color: #a3a09a; text-decoration: none; }
+      .admin-topbar .site-link:hover { color: #f5f3ef; }
+      .logout-btn {
+        background: none; border: 1px solid #333; color: #a3a09a; font-size: 12px;
+        padding: 5px 12px; border-radius: 4px; cursor: pointer; font-family: inherit;
+      }
+      .logout-btn:hover { border-color: #e8552a; color: #f5f3ef; }
+      .admin-main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    </style>
+  </head>
+  <body>
+    <div class="admin-topbar">
+      <a href="/admin" class="brand">Speedrome Admin <span>Results Editor</span></a>
+      <div class="right">
+        {email && <span>{email}</span>}
+        <a href="/" class="site-link">← View site</a>
+        {email && (
+          <form method="POST" action="/api/admin/auth-logout" style="margin:0">
+            <button type="submit" class="logout-btn"
+              onclick="this.closest('form').submit()"
+              data-site={SITE}>
+              Sign out
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+    <main class="admin-main">
+      <slot />
+    </main>
+    <script>
+      // Add CSRF headers to the logout form via fetch instead of native form submit
+      document.querySelectorAll('form[action="/api/admin/auth-logout"]').forEach(form => {
+        form.addEventListener('submit', async e => {
+          e.preventDefault();
+          const site = (form.querySelector('button[data-site]') as HTMLButtonElement)?.dataset.site ?? '';
+          await fetch('/api/admin/auth-logout', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'fetch', 'Origin': site || window.location.origin },
+            credentials: 'same-origin',
+          });
+          window.location.href = '/admin';
+        });
+      });
+    </script>
+  </body>
+</html>

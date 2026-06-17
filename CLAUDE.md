@@ -105,3 +105,14 @@ Delegate to specialists when needed. See `.claude/agents/` for definitions.
 | `frontend` | Component implementation, styling, accessibility, layout |
 | `content` | Writing/editing site copy, schedule data, SEO text |
 | `debugger` | Build failures, broken layouts, deployment issues |
+
+## Admin (deliberate exception to no-backend rule)
+
+A self-serve admin lives at `/admin` for track staff to post race results without going through Daniel. This is the only backend surface on the site. It uses:
+
+- **Astro `output: 'server'`** with `@astrojs/vercel` — all public pages have `export const prerender = true`; only `/admin/**` runs on-demand.
+- **Auth:** magic-link email via Resend + HMAC-signed tokens (`ADMIN_SESSION_SECRET`). Vercel Functions under `api/admin/`.
+- **Commits:** `GITHUB_TOKEN` (fine-grained PAT, `contents: write` on this repo) writes to `src/content/results.json` via the GitHub Contents API.
+- **Required env vars:** `ADMIN_EMAILS`, `ADMIN_SESSION_SECRET`, `GITHUB_TOKEN`, `GITHUB_REPO`, `RESEND_API_KEY` (already set), `SITE_URL`.
+
+See `features/admin-results-editor.md` for the full design. The no-backend rule still applies to everything outside `/admin`.

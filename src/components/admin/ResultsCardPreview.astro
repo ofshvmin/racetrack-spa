@@ -1,0 +1,77 @@
+---
+interface Division {
+  slug: string;
+  name: string;
+  feature: Array<{ pos: number; driver: string }>;
+  heats: string[];
+  dnf: Array<string | { driver: string; tag?: string }>;
+}
+
+interface Props {
+  date: string;
+  title: string;
+  divisions: Division[];
+}
+
+const { date, title, divisions } = Astro.props;
+
+const d = new Date(date + 'T12:00:00');
+const fullDate = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+const totalEntries = divisions.reduce((s, div) => s + div.feature.length + div.dnf.length, 0);
+const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
+---
+
+<article class="race-night">
+  <header class="race-night-head">
+    <div>
+      <div class="date"><span class="day">Fri,</span> {fullDate}</div>
+      <div class="feature">{title}</div>
+    </div>
+    <div></div>
+    <div class="meta">
+      <strong>{divisions.length} classes</strong> &middot; {totalEntries} entries<br />
+      Gates 5:00 &middot; Green 7:00
+    </div>
+  </header>
+
+  <div class="class-grid">
+    {divisions.map(div => (
+      <section class="class-panel" data-c={divCss(div.slug)}>
+        <div class="cls-head">
+          <div class="cls-name">{div.name}</div>
+          <div class="cls-entries"><strong>{div.feature.length + div.dnf.length}</strong> entries</div>
+        </div>
+        {div.heats.length > 0 && (
+          <div class="heats">
+            <span class="lbl">Heat{div.heats.length > 1 ? 's' : ''}</span>
+            <span class="winners">
+              {div.heats.map(h => <span>{h}</span>)}
+            </span>
+          </div>
+        )}
+        <ol class="field">
+          {div.feature.map(f => (
+            <li class:list={[f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd']}>
+              <span class="pos">{f.pos}</span>
+              <span class="nm">{f.driver}</span>
+            </li>
+          ))}
+        </ol>
+        {div.dnf.length > 0 && (
+          <div class="notes">
+            {div.dnf.map(entry => {
+              const driver = typeof entry === 'string' ? entry : entry.driver;
+              const tag = typeof entry === 'string' ? 'DNF' : (entry.tag ?? 'DNF');
+              return (
+                <div class="row">
+                  <span class="tag">{tag}</span>
+                  <span class="nm">{driver}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+    ))}
+  </div>
+</article>
