@@ -13,12 +13,17 @@ export default async function handler(req, res) {
 
   let body;
   try { body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body; }
-  catch { return res.status(400).json({ error: 'Invalid JSON' }); }
+  catch (err) {
+    console.error('[save] invalid JSON from', session.email, '—', err?.message);
+    return res.status(400).json({ error: 'Invalid JSON' });
+  }
 
   const validation = validateResultsEntry(body);
-  if (!validation.ok) return res.status(400).json({ error: 'Validation failed', errors: validation.errors });
+  if (!validation.ok) {
+    console.warn('[save] validation failed for', body?.date, 'by', session.email, '—', JSON.stringify(validation.errors));
+    return res.status(400).json({ error: 'Validation failed', errors: validation.errors });
+  }
 
-  // Look up the race title from schedule if not provided
   const scheduleEntry = schedule.find(e => e.date === body.date && e.type === 'race');
   const entry = {
     date: body.date,
@@ -32,11 +37,13 @@ export default async function handler(req, res) {
   try {
     const result = await upsertJsonArray('src/content/results.json', 'date', entry, message, session.email);
     if (result.conflict) {
+      console.warn('[save] conflict on', entry.date, 'for', session.email);
       return res.status(409).json({ error: 'Someone else just saved — please reload and try again.' });
     }
+    console.log('[save] published', entry.date, 'by', session.email, '— commit:', result.commitSha);
     return res.status(200).json({ commitSha: result.commitSha, commitUrl: result.commitUrl });
   } catch (err) {
-    console.error('Save error:', err);
+    console.error('[save] github error for', entry.date, 'by', session.email, '—', err?.message ?? err);
     return res.status(500).json({ error: 'Failed to save. Please try again.' });
   }
 }

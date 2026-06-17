@@ -7,16 +7,18 @@ export default function handler(req, res) {
   const parsed = verifyMagicToken(token);
 
   if (!parsed) {
+    console.warn('[auth-verify] invalid or expired token');
     return res.redirect(303, '/admin?error=invalid-link');
   }
 
-  // Verify the nonce matches the cookie set during auth-request (browser-binding)
   const cookies = parseCookies(req);
   const cookieNonce = cookies['pending-login-nonce'] ?? '';
   if (!cookieNonce || cookieNonce !== parsed.nonce) {
+    console.warn('[auth-verify] nonce mismatch for', parsed.email, '— possible different browser or replay');
     return res.redirect(303, '/admin?error=invalid-link');
   }
 
+  console.log('[auth-verify] signed in:', parsed.email);
   res.setHeader('Set-Cookie', [createSessionCookie(parsed.email), clearNonceCookie()]);
   return res.redirect(303, '/admin');
 }

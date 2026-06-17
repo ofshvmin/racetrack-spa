@@ -27,14 +27,15 @@ export default async function handler(req, res) {
   const link = `${SITE}/api/admin/auth-verify?token=${encodeURIComponent(token)}`;
 
   try {
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: FROM,
       to: [email],
       subject: 'Sign in to Chemung Speedrome Admin',
       html: buildEmail(link),
     });
-  } catch {
-    // Silently swallow — don't reveal whether the email was sent
+    console.log('[auth-request] magic link sent to', email, '— id:', result?.data?.id);
+  } catch (err) {
+    console.error('[auth-request] resend failed for', email, '—', err?.message ?? err);
   }
 
   res.setHeader('Set-Cookie', createNonceCookie(nonce));
