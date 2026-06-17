@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 
-const SECRET = process.env.ADMIN_SESSION_SECRET ?? '';
+// process.env works in Vercel Functions; import.meta.env works in Astro/Vite SSR dev
+const SECRET = process.env.ADMIN_SESSION_SECRET ?? import.meta.env?.ADMIN_SESSION_SECRET ?? '';
 const SESSION_DAYS = 7;
 const LINK_MINUTES = 15;
 
@@ -12,9 +13,8 @@ function hmac(payload) {
 
 export function createMagicToken(email, nonce) {
   const expires = Date.now() + LINK_MINUTES * 60 * 1000;
-  const payload = JSON.stringify({ email, nonce, expires });
-  const sig = hmac(payload);
-  return Buffer.from(payload).toString('base64url') + '.' + sig;
+  const payloadB64 = Buffer.from(JSON.stringify({ email, nonce, expires })).toString('base64url');
+  return payloadB64 + '.' + hmac(payloadB64);
 }
 
 export function verifyMagicToken(token) {
@@ -34,9 +34,8 @@ export function verifyMagicToken(token) {
 
 export function createSessionCookie(email) {
   const expires = Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000;
-  const payload = JSON.stringify({ email, expires });
-  const sig = hmac(payload);
-  const value = Buffer.from(payload).toString('base64url') + '.' + sig;
+  const payloadB64 = Buffer.from(JSON.stringify({ email, expires })).toString('base64url');
+  const value = payloadB64 + '.' + hmac(payloadB64);
   return `admin-session=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${SESSION_DAYS * 86400}`;
 }
 
@@ -79,6 +78,6 @@ export function clearNonceCookie() {
 // ── Allow-list ────────────────────────────────────────────────────────────────
 
 export function isAllowed(email) {
-  const list = (process.env.ADMIN_EMAILS ?? '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+  const list = (process.env.ADMIN_EMAILS ?? import.meta.env?.ADMIN_EMAILS ?? '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
   return list.includes(email.trim().toLowerCase());
 }
