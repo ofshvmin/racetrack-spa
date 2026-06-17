@@ -68,7 +68,8 @@ export function requireSession(req) {
 // ── Nonce cookie (browser-binding) ────────────────────────────────────────────
 
 export function createNonceCookie(nonce) {
-  return `pending-login-nonce=${nonce}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${LINK_MINUTES * 60}`;
+  // Lax (not Strict) so the cookie is sent when clicking the magic link from an email client
+  return `pending-login-nonce=${nonce}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${LINK_MINUTES * 60}`;
 }
 
 export function clearNonceCookie() {
