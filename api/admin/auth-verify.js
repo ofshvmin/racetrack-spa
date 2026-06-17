@@ -13,8 +13,15 @@ export default function handler(req, res) {
 
   const cookies = parseCookies(req);
   const cookieNonce = cookies['pending-login-nonce'] ?? '';
-  if (!cookieNonce || cookieNonce !== parsed.nonce) {
-    console.warn('[auth-verify] nonce mismatch for', parsed.email, '— possible different browser or replay');
+
+  if (!cookieNonce) {
+    console.warn('[auth-verify] nonce cookie absent for', parsed.email, '— cookies present:', Object.keys(cookies));
+    return res.redirect(303, '/admin?error=invalid-link');
+  }
+
+  if (cookieNonce !== parsed.nonce) {
+    console.warn('[auth-verify] nonce value mismatch for', parsed.email,
+      '— cookie ends:', cookieNonce.slice(-6), 'token ends:', parsed.nonce.slice(-6));
     return res.redirect(303, '/admin?error=invalid-link');
   }
 
