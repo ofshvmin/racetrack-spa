@@ -4,7 +4,7 @@ import { checkRateLimit, getClientIp } from '../_lib/rate-limit.js';
 import crypto from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM = 'onboarding@resend.dev';
+const FROM = 'Chemung Speedrome <noreply@chemungspeedrome.com>';
 const SITE = process.env.SITE_URL ?? 'https://chemungspeedrome.com';
 
 export default async function handler(req, res) {
