@@ -4,25 +4,59 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import results from '../content/results.json';
 import schedule from '../content/schedule.json';
 
-const metaTitle = 'Race Results | Chemung Speedrome';
-const metaDescription = 'Official race results for Chemung Speedrome 2026. Feature finishes, heat race winners, and full finishing orders for all four divisions.';
+const metaTitle = 'Race Results & Standings | Chemung Speedrome';
+const metaDescription =
+  'Official 2026 race results and championship points standings for all four divisions at Chemung Speedrome — feature finishes, heat winners, and season points.';
 
+// ── Standings ─────────────────────────────────────────────────────────────
+const DNS_PTS = 1;
+const cleanName = (s: string): string => s.replace(/\s*\([^)]*\)\s*$/, '').trim();
+const DIVISION_ORDER = ['b-mod', 'hobby', '4cyl', 'super'];
+const DIV_NAMES: Record<string, string> = {
+  'b-mod': 'Modified', 'hobby': 'Hobby Stock', '4cyl': '4-Cylinder', 'super': 'Super Stock',
+};
+const divCss = (slug: string): string => slug === 'b-mod' ? 'mod' : slug;
+
+const standingsPerDiv = DIVISION_ORDER.map(divSlug => {
+  const entries: Map<string, number> = new Map();
+  results.forEach(night => {
+    const div = night.divisions.find(d => d.slug === divSlug);
+    if (!div) return;
+    const add = (driver: string, pts: number) => {
+      const name = cleanName(driver);
+      entries.set(name, (entries.get(name) ?? 0) + pts);
+    };
+    div.feature.forEach((f: any) => add(f.driver, typeof f.pts === 'number' ? f.pts : 0));
+    div.dnf.forEach((e: any) => {
+      const driver = typeof e === 'string' ? e : e.driver;
+      const tag = typeof e === 'string' ? 'DNF' : (e.tag ?? 'DNF');
+      const pts = (typeof e === 'object' && typeof e.pts === 'number') ? e.pts : (tag === 'DNS' ? DNS_PTS : 0);
+      add(driver, pts);
+    });
+  });
+  const rows = Array.from(entries.entries())
+    .map(([driver, total]) => ({ driver, total }))
+    .sort((a, b) => b.total - a.total);
+  return { slug: divSlug, name: DIV_NAMES[divSlug], rows };
+}).filter(d => d.rows.length > 0);
+
+const raceCount = results.length;
+const lastRaceLabel = raceCount > 0 ? `Race ${raceCount}` : 'Season Start';
+
+// ── Results feed (scored nights + pending/canceled placeholders) ──────────
 const resultDates = new Set(results.map(r => r.date));
-
 const resultNights = results.map(night => {
   const d = new Date(night.date + 'T12:00:00');
   return {
     kind: 'results' as const,
     date: night.date,
     fullDate: d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-    shortDate: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     totalEntries: night.divisions.reduce((s: number, div: any) => s + div.feature.length + div.dnf.length, 0),
     divisions: night.divisions,
     title: night.title,
   };
 });
 
-// Scheduled races with no results — split into canceled (static) and pending (JS-classified)
 const noResultRaces = (schedule as any[])
   .filter(e => e.type === 'race' && !resultDates.has(e.date))
   .map(e => {
@@ -32,406 +66,447 @@ const noResultRaces = (schedule as any[])
       date: e.date,
       title: e.title,
       fullDate: d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' }),
-      shortDate: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     };
   });
 
-// Unified feed sorted newest first
 const feedItems = ([...resultNights, ...noResultRaces] as any[])
   .sort((a, b) => (b.date as string).localeCompare(a.date as string));
 
-const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
+// ── Per-driver index (for the Results-view search stat card) ──────────────
+const rankOf = new Map<string, number>();
+standingsPerDiv.forEach(d => d.rows.forEach((r, i) => rankOf.set(`${d.slug}|${r.driver}`, i + 1)));
+
+type Finish = { date: string; dateShort: string; title: string; slug: string; className: string; pos: number | null; pts: number; tag: string | null };
+const driverMap = new Map<string, { name: string; finishes: Finish[] }>();
+results.forEach(night => {
+  const dateShort = new Date(night.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  night.divisions.forEach((div: any) => {
+    const className = DIV_NAMES[div.slug] ?? div.name;
+    const push = (driver: string, fin: Omit<Finish, 'date' | 'dateShort' | 'title' | 'slug' | 'className'>) => {
+      const name = cleanName(driver);
+      const key = name.toLowerCase();
+      if (!driverMap.has(key)) driverMap.set(key, { name, finishes: [] });
+      driverMap.get(key)!.finishes.push({ date: night.date, dateShort, title: night.title, slug: div.slug, className, ...fin });
+    };
+    div.feature.forEach((f: any) => push(f.driver, { pos: f.pos, pts: typeof f.pts === 'number' ? f.pts : 0, tag: null }));
+    div.dnf.forEach((e: any) => {
+      const driver = typeof e === 'string' ? e : e.driver;
+      const tag = typeof e === 'string' ? 'DNF' : (e.tag ?? 'DNF');
+      const pts = (typeof e === 'object' && typeof e.pts === 'number') ? e.pts : (tag === 'DNS' ? 1 : 0);
+      push(driver, { pos: null, pts, tag });
+    });
+  });
+});
+
+const driverIndex = Array.from(driverMap.values()).map(d => {
+  const feats = d.finishes.filter(f => f.pos !== null) as (Finish & { pos: number })[];
+  const best = feats.reduce((m, f) => Math.min(m, f.pos), Infinity);
+  const classes = Array.from(new Set(d.finishes.map(f => f.slug))).map(slug => ({
+    slug, name: DIV_NAMES[slug] ?? slug, rank: rankOf.get(`${slug}|${d.name}`) ?? null,
+  }));
+  return {
+    name: d.name,
+    starts: feats.length,
+    wins: feats.filter(f => f.pos === 1).length,
+    podiums: feats.filter(f => f.pos <= 3).length,
+    best: best === Infinity ? null : best,
+    totalPts: d.finishes.reduce((s, f) => s + f.pts, 0),
+    classes,
+    finishes: d.finishes.slice().sort((a, b) => b.date.localeCompare(a.date)),
+  };
+}).sort((a, b) => b.totalPts - a.totalPts);
 ---
 
 <BaseLayout title={metaTitle} description={metaDescription}>
 
   <section class="page-header">
     <div class="container page-header-inner">
-      <div class="eyebrow">2026 Season &middot; Feature results</div>
+      <div class="eyebrow">2026 Season &middot; Through {lastRaceLabel}</div>
       <h1>The <span class="hot">Results.</span></h1>
-      <p class="lede">Every Friday's feature finishing order, heat winners, and DNFs. Newest race at the top. Use the rail on the left to jump to a specific night, or search for a driver to see every appearance across the season.</p>
-    </div>
-  </section>
+      <p class="lede">Every Friday's finishing order and the season points standings — all in one place.</p>
 
-  <section class="block">
-    <div class="container results-layout">
-
-      <!-- Jump rail -->
-      <aside class="jump-rail" aria-label="Jump to race night">
-        <div class="head">Race Night</div>
-        {feedItems.map((item, i) => (
-          <a
-            href={`#race-${item.date}`}
-            class={i === 0 && item.kind === 'results' ? 'is-active' : ''}
-            style={item.kind !== 'results' ? 'opacity:0.45' : ''}
-            data-rail-date={item.date}
-          >
-            {item.shortDate}
-            <span class="sub">{item.title}</span>
-          </a>
-        ))}
-      </aside>
-
-      <!-- Results feed -->
-      <div class="results-feed">
-
-        <!-- Driver search -->
-        <div class="driver-search">
-          <label for="driver-q">Find a Driver</label>
-          <input id="driver-q" type="search" placeholder="Type a name — Zacharias, Robinson, Gullo…" autocomplete="off" />
+      <!-- View toggle + unified driver search -->
+      <div class="season-controls">
+        <div class="season-toggle" role="tablist" aria-label="View">
+          <button class="season-tab is-active" data-view="results" role="tab" aria-selected="true">Race Results</button>
+          <button class="season-tab" data-view="standings" role="tab" aria-selected="false">Standings</button>
+        </div>
+        <div class="season-search">
+          <input id="driver-q" type="search" placeholder="Find a driver — Sharpsteen, Gullo, Moldt…" autocomplete="off" />
           <span class="count" id="driver-count" aria-live="polite"></span>
         </div>
-
-        <!-- Driver season summary — populated by JS when a search matches -->
-        <div class="driver-summary" id="driver-summary" hidden aria-live="polite">
-          <div class="ds-header">
-            <div class="ds-name" id="ds-name"></div>
-            <div class="ds-classes" id="ds-classes"></div>
-          </div>
-          <div class="ds-stats" id="ds-stats">
-            <div class="ds-stat"><span class="ds-val" id="ds-starts">—</span><span class="ds-lbl">Starts</span></div>
-            <div class="ds-stat"><span class="ds-val" id="ds-wins">—</span><span class="ds-lbl">Wins</span></div>
-            <div class="ds-stat"><span class="ds-val" id="ds-podiums">—</span><span class="ds-lbl">Podiums</span></div>
-            <div class="ds-stat"><span class="ds-val" id="ds-best">—</span><span class="ds-lbl">Best Finish</span></div>
-          </div>
-          <p class="ds-hint" id="ds-hint"></p>
-        </div>
-
-        {feedItems.map(item => item.kind === 'results' ? (
-          <article class="race-night" id={`race-${item.date}`}>
-
-            <header class="race-night-head">
-              <div>
-                <div class="date"><span class="day">Fri,</span> {item.fullDate}</div>
-                <div class="feature">{item.title}</div>
-              </div>
-              <div></div>
-              <div class="meta">
-                <strong>{item.divisions.length} classes</strong> &middot; {item.totalEntries} entries<br />
-                Gates 5:00 &middot; Green 7:00
-              </div>
-            </header>
-
-            <div class="class-grid">
-              {item.divisions.map((div: any) => (
-                <section class="class-panel" data-c={divCss(div.slug)}>
-                  <div class="cls-head">
-                    <div class="cls-name">{div.name}</div>
-                    <div class="cls-entries"><strong>{div.feature.length + div.dnf.length}</strong> entries</div>
-                  </div>
-                  {div.heats.length > 0 && (
-                    <div class="heats">
-                      <span class="lbl">Heat{div.heats.length > 1 ? 's' : ''}</span>
-                      <span class="winners">
-                        {div.heats.map((h: string) => <span>{h}</span>)}
-                      </span>
-                    </div>
-                  )}
-                  <ol class="field">
-                    {div.feature.map((f: any) => (
-                      <li class:list={[f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd']}>
-                        <span class="pos">{f.pos}</span>
-                        <span class="nm">{f.driver}</span>
-                        {typeof f.pts === 'number' && (
-                          <span class="pts">{f.pts}<i>pts</i></span>
-                        )}
-                      </li>
-                    ))}
-                  </ol>
-                  {div.dnf.length > 0 && (
-                    <div class="notes">
-                      {div.dnf.map((entry: any) => {
-                        const driver = typeof entry === 'string' ? entry : entry.driver;
-                        const tag = typeof entry === 'string' ? 'DNF' : (entry.tag ?? 'DNF');
-                        return (
-                          <div class="row">
-                            <span class="tag">{tag}</span>
-                            <span class="nm">{driver}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </section>
-              ))}
-            </div>
-
-          </article>
-
-        ) : item.kind === 'canceled' ? (
-
-          <article class="race-night is-placeholder is-rained-out" id={`race-${item.date}`}>
-            <header class="race-night-head">
-              <div>
-                <div class="date" style="color:var(--ink-mute)">{item.fullDate}</div>
-                <div class="feature" style="color:var(--ink-dim)">{item.title}</div>
-              </div>
-              <div></div>
-              <div class="meta">Rained out</div>
-            </header>
-            <div class="placeholder-body">
-              <strong>Rained out</strong>
-              This race was canceled due to weather.
-            </div>
-          </article>
-
-        ) : (
-
-          /* pending — JS will set label based on whether date is past or future */
-          <article class="race-night is-placeholder" id={`race-${item.date}`} data-pending data-date={item.date} style="display:none">
-            <header class="race-night-head">
-              <div>
-                <div class="date" style="color:var(--ink-mute)">{item.fullDate}</div>
-                <div class="feature" style="color:var(--ink-dim)">{item.title}</div>
-              </div>
-              <div></div>
-              <div class="meta pending-meta">—</div>
-            </header>
-            <div class="placeholder-body pending-body">—</div>
-          </article>
-
-        ))}
-
       </div>
     </div>
   </section>
 
+  <!-- ── Results view ──────────────────────────────────────────────────── -->
+  <section class="block season-view" data-view="results">
+    <div class="container">
+
+      <!-- Driver stat card + filtered finishes (shown when a driver is searched) -->
+      <div id="driver-panel" hidden></div>
+
+      <div id="results-feed">
+      {feedItems.map(item => item.kind === 'results' ? (
+        <article class="race-night" id={`race-${item.date}`}>
+          <header class="race-night-head">
+            <div>
+              <div class="date"><span class="day">Fri,</span> {item.fullDate}</div>
+              <div class="feature">{item.title}</div>
+            </div>
+            <div></div>
+            <div class="meta">
+              <strong>{item.divisions.length} classes</strong> &middot; {item.totalEntries} entries
+            </div>
+          </header>
+          <div class="class-grid">
+            {item.divisions.map((div: any) => (
+              <section class="class-panel" data-c={divCss(div.slug)}>
+                <div class="cls-head">
+                  <div class="cls-name">{div.name}</div>
+                  <div class="cls-entries"><strong>{div.feature.length + div.dnf.length}</strong> entries</div>
+                </div>
+                {div.heats.length > 0 && (
+                  <div class="heats">
+                    <span class="lbl">Heat{div.heats.length > 1 ? 's' : ''}</span>
+                    <span class="winners">{div.heats.map((h: string) => <span>{h}</span>)}</span>
+                  </div>
+                )}
+                <ol class="field">
+                  {div.feature.map((f: any) => (
+                    <li class:list={[f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd']}>
+                      <span class="pos">{f.pos}</span>
+                      <span class="nm">{f.driver}</span>
+                      {typeof f.pts === 'number' && <span class="pts">{f.pts}<i>pts</i></span>}
+                    </li>
+                  ))}
+                </ol>
+                {div.dnf.length > 0 && (
+                  <div class="notes">
+                    {div.dnf.map((entry: any) => {
+                      const driver = typeof entry === 'string' ? entry : entry.driver;
+                      const tag = typeof entry === 'string' ? 'DNF' : (entry.tag ?? 'DNF');
+                      return (<div class="row"><span class="tag">{tag}</span><span class="nm">{driver}</span></div>);
+                    })}
+                  </div>
+                )}
+              </section>
+            ))}
+          </div>
+        </article>
+      ) : item.kind === 'canceled' ? (
+        <article class="race-night is-placeholder is-rained-out" id={`race-${item.date}`}>
+          <header class="race-night-head">
+            <div>
+              <div class="date" style="color:var(--ink-mute)">{item.fullDate}</div>
+              <div class="feature" style="color:var(--ink-dim)">{item.title}</div>
+            </div>
+            <div></div>
+            <div class="meta">Rained out</div>
+          </header>
+          <div class="placeholder-body">
+            <strong>Rained out</strong>
+            This race was canceled due to weather.
+          </div>
+        </article>
+      ) : (
+        <article class="race-night is-placeholder" id={`race-${item.date}`} data-pending data-date={item.date} style="display:none">
+          <header class="race-night-head">
+            <div>
+              <div class="date" style="color:var(--ink-mute)">{item.fullDate}</div>
+              <div class="feature" style="color:var(--ink-dim)">{item.title}</div>
+            </div>
+            <div></div>
+            <div class="meta pending-meta">—</div>
+          </header>
+          <div class="placeholder-body pending-body">—</div>
+        </article>
+      ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Standings view ────────────────────────────────────────────────── -->
+  <section class="block season-view" data-view="standings" hidden>
+    <div class="container">
+      <div class="standings-grid">
+        {standingsPerDiv.map(({ slug, name, rows }) => (
+          <div class="standings-col" data-c={divCss(slug)}>
+            <div class="standings-col-hdr">
+              <span class="cn">{name}</span>
+              <span class="cr">{raceCount} race{raceCount !== 1 ? 's' : ''}</span>
+            </div>
+            <ol class="standings-list">
+              {rows.map((row, i) => (
+                <li class:list={[i < 3 && 'is-podium', i === 0 && 'is-1st']}>
+                  <span class="rk">{i + 1}</span>
+                  <span class="nm">{row.driver}</span>
+                  <span class="pt">{row.total}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+      <div class="pts-legend">
+        <div class="pts-legend-title">How points work</div>
+        <div class="pts-legend-list">
+          <span>Each race, drivers earn points from their <strong>heat</strong> and <strong>feature</strong> finishes.</span>
+          <span>DNS <strong>1 pt</strong></span>
+          <span>DQ / not present <strong>0 pts</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script id="driver-data" type="application/json" is:inline set:html={JSON.stringify(driverIndex)}></script>
+
 </BaseLayout>
 
+<style>
+  .season-controls {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 16px 20px; margin-top: 28px;
+  }
+  .season-toggle {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .season-search { display: flex; align-items: center; gap: 10px; }
+  .season-search input {
+    width: 280px; max-width: 60vw;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+  .season-search input:focus { outline: none; border-color: var(--hot); }
+  .season-search .count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.08em;
+    color: var(--ink-mute); white-space: nowrap;
+  }
+  /* When a search is active, dim non-matches and spotlight matches */
+  .is-searching .standings-list li:not(.is-match),
+  .is-searching .field li:not(.is-match) { opacity: 0.22; }
+  .standings-list li.is-match .nm,
+  .field li.is-match .nm { color: var(--hot) !important; }
+  .is-searching .class-panel:not(.has-match),
+  .is-searching .race-night:not(.has-match) { opacity: 0.3; }
+  .season-tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 11px 22px;
+    background: transparent;
+    color: var(--ink-mute);
+    border: 0;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .season-tab + .season-tab { border-left: 1px solid var(--line); }
+  .season-tab:hover { color: var(--ink); }
+  .season-tab.is-active { background: var(--hot); color: #fff; }
+  .season-view[hidden] { display: none; }
+</style>
+
+<!-- Global because the driver card + finishes list are injected via innerHTML
+     at runtime, which Astro's scoped styles don't reach. -->
+<style is:global>
+  /* Driver stat card — header with season points headline */
+  .ds-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .ds-points { text-align: right; line-height: 1; }
+  .dsp-val {
+    display: block;
+    font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-style: italic;
+    font-size: clamp(36px, 5vw, 56px); color: var(--hot);
+    font-variant-numeric: tabular-nums; line-height: 0.85;
+  }
+  .dsp-lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink-dim);
+  }
+
+  /* Driver stat card — filtered finishes list */
+  .driver-finishes { list-style: none; margin: 24px 0 0; padding: 0; border: 1px solid var(--line); }
+  .driver-finishes li {
+    display: grid;
+    grid-template-columns: 76px 1fr 56px 72px;
+    align-items: center; gap: 16px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .driver-finishes li:last-child { border-bottom: 0; }
+  .df-date {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute);
+  }
+  .df-cls {
+    font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-style: italic;
+    font-size: 15px; text-transform: uppercase; color: var(--ink); letter-spacing: 0.02em;
+  }
+  .df-cls[data-c="mod"]   { color: var(--hot); }
+  .df-cls[data-c="hobby"] { color: var(--safety); }
+  .df-cls[data-c="4cyl"]  { color: var(--sky); }
+  .df-cls[data-c="super"] { color: oklch(0.78 0.16 145); }
+  .df-res {
+    justify-self: end;
+    font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-style: italic;
+    font-size: 18px; color: var(--ink); font-variant-numeric: tabular-nums;
+  }
+  .df-res.is-win { color: var(--safety); }
+  .df-res.is-dnf {
+    font-family: 'JetBrains Mono', monospace; font-style: normal; font-weight: 700;
+    font-size: 12px; color: var(--ink-dim);
+  }
+  .df-pts {
+    justify-self: end;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;
+    color: var(--ink-mute); font-variant-numeric: tabular-nums;
+  }
+  .df-pts i { font-style: normal; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); margin-left: 3px; }
+
+  .driver-chooser {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 18px 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-mute);
+  }
+  .dc-chip {
+    font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-style: italic;
+    text-transform: uppercase; font-size: 15px; padding: 6px 14px;
+    background: var(--surface); border: 1px solid var(--line); color: var(--ink); cursor: pointer;
+  }
+  .dc-chip:hover { border-color: var(--hot); color: var(--hot); }
+  .driver-empty { padding: 24px 0; color: var(--ink-mute); font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+</style>
+
 <script>
+  // --- Classify pending placeholders as past (results pending) or future ---
   (function () {
-    // --- Classify pending placeholders as past (results pending) or future (next race) ---
     const etStr = new Date().toLocaleDateString('en-US', {
-      timeZone: 'America/New_York',
-      year: 'numeric', month: '2-digit', day: '2-digit',
+      timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit',
     });
     const [etM, etD, etY] = etStr.split('/').map(Number);
     const today = new Date(etY, etM - 1, etD);
-
-    const pendingCards = Array.from(
-      document.querySelectorAll<HTMLElement>('.race-night.is-placeholder[data-pending]')
-    );
-
-    const pastPending: HTMLElement[]   = [];
-    const futurePending: HTMLElement[] = [];
-
-    pendingCards.forEach(card => {
+    document.querySelectorAll<HTMLElement>('.race-night.is-placeholder[data-pending]').forEach(card => {
       const [ry, rm, rd] = (card.dataset.date ?? '').split('-').map(Number);
       const raceDate = new Date(ry, rm - 1, rd);
-      if (raceDate < today) pastPending.push(card);
-      else futurePending.push(card);
-    });
-
-    // Past races with no results → "Results Pending"
-    pastPending.forEach(card => {
-      card.style.display = '';
-      const meta = card.querySelector('.pending-meta');
-      const body = card.querySelector('.pending-body');
-      if (meta) meta.textContent = 'Results pending';
-      if (body) {
-        body.innerHTML = '<strong>Results pending</strong> Full results will be posted shortly.';
+      if (raceDate < today) {
+        card.style.display = '';
+        const meta = card.querySelector('.pending-meta');
+        const body = card.querySelector('.pending-body');
+        if (meta) meta.textContent = 'Results pending';
+        if (body) body.innerHTML = '<strong>Results pending</strong> Full results will be posted shortly.';
       }
+      // future races stay hidden — upcoming races belong on /schedule
     });
-
-    // Future races stay hidden in the feed — upcoming races belong on /schedule
-
-    // --- Rebuild jump rail: past races first (newest → oldest), then one upcoming ---
-    const rail = document.querySelector<HTMLElement>('.jump-rail');
-    if (rail) {
-      const allRailLinks = Array.from(rail.querySelectorAll<HTMLElement>('a[data-rail-date]'));
-
-      const pastRailLinks: HTMLElement[] = [];
-      const futureRailLinks: HTMLElement[] = [];
-
-      allRailLinks.forEach(link => {
-        const date = link.dataset.railDate ?? '';
-        const card = document.getElementById('race-' + date);
-
-        // Drop entries whose cards are hidden (far-future races)
-        if (!card || card.style.display === 'none') {
-          link.remove();
-          return;
-        }
-
-        const [ry, rm, rd] = date.split('-').map(Number);
-        const raceDate = new Date(ry, rm - 1, rd);
-        if (raceDate < today) pastRailLinks.push(link);
-        else futureRailLinks.push(link);
-      });
-
-      // Sort future links ascending so index 0 is the nearest upcoming race
-      futureRailLinks.sort((a, b) =>
-        (a.dataset.railDate ?? '').localeCompare(b.dataset.railDate ?? '')
-      );
-      const nextRailLink = futureRailLinks[0] ?? null;
-      // Remove any extras (shouldn't exist since hidden cards were already dropped above,
-      // but guard anyway)
-      futureRailLinks.slice(1).forEach(l => l.remove());
-
-      // Sort past entries newest first
-      pastRailLinks.sort((a, b) =>
-        (b.dataset.railDate ?? '').localeCompare(a.dataset.railDate ?? '')
-      );
-
-      // Detach all, re-append in desired order
-      pastRailLinks.forEach(l => l.remove());
-      if (nextRailLink) (nextRailLink as HTMLElement).remove();
-
-      pastRailLinks.forEach(l => rail.appendChild(l));
-
-      if (nextRailLink) {
-        const sep = document.createElement('div');
-        sep.className = 'rail-sep';
-        sep.textContent = 'Upcoming';
-        rail.appendChild(sep);
-        (nextRailLink as HTMLAnchorElement).href = '/schedule';
-        rail.appendChild(nextRailLink as HTMLElement);
-      }
-
-      // Set initial active on most recent past race
-      if (pastRailLinks.length > 0) pastRailLinks[0].classList.add('is-active');
-    }
-
-    // --- Driver search + season summary ---
-    const q = document.getElementById('driver-q') as HTMLInputElement | null;
-    const countEl       = document.getElementById('driver-count');
-    const summaryEl     = document.getElementById('driver-summary');
-    const dsName        = document.getElementById('ds-name');
-    const dsClasses     = document.getElementById('ds-classes');
-    const dsStarts      = document.getElementById('ds-starts');
-    const dsWins        = document.getElementById('ds-wins');
-    const dsPodiums     = document.getElementById('ds-podiums');
-    const dsBest        = document.getElementById('ds-best');
-    const dsHint        = document.getElementById('ds-hint');
-    if (!q) return;
-
-    const cards = document.querySelectorAll<HTMLElement>('.race-night:not(.is-placeholder)');
-    const nameNodes = Array.from(document.querySelectorAll<HTMLElement>('.field .nm, .notes .nm'));
-    const originals = new WeakMap<HTMLElement, string>();
-    nameNodes.forEach(n => originals.set(n, n.textContent ?? ''));
-
-    // Class slug → display label
-    const classLabels: Record<string, string> = {
-      mod: 'Modifieds', hobby: 'Hobby Stocks', '4cyl': '4 Cylinder', super: 'Super Stocks', vintage: 'Vintage Mods',
-    };
-
-    const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-    function hideSummary() {
-      summaryEl?.setAttribute('hidden', '');
-    }
-
-    function showSummary(term: string) {
-      const re = new RegExp(esc(term), 'i');
-
-      // Collect every distinct full driver name the term touches
-      const matchedNames = new Set<string>();
-      nameNodes.forEach(n => {
-        const orig = originals.get(n) ?? '';
-        if (re.test(orig)) matchedNames.add(orig);
-      });
-
-      if (matchedNames.size === 0) { hideSummary(); return; }
-
-      if (matchedNames.size > 1) {
-        // Disambiguation — don't mix stats across different people
-        summaryEl?.setAttribute('data-state', 'multi');
-        if (dsName) dsName.textContent = `${matchedNames.size} drivers matched`;
-        if (dsClasses) {
-          dsClasses.innerHTML = '';
-          [...matchedNames].sort().forEach(name => {
-            const btn = document.createElement('button');
-            btn.className = 'ds-class-tag ds-name-btn';
-            btn.textContent = name;
-            btn.addEventListener('click', () => {
-              if (q) { q.value = name; q.dispatchEvent(new Event('input')); q.focus(); }
-            });
-            dsClasses.appendChild(btn);
-          });
-        }
-        if (dsHint) dsHint.textContent = 'Select a name to see their season card.';
-        summaryEl?.removeAttribute('hidden');
-        return;
-      }
-
-      // Exactly one driver — compute stats using an exact full-name match
-      const driverName = [...matchedNames][0];
-      const exactRe = new RegExp('^' + esc(driverName) + '$', 'i');
-      let starts = 0, wins = 0, podiums = 0, bestFinish = Infinity;
-      const classesSeen = new Set<string>();
-
-      nameNodes.forEach(n => {
-        const orig = originals.get(n) ?? '';
-        if (!exactRe.test(orig)) return;
-        const li = n.closest('li');
-        if (li) {
-          starts++;
-          const pos = parseInt(li.querySelector('.pos')?.textContent ?? '99', 10);
-          if (!isNaN(pos)) {
-            if (pos === 1) wins++;
-            if (pos <= 3) podiums++;
-            if (pos < bestFinish) bestFinish = pos;
-          }
-        }
-        const panel = n.closest<HTMLElement>('.class-panel');
-        if (panel?.dataset.c) classesSeen.add(panel.dataset.c);
-      });
-
-      summaryEl?.setAttribute('data-state', 'single');
-      if (dsName)    dsName.textContent    = driverName;
-      if (dsClasses) dsClasses.innerHTML   = [...classesSeen]
-        .map(c => `<span class="ds-class-tag">${classLabels[c] ?? c}</span>`).join('');
-      if (dsStarts)  dsStarts.textContent  = String(starts);
-      if (dsWins)    dsWins.textContent    = String(wins);
-      if (dsPodiums) dsPodiums.textContent = String(podiums);
-      if (dsBest)    dsBest.textContent    = bestFinish === Infinity ? '—' : `P${bestFinish}`;
-      if (dsHint)    dsHint.textContent    = '';
-      summaryEl?.removeAttribute('hidden');
-    }
-
-    function reset() {
-      nameNodes.forEach(n => { n.textContent = originals.get(n) ?? ''; });
-      cards.forEach(c => c.classList.remove('is-dimmed'));
-      if (countEl) countEl.textContent = '';
-      hideSummary();
-    }
-
-    q.addEventListener('input', () => {
-      const term = q.value.trim();
-      if (!term) { reset(); return; }
-      const re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
-      let hits = 0;
-      const cardHits = new Map<Element, number>();
-      nameNodes.forEach(n => {
-        const orig = originals.get(n) ?? '';
-        re.lastIndex = 0;
-        if (re.test(orig)) {
-          hits++;
-          re.lastIndex = 0;
-          n.innerHTML = orig.replace(re, '<mark>$1</mark>');
-          const card = n.closest('.race-night');
-          if (card) cardHits.set(card, (cardHits.get(card) ?? 0) + 1);
-        } else {
-          n.textContent = orig;
-        }
-      });
-      cards.forEach(c => c.classList.toggle('is-dimmed', !cardHits.has(c)));
-      if (countEl) countEl.textContent = hits + (hits === 1 ? ' result' : ' results');
-      showSummary(term);
-    });
-
-    // --- Scroll-based jump rail active state ---
-    const railLinks = document.querySelectorAll<HTMLAnchorElement>('.jump-rail a[href^="#race-"]');
-    if (railLinks.length) {
-      const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const id = '#' + entry.target.id;
-            railLinks.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === id));
-          }
-        });
-      }, { rootMargin: '-20% 0px -70% 0px' });
-      document.querySelectorAll<HTMLElement>('.race-night[id]').forEach(el => observer.observe(el));
-    }
   })();
+</script>
+
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>('.season-tab');
+  const views = document.querySelectorAll<HTMLElement>('.season-view');
+
+  // ── Driver search ─────────────────────────────────────────────────────
+  // Standings view: spotlight matching rows. Results view: show a driver
+  // stat card and collapse the feed to just that driver's finishes.
+  const data: any[] = JSON.parse(document.getElementById('driver-data')?.textContent || '[]');
+  const q = document.getElementById('driver-q') as HTMLInputElement | null;
+  const countEl = document.getElementById('driver-count');
+  const feed = document.getElementById('results-feed');
+  const panel = document.getElementById('driver-panel');
+  const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9 ]/g, '').trim();
+  const standingsRows = Array.from(document.querySelectorAll<HTMLElement>('.standings-list li'));
+  const standingsCols = Array.from(document.querySelectorAll<HTMLElement>('.standings-col'));
+  const cssC = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
+  const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] as string));
+
+  function highlightStandings(term: string) {
+    standingsRows.forEach(r => {
+      const nm = r.querySelector('.nm');
+      r.classList.toggle('is-match', !!term && !!nm && norm(nm.textContent || '').includes(term));
+    });
+    standingsCols.forEach(c => c.classList.toggle('has-match', !!c.querySelector('li.is-match')));
+  }
+
+  function renderCard(d: any) {
+    const chips = d.classes.map((c: any) =>
+      `<span class="ds-class-tag" data-c="${cssC(c.slug)}">${esc(c.name)}${c.rank ? ` &middot; P${c.rank}` : ''}</span>`).join('');
+    const stat = (v: any, l: string) => `<div class="ds-stat"><span class="ds-val">${v}</span><span class="ds-lbl">${l}</span></div>`;
+    const finishes = d.finishes.map((f: any) => {
+      const res = f.pos !== null ? `P${f.pos}` : (f.tag || 'DNF');
+      const cls = f.pos === 1 ? 'is-win' : (f.pos !== null && f.pos <= 3 ? 'is-pod' : (f.pos === null ? 'is-dnf' : ''));
+      return `<li>
+        <span class="df-date">${esc(f.dateShort)}</span>
+        <span class="df-cls" data-c="${cssC(f.slug)}">${esc(f.className)}</span>
+        <span class="df-res ${cls}">${res}</span>
+        <span class="df-pts">${f.pts}<i>pts</i></span></li>`;
+    }).join('');
+    return `<div class="driver-summary">
+        <div class="ds-top">
+          <div class="ds-header"><div class="ds-name">${esc(d.name)}</div><div class="ds-classes">${chips}</div></div>
+          <div class="ds-points"><span class="dsp-val">${d.totalPts}</span><span class="dsp-lbl">Season Points</span></div>
+        </div>
+        <div class="ds-stats">
+          ${stat(d.starts, 'Starts')}${stat(d.wins, 'Wins')}${stat(d.podiums, 'Podiums')}${stat(d.best ? 'P' + d.best : '—', 'Best')}
+        </div>
+      </div>
+      <ol class="driver-finishes">${finishes}</ol>`;
+  }
+
+  function renderPanel(term: string) {
+    if (!panel) return;
+    if (!term) { panel.hidden = true; panel.innerHTML = ''; if (feed) feed.hidden = false; return; }
+    const hits = data.filter(d => norm(d.name).includes(term));
+    if (feed) feed.hidden = true;
+    panel.hidden = false;
+    if (hits.length === 0) {
+      panel.innerHTML = `<p class="driver-empty">No driver matches “${esc(q?.value || '')}”.</p>`;
+    } else if (hits.length > 1) {
+      panel.innerHTML = `<div class="driver-chooser"><span>Did you mean…</span>${
+        hits.slice(0, 16).map(d => `<button type="button" class="dc-chip" data-name="${esc(d.name)}">${esc(d.name)}</button>`).join('')}</div>`;
+      panel.querySelectorAll<HTMLButtonElement>('.dc-chip').forEach(btn =>
+        btn.addEventListener('click', () => { if (q) { q.value = btn.dataset.name || ''; apply(); } }));
+    } else {
+      panel.innerHTML = renderCard(hits[0]);
+    }
+  }
+
+  function apply() {
+    const term = norm(q?.value || '');
+    document.body.classList.toggle('is-searching', term.length > 0);
+    highlightStandings(term);
+    renderPanel(term);
+    if (countEl) {
+      const n = term ? data.filter(d => norm(d.name).includes(term)).length : 0;
+      countEl.textContent = term ? (n ? `${n} driver${n !== 1 ? 's' : ''}` : 'no match') : '';
+    }
+  }
+
+  // ── View toggle (with #hash deep-linking) ─────────────────────────────
+  function activate(view: string) {
+    tabs.forEach(t => {
+      const a = t.dataset.view === view;
+      t.classList.toggle('is-active', a);
+      t.setAttribute('aria-selected', String(a));
+    });
+    views.forEach(v => { v.hidden = v.dataset.view !== view; });
+    apply();
+  }
+
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    const view = tab.dataset.view || 'results';
+    activate(view);
+    history.replaceState(null, '', `#${view}`);
+  }));
+
+  q?.addEventListener('input', apply);
+
+  window.addEventListener('hashchange', () => activate(location.hash === '#standings' ? 'standings' : 'results'));
+  activate(location.hash === '#standings' ? 'standings' : 'results');
 </script>
