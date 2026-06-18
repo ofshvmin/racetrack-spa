@@ -17,6 +17,17 @@ pnpm-debug.log*
 .env
 .env.production
 
+# Local-only infrastructure/services inventory — NEVER commit (repo is public)
+docs/INFRASTRUCTURE.md
+
+# Local-only working assets and design iterations (kept on disk, not published)
+racetrack_assets/
+designs/
+design-system/
+
+# pnpm workspace placeholder — not a real workspace config
+pnpm-workspace.yaml
+
 # macOS-specific files
 .DS_Store
 
