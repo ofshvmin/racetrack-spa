@@ -42,5 +42,44 @@ const currentPath = Astro.url.pathname;
       <a href="#" class="nav-cta" data-tickets>Tickets</a>
     </nav>
 
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-nav-toggle
+    >
+      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
+
   </div>
+
+  <nav id="mobile-menu" class="mobile-menu" aria-label="Mobile navigation" hidden>
+    <div class="container">
+      {navLinks.map(({ href, label }) => {
+        const isActive = currentPath === href || (href !== '/' && !href.includes('#') && currentPath.startsWith(href));
+        return (
+          <a href={href} aria-current={isActive ? 'page' : undefined}>{label}</a>
+        );
+      })}
+      <a href="#" class="mobile-cta" data-tickets>Tickets</a>
+    </div>
+  </nav>
 </header>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const menu = document.getElementById('mobile-menu');
+  function setOpen(open: boolean) {
+    if (!btn || !menu) return;
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    menu.hidden = !open;
+  }
+  btn?.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
+  // Close after choosing a destination (Tickets still opens its popover via [data-tickets])
+  menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+  // Close if viewport grows back to desktop
+  window.matchMedia('(min-width: 821px)').addEventListener('change', e => { if (e.matches) setOpen(false); });
+</script>
