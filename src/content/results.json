@@ -1,5 +1,24 @@
 [
   {
+    "date": "2026-08-07",
+    "title": "Race Night",
+    "raceNum": 7,
+    "divisions": [
+      {
+        "slug": "b-mod",
+        "name": "Modifieds",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Adrianna Purvis"
+          }
+        ],
+        "heats": [],
+        "dnf": []
+      }
+    ]
+  },
+  {
     "date": "2026-06-12",
     "title": "Race Night",
     "raceNum": 6,
