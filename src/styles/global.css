@@ -235,10 +235,10 @@ h1, h2 {
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(120% 80% at 50% -20%, oklch(0.32 0.10 235 / 0.6), transparent 60%),
-    radial-gradient(60% 50% at 18% 10%, oklch(0.55 0.08 60 / 0.18), transparent 70%),
-    radial-gradient(60% 50% at 82% 10%, oklch(0.55 0.08 60 / 0.18), transparent 70%),
-    linear-gradient(180deg, #06060a 0%, #0a0a12 55%, #050507 100%);
+    radial-gradient(120% 80% at 50% -20%, oklch(0.30 0.09 235 / 0.32), transparent 60%),
+    radial-gradient(60% 50% at 18% 10%, oklch(0.50 0.08 60 / 0.10), transparent 70%),
+    radial-gradient(60% 50% at 82% 10%, oklch(0.50 0.08 60 / 0.10), transparent 70%),
+    linear-gradient(180deg, #040406 0%, #060610 55%, #020203 100%);
   color: var(--ink);
 }
 .hero::before {
@@ -249,7 +249,7 @@ h1, h2 {
     radial-gradient(circle at 70% 80%, rgba(255,255,255,0.04) 0, transparent 2px),
     radial-gradient(circle at 10% 70%, rgba(255,255,255,0.03) 0, transparent 2px);
   background-size: 7px 7px, 11px 11px, 5px 5px;
-  opacity: 0.7;
+  opacity: 0.5;
   pointer-events: none;
 }
 .hero .lights {
@@ -302,9 +302,9 @@ h1, h2 {
 
 .hero-inner {
   position: relative;
-  padding: 80px 0 120px;
+  padding: 80px 0 116px;
   display: grid;
-  gap: 48px;
+  gap: 46px;
 }
 
 .eyebrow {
@@ -327,6 +327,9 @@ h1, h2 {
   0%,100% { opacity: 1; }
   50% { opacity: 0.35; }
 }
+@media (prefers-reduced-motion: reduce) {
+  .eyebrow .dot { animation: none; }
+}
 
 .logo-mark {
   text-align: center;
@@ -335,26 +338,42 @@ h1, h2 {
   gap: 0;
   user-select: none;
 }
-.logo-mark .top-rule {
+/* word block shrinks to the CHEMUNG width so the overline can align to it */
+.logo-mark .word {
+  position: relative;
+  width: max-content;
+  max-width: 100%;
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  width: 100%;
-  max-width: 920px;
-  gap: 20px;
-  color: var(--ink-mute);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
 }
-.logo-mark .top-rule::before,
-.logo-mark .top-rule::after {
-  content: "";
+.logo-mark .top-rule {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+.logo-mark .top-rule .rule {
+  flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--line), transparent);
+  background: linear-gradient(90deg, var(--line), transparent);
+}
+/* "THE NEW" chip — margin tunes the T to sit centered over the C of CHEMUNG */
+.logo-mark .thenew {
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-weight: 800;
+  font-style: italic;
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  white-space: nowrap;
+  flex: none;
+  margin-left: clamp(8px, 4.3vw, 58px);
 }
 .logo-mark .chemung {
+  position: relative;
   font-family: 'Big Shoulders Display', sans-serif;
   font-weight: 900;
   font-style: italic;
@@ -364,21 +383,35 @@ h1, h2 {
   color: var(--ink);
   text-transform: uppercase;
   text-shadow:
+    0 3px 6px rgba(0,0,0,0.6),
+    0 1px 1px rgba(0,0,0,0.55),
     0 2px 0 rgba(0,0,0,0.5),
-    0 0 80px oklch(0.72 0.13 235 / 0.25);
+    0 0 50px oklch(0.66 0.18 245 / 0.55),
+    0 0 110px oklch(0.62 0.20 245 / 0.42);
+}
+/* electric-blue backdrop glow behind the wordmark */
+.logo-mark .chemung::before {
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 130%; height: 185%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(58% 56% at 50% 50%, oklch(0.66 0.19 245 / 0.55), oklch(0.58 0.16 245 / 0.26) 46%, transparent 74%);
+  filter: blur(22px);
 }
 .logo-mark .chemung .accent {
   color: var(--hot);
-  text-shadow: 0 0 30px oklch(0.62 0.22 30 / 0.6);
+  text-shadow: none;
 }
 .logo-mark .speedrome-row {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   width: 100%;
-  max-width: 920px;
   gap: 24px;
-  margin-top: 12px;
+  margin-top: 14px;
 }
 .logo-mark .speedrome-row .bar {
   height: 6px;
@@ -445,7 +478,7 @@ h1, h2 {
 
 /* === Hero Presenter Co-brand === */
 .presenter {
-  margin-top: 28px;
+  margin-top: 26px;
   display: inline-flex;
   align-items: center;
   gap: 18px;
@@ -460,14 +493,6 @@ h1, h2 {
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--ink-dim);
-}
-.presenter .bowtie {
-  width: 56px; height: 28px;
-  background-image: url('/images/elm-bowtie-only.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
 }
 .presenter .name {
   display: inline-flex;
