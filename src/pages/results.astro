@@ -132,6 +132,9 @@ const divCss = (slug: string) => slug === 'b-mod' ? 'mod' : slug;
                       <li class:list={[f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd']}>
                         <span class="pos">{f.pos}</span>
                         <span class="nm">{f.driver}</span>
+                        {typeof f.pts === 'number' && (
+                          <span class="pts">{f.pts}<i>pts</i></span>
+                        )}
                       </li>
                     ))}
                   </ol>

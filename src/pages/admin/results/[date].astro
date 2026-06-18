@@ -98,6 +98,9 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
                   <input type="text" class="driver-name" value={f.driver} list="driver-datalist" autocomplete="off"
                     placeholder="Driver name"
                     style="flex:1;background:none;border:none;color:#f5f3ef;font-size:14px;font-family:inherit;outline:none;min-width:0" />
+                  <input type="number" class="driver-pts" value={f.pts ?? ''} min="0" inputmode="numeric"
+                    placeholder="pts" title="Points scored"
+                    style="width:54px;background:#0a0a0c;border:1px solid #333;border-radius:4px;color:#f5f3ef;font-size:13px;font-family:inherit;text-align:center;padding:5px 4px;min-width:0" />
                   <button type="button" class="tag-btn" data-tag="" style="font-size:11px;background:#222;border:1px solid #333;color:#888;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;white-space:nowrap">+ tag</button>
                   <button type="button" class="remove-row" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px;padding:0;line-height:1" title="Remove">×</button>
                 </div>
@@ -175,7 +178,7 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
-  function makeDriverRow(name = '', tag = '') {
+  function makeDriverRow(name = '', tag = '', pts = '') {
     const div = document.createElement('div');
     div.className = 'driver-row';
     div.draggable = true;
@@ -187,6 +190,9 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
       <input type="text" class="driver-name" value="${name.replace(/"/g,'&quot;')}" list="driver-datalist" autocomplete="off"
         placeholder="Driver name"
         style="flex:1;background:none;border:none;color:#f5f3ef;font-size:14px;font-family:inherit;outline:none;min-width:0" />
+      <input type="number" class="driver-pts" value="${pts}" min="0" inputmode="numeric"
+        placeholder="pts" title="Points scored"
+        style="width:54px;background:#0a0a0c;border:1px solid #333;border-radius:4px;color:#f5f3ef;font-size:13px;font-family:inherit;text-align:center;padding:5px 4px;min-width:0" />
       <button type="button" class="tag-btn" data-tag="${tag}"
         style="font-size:11px;background:#222;border:1px solid #333;color:${tag ? '#e8552a' : '#888'};padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;white-space:nowrap">
         ${tag ? tag : '+ tag'}
@@ -310,7 +316,12 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
       block.querySelectorAll('.driver-row').forEach((row, i) => {
         const driver = row.querySelector('.driver-name').value.trim();
         const tag = row.querySelector('.tag-btn').dataset.tag ?? '';
-        if (driver) feature.push({ pos: i + 1, driver: tag ? `${driver} (${tag})` : driver });
+        const ptsRaw = row.querySelector('.driver-pts')?.value.trim() ?? '';
+        if (driver) {
+          const entry = { pos: i + 1, driver: tag ? `${driver} (${tag})` : driver };
+          if (ptsRaw !== '') entry.pts = Number(ptsRaw);
+          feature.push(entry);
+        }
       });
       const dnf = [];
       block.querySelectorAll('.dnf-row').forEach(row => {

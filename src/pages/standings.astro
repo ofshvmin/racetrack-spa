@@ -6,15 +6,14 @@ import results from '../content/results.json';
 const metaTitle = 'Standings | Chemung Speedrome';
 const metaDescription = '2026 championship points standings for all four divisions at Chemung Speedrome.';
 
-const FEATURE_PTS = (pos: number): number => {
-  if (pos === 1) return 40;
-  if (pos === 2) return 35;
-  if (pos === 3) return 32;
-  if (pos <= 10) return 32 - (pos - 3) * 2;
-  return Math.max(5, 18 - (pos - 10));
-};
-const HEAT_BONUS = 2;
-const DNF_PTS = 5;
+// Points are scored by track officials each race (feature finish + heat-race
+// points) and entered per driver in the admin editor. The standings simply sum
+// those entered values — DNS = 1 pt, DQ / not present = 0 — so they always match
+// the official scoring sheet.
+const DNS_PTS = 1;
+
+// Strip a trailing status tag like " (BF)" so tagged finishes group with the driver
+const cleanName = (s: string): string => s.replace(/\s*\([^)]*\)\s*$/, '').trim();
 
 const DIVISION_ORDER = ['b-mod', 'hobby', '4cyl', 'super'];
 const DIV_NAMES: Record<string, string> = {
@@ -24,10 +23,7 @@ const DIV_NAMES: Record<string, string> = {
   'super': 'Super Stock',
 };
 
-const raceLabels = results.map(night => {
-  const d = new Date(night.date + 'T12:00:00');
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
-});
+const divCss = (slug: string): string => slug === 'b-mod' ? 'mod' : slug;
 
 const standingsPerDiv = DIVISION_ORDER.map(divSlug => {
   const entries: Map<string, (number | null)[]> = new Map();
@@ -36,24 +32,19 @@ const standingsPerDiv = DIVISION_ORDER.map(divSlug => {
     const div = night.divisions.find(d => d.slug === divSlug);
     if (!div) return;
 
-    const ensure = (driver: string) => {
-      if (!entries.has(driver)) entries.set(driver, new Array(results.length).fill(null));
+    const add = (driver: string, pts: number) => {
+      const name = cleanName(driver);
+      if (!entries.has(name)) entries.set(name, new Array(results.length).fill(null));
+      const cur = entries.get(name)![raceIdx];
+      entries.get(name)![raceIdx] = (cur ?? 0) + pts;
     };
 
-    div.feature.forEach(f => {
-      ensure(f.driver);
-      entries.get(f.driver)![raceIdx] = FEATURE_PTS(f.pos);
-    });
+    div.feature.forEach((f: any) => add(f.driver, typeof f.pts === 'number' ? f.pts : 0));
 
-    div.dnf.forEach(driver => {
-      ensure(driver);
-      if (entries.get(driver)![raceIdx] === null) entries.get(driver)![raceIdx] = DNF_PTS;
-    });
-
-    div.heats.forEach(driver => {
-      ensure(driver);
-      const cur = entries.get(driver)![raceIdx] ?? 0;
-      entries.get(driver)![raceIdx] = cur + HEAT_BONUS;
+    div.dnf.forEach((e: any) => {
+      const driver = typeof e === 'string' ? e : e.driver;
+      const tag = typeof e === 'string' ? 'DNF' : (e.tag ?? 'DNF');
+      add(driver, tag === 'DNS' ? DNS_PTS : 0);
     });
   });
 
@@ -66,7 +57,7 @@ const standingsPerDiv = DIVISION_ORDER.map(divSlug => {
     .sort((a, b) => b.total - a.total);
 
   return { slug: divSlug, name: DIV_NAMES[divSlug], rows };
-});
+}).filter(d => d.rows.length > 0);
 
 const raceCount = results.length;
 const lastRaceLabel = raceCount > 0 ? `Race ${raceCount}` : 'Season Start';
@@ -78,60 +69,40 @@ const lastRaceLabel = raceCount > 0 ? `Race ${raceCount}` : 'Season Start';
     <div class="container page-header-inner">
       <div class="eyebrow">2026 Season &middot; Through {lastRaceLabel}</div>
       <h1>The <span class="hot">Standings.</span></h1>
-      <p class="lede">Championship points through {lastRaceLabel}. Points are awarded for feature finishes and heat race wins.</p>
+      <p class="lede">Championship points through {lastRaceLabel}. Points combine each driver's feature finish and heat-race results, as scored by track officials.</p>
     </div>
   </section>
 
   <section class="block">
     <div class="container">
 
-      {standingsPerDiv.map(({ slug, name, rows }) => (
-        <div class="standings-div" id={slug}>
-          <div class="standings-div-hdr">
-            <div class="standings-div-name" data-c={slug}>{name}</div>
-            <div class="standings-div-races">{raceCount} Race{raceCount !== 1 ? 's' : ''} Scored</div>
+      <div class="standings-grid">
+        {standingsPerDiv.map(({ slug, name, rows }) => (
+          <div class="standings-col" id={slug} data-c={divCss(slug)}>
+            <div class="standings-col-hdr">
+              <span class="cn">{name}</span>
+              <span class="cr">{raceCount} race{raceCount !== 1 ? 's' : ''}</span>
+            </div>
+            <ol class="standings-list">
+              {rows.map((row, i) => (
+                <li class:list={[i < 3 && 'is-podium', i === 0 && 'is-1st']}>
+                  <span class="rk">{i + 1}</span>
+                  <span class="nm">{row.driver}</span>
+                  <span class="pt">{row.total}</span>
+                </li>
+              ))}
+            </ol>
           </div>
-          <div class="s-table-wrap">
-            <table class="s-table">
-              <thead>
-                <tr>
-                  <th class="s-th-rank">#</th>
-                  <th class="s-th-driver">Driver</th>
-                  {raceLabels.map(lbl => <th class="s-th-pts">{lbl}</th>)}
-                  <th class="s-th-total">Pts</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, i) => (
-                  <tr class="s-row" data-rank={i + 1}>
-                    <td class="s-rank">{i + 1}</td>
-                    <td class="s-driver">{row.driver}</td>
-                    {row.racePts.map(pts => (
-                      <td class:list={['s-pts', pts === null && 'is-dns']}>
-                        {pts !== null ? pts : '—'}
-                      </td>
-                    ))}
-                    <td class="s-total">{row.total}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
       <div class="pts-legend">
-        <div class="pts-legend-title">Points System</div>
+        <div class="pts-legend-title">How points work</div>
         <div class="pts-legend-list">
-          <span>1st <strong>40</strong></span>
-          <span>2nd <strong>35</strong></span>
-          <span>3rd <strong>32</strong></span>
-          <span>4th <strong>30</strong></span>
-          <span>5th <strong>28</strong></span>
-          <span>6th–10th <strong>–2 per position</strong></span>
-          <span>11th+ <strong>–1 per position</strong></span>
-          <span>Heat win <strong>+2 bonus</strong></span>
-          <span>DNF <strong>5</strong></span>
+          <span>Each race, drivers earn points from their <strong>heat</strong> and <strong>feature</strong> finishes.</span>
+          <span>DNS <strong>1 pt</strong></span>
+          <span>DQ / not present <strong>0 pts</strong></span>
+          <span>Points are scored by track officials.</span>
         </div>
       </div>
 

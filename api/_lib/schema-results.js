@@ -44,6 +44,9 @@ export function validateResultsEntry(entry) {
       }
       div.feature.forEach((f, fi) => {
         if (!f.driver?.trim()) errors.push({ field: `${p}.feature[${fi}].driver`, message: 'Driver name required' });
+        if (f.pts != null && (typeof f.pts !== 'number' || !Number.isFinite(f.pts) || f.pts < 0)) {
+          errors.push({ field: `${p}.feature[${fi}].pts`, message: 'Points must be a non-negative number' });
+        }
       });
     }
 
