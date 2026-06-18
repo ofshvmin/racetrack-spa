@@ -60,6 +60,9 @@ export function validateResultsEntry(entry) {
         if (typeof d === 'object' && d !== null) {
           if (!d.driver?.trim()) errors.push({ field: `${p}.dnf[${di2}].driver`, message: 'Driver name required' });
           if (d.tag && !VALID_TAGS.has(d.tag)) errors.push({ field: `${p}.dnf[${di2}].tag`, message: `Invalid tag "${d.tag}"` });
+          if (d.pts != null && (typeof d.pts !== 'number' || !Number.isFinite(d.pts) || d.pts < 0)) {
+            errors.push({ field: `${p}.dnf[${di2}].pts`, message: 'Points must be a non-negative number' });
+          }
           return;
         }
         errors.push({ field: `${p}.dnf[${di2}]`, message: 'dnf entry must be string or {driver, tag}' });

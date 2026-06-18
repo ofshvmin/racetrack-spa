@@ -504,7 +504,8 @@
           },
           {
             "driver": "Josh Parker",
-            "tag": "DNS"
+            "tag": "DNS",
+            "pts": 2
           },
           {
             "driver": "John Lane",
@@ -831,15 +832,18 @@
             "pos": 9,
             "driver": "Garrett Zacharias",
             "pts": 40
+          },
+          {
+            "pos": 10,
+            "driver": "Lucas Bartlett",
+            "pts": 38
           }
         ],
         "heats": [
           "J. Zacharias",
           "Youngs"
         ],
-        "dnf": [
-          "Lucas Bartlett"
-        ]
+        "dnf": []
       },
       {
         "slug": "super",
@@ -937,7 +941,7 @@
           },
           {
             "pos": 14,
-            "driver": "Kalysta Demark",
+            "driver": "Kalysta DeMark",
             "pts": 30
           },
           {
@@ -1162,7 +1166,13 @@
           }
         ],
         "heats": [],
-        "dnf": []
+        "dnf": [
+          {
+            "driver": "Michael Bast",
+            "tag": "DNS",
+            "pts": 1
+          }
+        ]
       },
       {
         "slug": "4cyl",
@@ -1212,6 +1222,11 @@
             "pos": 9,
             "driver": "Troy Hodge",
             "pts": 40
+          },
+          {
+            "pos": 10,
+            "driver": "Ronald Manwaring Jr",
+            "pts": 38
           }
         ],
         "heats": [],

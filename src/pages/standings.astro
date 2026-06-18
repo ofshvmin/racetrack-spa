@@ -44,7 +44,8 @@ const standingsPerDiv = DIVISION_ORDER.map(divSlug => {
     div.dnf.forEach((e: any) => {
       const driver = typeof e === 'string' ? e : e.driver;
       const tag = typeof e === 'string' ? 'DNF' : (e.tag ?? 'DNF');
-      add(driver, tag === 'DNS' ? DNS_PTS : 0);
+      const pts = (typeof e === 'object' && typeof e.pts === 'number') ? e.pts : (tag === 'DNS' ? DNS_PTS : 0);
+      add(driver, pts);
     });
   });
 
