@@ -3,6 +3,8 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import site from '../content/site.json';
 
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+
 const metaTitle = 'Contact Us | Chemung Speedrome';
 const metaDescription =
   `Reach out to Chemung Speedrome. Questions about racing, directions, sponsorships, or media — we're here. Call, email, or use the contact form.`;
@@ -130,6 +132,11 @@ const socialLabels: Record<string, string> = {
               ></textarea>
             </div>
 
+            <!-- Human verification — Cloudflare Turnstile -->
+            {turnstileSiteKey && (
+              <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark"></div>
+            )}
+
             <div class="flex flex-col sm:flex-row sm:items-center gap-4">
               <button
                 type="submit"
@@ -246,15 +253,24 @@ const socialLabels: Record<string, string> = {
   </section>
 </BaseLayout>
 
+{turnstileSiteKey && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
+
 <script>
   const p = new URLSearchParams(window.location.search);
   if (p.get('sent') === 'true')  document.getElementById('form-success')?.classList.remove('hidden');
-  if (p.get('error')) {
+  const error = p.get('error');
+  if (error) {
     const el = document.getElementById('form-error');
     if (el) {
       el.classList.remove('hidden');
-      const detail = p.get('detail');
-      if (detail) el.textContent += ` [${decodeURIComponent(detail)}]`;
+      if (error === 'captcha') {
+        el.textContent = "Please complete the “Verify you are human” check and try again.";
+      } else {
+        const detail = p.get('detail');
+        if (detail) el.textContent += ` [${decodeURIComponent(detail)}]`;
+      }
     }
   }
 </script>

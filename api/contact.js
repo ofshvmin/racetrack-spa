@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { verifyTurnstile } from './_lib/turnstile.js';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -10,7 +11,9 @@ export default async function handler(req, res) {
     return res.status(405).end('Method Not Allowed');
   }
 
-  const { name, email, subject, message, _gotcha } = req.body ?? {};
+  const body = req.body ?? {};
+  const { name, email, subject, message, _gotcha } = body;
+  const turnstileToken = body['cf-turnstile-response'];
 
   // Honeypot: bots fill this field, humans don't see it
   if (_gotcha) {
@@ -19,6 +22,13 @@ export default async function handler(req, res) {
 
   if (!name?.trim() || !email?.trim() || !message?.trim()) {
     return res.redirect(303, '/contact?error=missing');
+  }
+
+  // Human check: Cloudflare Turnstile
+  const xff = req.headers['x-forwarded-for'] ?? '';
+  const ip = xff.split(',')[0].trim() || req.socket?.remoteAddress || 'unknown';
+  if (!(await verifyTurnstile(turnstileToken, ip))) {
+    return res.redirect(303, '/contact?error=captcha');
   }
 
   try {

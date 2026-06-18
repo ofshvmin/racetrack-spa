@@ -9,6 +9,8 @@ const session = requireSession({ headers: { cookie: Astro.request.headers.get('c
 
 const error = Astro.url.searchParams.get('error');
 const errorMessage = error === 'invalid-link' ? 'That sign-in link has expired or is invalid. Please request a new one.' : null;
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 ---
 
 <AdminShell title="Admin" email={session?.email}>
@@ -36,6 +38,12 @@ const errorMessage = error === 'invalid-link' ? 'That sign-in link has expired o
             style="width:100%;padding:12px 14px;background:#1a1a1e;border:1px solid #333;border-radius:4px;color:#f5f3ef;font-size:15px;font-family:inherit;outline:none"
           />
         </div>
+        {turnstileSiteKey && (
+          <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark"></div>
+        )}
+
+        <div id="signin-error" hidden style="background:#3a1a1a;border:1px solid #e8552a;color:#f5c0b0;padding:12px 16px;border-radius:4px;font-size:14px"></div>
+
         <button type="submit" id="signin-btn" style="background:#e8552a;color:#fff;border:none;padding:14px;border-radius:4px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.02em">
           Send sign-in link
         </button>
@@ -74,26 +82,52 @@ const errorMessage = error === 'invalid-link' ? 'That sign-in link has expired o
   )}
 </AdminShell>
 
+{turnstileSiteKey && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
+
 <script>
   const form = document.getElementById('signin-form');
   const btn = document.getElementById('signin-btn') as HTMLButtonElement | null;
   const success = document.getElementById('signin-success');
+  const errorBox = document.getElementById('signin-error');
+
+  const fail = (msg: string) => {
+    if (errorBox) {
+      errorBox.textContent = msg;
+      errorBox.hidden = false;
+    }
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Send sign-in link';
+    }
+    (window as any).turnstile?.reset();
+  };
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!btn || !form) return;
+    if (errorBox) errorBox.hidden = true;
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
     const email = (form.querySelector('#email') as HTMLInputElement)?.value ?? '';
+    const token = (form.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value ?? '';
+
     try {
-      await fetch('/api/admin/auth-request', {
+      const res = await fetch('/api/admin/auth-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'fetch' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, 'cf-turnstile-response': token }),
         credentials: 'same-origin',
       });
-    } catch {}
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        return fail(data.error ?? 'Something went wrong. Please try again.');
+      }
+    } catch {
+      return fail('Network error. Please try again.');
+    }
 
     form.hidden = true;
     if (success) success.hidden = false;

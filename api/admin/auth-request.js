@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import { createMagicToken, createNonceCookie, isAllowed } from '../_lib/session.js';
 import { checkRateLimit, getClientIp } from '../_lib/rate-limit.js';
+import { verifyTurnstile } from '../_lib/turnstile.js';
 import crypto from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -13,6 +14,11 @@ export default async function handler(req, res) {
   const ip = getClientIp(req);
   if (!checkRateLimit(ip)) {
     return res.status(429).json({ error: 'Too many requests. Please wait a few minutes and try again.' });
+  }
+
+  // Human check: Cloudflare Turnstile
+  if (!(await verifyTurnstile(req.body?.['cf-turnstile-response'], ip))) {
+    return res.status(400).json({ error: 'Please complete the human-verification check and try again.' });
   }
 
   const email = (req.body?.email ?? '').trim().toLowerCase();
