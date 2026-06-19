@@ -9,7 +9,12 @@ export default defineConfig({
   output: 'server',
   adapter: vercel(),
   site: 'https://chemungspeedrome.com',
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      // Keep admin pages out of the sitemap to match robots.txt (Disallow: /admin/)
+      filter: (page) => !page.includes('/admin'),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

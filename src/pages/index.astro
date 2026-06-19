@@ -14,11 +14,36 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SportsActivityLocation',
   name: site.trackName,
-  description: site.tagline,
-  address: { '@type': 'PostalAddress', streetAddress: site.address },
+  description: metaDescription,
+  url: 'https://chemungspeedrome.com',
   telephone: site.phone,
   email: site.email,
-  url: 'https://chemungspeedrome.com',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '605 Wyncoop Creek Rd',
+    addressLocality: 'Chemung',
+    addressRegion: 'NY',
+    postalCode: '14825',
+    addressCountry: 'US',
+  },
+  // Approximate — confirm exact lat/lng from the Google Maps pin and update.
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 42.0007,
+    longitude: -76.6339,
+  },
+  // Friday night racing; gates open at the default gate time.
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: 'Friday',
+      opens: '17:00',
+      closes: '22:00',
+    },
+  ],
+  priceRange: `${site.admission.children}–${site.admission.adult}`,
+  // TODO: add a real track photo (1200px+ wide) and reference it here, e.g.
+  // image: 'https://chemungspeedrome.com/images/track.jpg',
   sameAs: [site.socialLinks.facebook, site.socialLinks.instagram].filter(Boolean),
 };
 
