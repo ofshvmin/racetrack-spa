@@ -1,5 +1,94 @@
 [
   {
+    "date": "2026-06-19",
+    "title": "Race Night",
+    "raceNum": 7,
+    "divisions": [
+      {
+        "slug": "hobby",
+        "name": "Hobby Stocks",
+        "features": [
+          {
+            "label": "Feature 1",
+            "finishers": [
+              { "pos": 1, "driver": "Tom Shaffer" },
+              { "pos": 2, "driver": "Mark Taylor" },
+              { "pos": 3, "driver": "Terry Potrzebowski" },
+              { "pos": 4, "driver": "Ethan Roberts" },
+              { "pos": 5, "driver": "Cullen Sharpsteen" },
+              { "pos": 6, "driver": "Dave Decker" },
+              { "pos": 7, "driver": "Ryan Osgood" },
+              { "pos": 8, "driver": "Thomas Decker" },
+              { "pos": 9, "driver": "Cody Marshall" },
+              { "pos": 10, "driver": "John Lane" },
+              { "pos": 11, "driver": "M-R Taylor" },
+              { "pos": 12, "driver": "Josh Parker" },
+              { "pos": 13, "driver": "Paul Bailey" },
+              { "pos": 14, "driver": "Kamden Wheeler" },
+              { "pos": 15, "driver": "Chad Lane" }
+            ]
+          },
+          {
+            "label": "Feature 2 — Pill Draw Inverted Top 10",
+            "finishers": [
+              { "pos": 1, "driver": "Cullen Sharpsteen" },
+              { "pos": 2, "driver": "Mark Taylor" },
+              { "pos": 3, "driver": "Cody Marshall" },
+              { "pos": 4, "driver": "Terry Potrzebowski" },
+              { "pos": 5, "driver": "Tom Shaffer" },
+              { "pos": 6, "driver": "Ethan Roberts" },
+              { "pos": 7, "driver": "Ryan Osgood" },
+              { "pos": 8, "driver": "John Lane" },
+              { "pos": 9, "driver": "Thomas Decker" },
+              { "pos": 10, "driver": "Dave Decker" },
+              { "pos": 11, "driver": "M-R Taylor" },
+              { "pos": 12, "driver": "Chad Lane" },
+              { "pos": 13, "driver": "Josh Parker" },
+              { "pos": 14, "driver": "Paul Bailey" },
+              { "pos": 15, "driver": "Kamden Wheeler" }
+            ]
+          }
+        ],
+        "heats": ["Taylor", "Shaffer", "Sharpsteen"],
+        "dnf": [{ "driver": "Michael Bast", "tag": "DNS" }]
+      },
+      {
+        "slug": "b-mod",
+        "name": "Modifieds",
+        "feature": [
+          { "pos": 1, "driver": "Zack Curren" },
+          { "pos": 2, "driver": "Jimmy Zacharias" },
+          { "pos": 3, "driver": "Zack Knowlden" },
+          { "pos": 4, "driver": "Lee Sharpsteen" },
+          { "pos": 5, "driver": "Jesse Kent" },
+          { "pos": 6, "driver": "Garrett Zacharias" },
+          { "pos": 7, "driver": "Charlie Sharpsteen" },
+          { "pos": 8, "driver": "Nick Morich" },
+          { "pos": 9, "driver": "Tommy Rought" },
+          { "pos": 10, "driver": "Jeffery Daugherty" },
+          { "pos": 11, "driver": "Tyler Harbst" },
+          { "pos": 12, "driver": "Joey Bevacqua" },
+          { "pos": 13, "driver": "Lucas Bartlett" },
+          { "pos": 14, "driver": "JP Harbst" }
+        ],
+        "heats": ["J Zacharias", "Curren"],
+        "dnf": []
+      },
+      {
+        "slug": "4cyl",
+        "name": "4 Cylinder",
+        "feature": [
+          { "pos": 1, "driver": "Greg Moldt" },
+          { "pos": 2, "driver": "Zach Daugherty" },
+          { "pos": 3, "driver": "Mike Kintner" },
+          { "pos": 4, "driver": "Ronald Manwaring Jr" }
+        ],
+        "heats": ["Moldt"],
+        "dnf": []
+      }
+    ]
+  },
+  {
     "date": "2026-06-12",
     "title": "Race Night",
     "raceNum": 6,

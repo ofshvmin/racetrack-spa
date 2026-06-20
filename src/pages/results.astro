@@ -26,7 +26,10 @@ const standingsPerDiv = DIVISION_ORDER.map(divSlug => {
       const name = cleanName(driver);
       entries.set(name, (entries.get(name) ?? 0) + pts);
     };
-    div.feature.forEach((f: any) => add(f.driver, typeof f.pts === 'number' ? f.pts : 0));
+    const featureFinishers: any[] = div.features
+      ? (div.features as any[]).flatMap((feat: any) => feat.finishers)
+      : div.feature;
+    featureFinishers.forEach((f: any) => add(f.driver, typeof f.pts === 'number' ? f.pts : 0));
     div.dnf.forEach((e: any) => {
       const driver = typeof e === 'string' ? e : e.driver;
       const tag = typeof e === 'string' ? 'DNF' : (e.tag ?? 'DNF');
@@ -51,7 +54,12 @@ const resultNights = results.map(night => {
     kind: 'results' as const,
     date: night.date,
     fullDate: d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-    totalEntries: night.divisions.reduce((s: number, div: any) => s + div.feature.length + div.dnf.length, 0),
+    totalEntries: night.divisions.reduce((s: number, div: any) => {
+      const entryCount = div.features
+        ? ((div.features as any[])[0]?.finishers?.length ?? 0)
+        : div.feature.length;
+      return s + entryCount + div.dnf.length;
+    }, 0),
     divisions: night.divisions,
     title: night.title,
   };
@@ -88,7 +96,10 @@ results.forEach(night => {
       if (!driverMap.has(key)) driverMap.set(key, { name, finishes: [] });
       driverMap.get(key)!.finishes.push({ date: night.date, dateShort, title: night.title, slug: div.slug, className, ...fin });
     };
-    div.feature.forEach((f: any) => push(f.driver, { pos: f.pos, pts: typeof f.pts === 'number' ? f.pts : 0, tag: null }));
+    const nightFinishers: any[] = div.features
+      ? (div.features as any[]).flatMap((feat: any) => feat.finishers)
+      : div.feature;
+    nightFinishers.forEach((f: any) => push(f.driver, { pos: f.pos, pts: typeof f.pts === 'number' ? f.pts : 0, tag: null }));
     div.dnf.forEach((e: any) => {
       const driver = typeof e === 'string' ? e : e.driver;
       const tag = typeof e === 'string' ? 'DNF' : (e.tag ?? 'DNF');
@@ -164,7 +175,7 @@ const driverIndex = Array.from(driverMap.values()).map(d => {
               <section class="class-panel" data-c={divCss(div.slug)}>
                 <div class="cls-head">
                   <div class="cls-name">{div.name}</div>
-                  <div class="cls-entries"><strong>{div.feature.length + div.dnf.length}</strong> entries</div>
+                  <div class="cls-entries"><strong>{(div.features ? div.features[0].finishers.length : div.feature.length) + div.dnf.length}</strong> entries</div>
                 </div>
                 {div.heats.length > 0 && (
                   <div class="heats">
@@ -172,15 +183,32 @@ const driverIndex = Array.from(driverMap.values()).map(d => {
                     <span class="winners">{div.heats.map((h: string) => <span>{h}</span>)}</span>
                   </div>
                 )}
-                <ol class="field">
-                  {div.feature.map((f: any) => (
-                    <li class:list={[f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd']}>
-                      <span class="pos">{f.pos}</span>
-                      <span class="nm">{f.driver}</span>
-                      {typeof f.pts === 'number' && <span class="pts">{f.pts}<i>pts</i></span>}
-                    </li>
-                  ))}
-                </ol>
+                {div.features ? (
+                  (div.features as any[]).map((feat: any) => (
+                    <div class="multi-feature">
+                      <div class="feature-label">{feat.label}</div>
+                      <ol class="field">
+                        {feat.finishers.map((f: any) => (
+                          <li class:list={[f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd']}>
+                            <span class="pos">{f.pos}</span>
+                            <span class="nm">{f.driver}</span>
+                            {typeof f.pts === 'number' && <span class="pts">{f.pts}<i>pts</i></span>}
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  ))
+                ) : (
+                  <ol class="field">
+                    {div.feature.map((f: any) => (
+                      <li class:list={[f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd']}>
+                        <span class="pos">{f.pos}</span>
+                        <span class="nm">{f.driver}</span>
+                        {typeof f.pts === 'number' && <span class="pts">{f.pts}<i>pts</i></span>}
+                      </li>
+                    ))}
+                  </ol>
+                )}
                 {div.dnf.length > 0 && (
                   <div class="notes">
                     {div.dnf.map((entry: any) => {
@@ -264,6 +292,16 @@ const driverIndex = Array.from(driverMap.values()).map(d => {
 </BaseLayout>
 
 <style>
+  .feature-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-dim);
+    padding: 10px 14px 4px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .multi-feature:first-child .feature-label { border-top: 0; padding-top: 6px; }
+
   .season-controls {
     display: flex; flex-wrap: wrap; align-items: center;
     gap: 16px 20px; margin-top: 28px;
