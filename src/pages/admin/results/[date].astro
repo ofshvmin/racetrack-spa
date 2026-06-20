@@ -25,7 +25,9 @@ const raceNum = existing?.raceNum ?? (maxRaceNum + 1);
 // Collect all driver names from history for autocomplete
 const allDrivers = [...new Set((results as any[]).flatMap((r: any) =>
   r.divisions.flatMap((d: any) => [
-    ...d.feature.map((f: any) => f.driver),
+    ...(d.features
+      ? (d.features as any[]).flatMap((feat: any) => feat.finishers.map((f: any) => f.driver))
+      : d.feature.map((f: any) => f.driver)),
     ...d.dnf.map((e: any) => typeof e === 'string' ? e : e.driver),
   ])
 ))].sort();
