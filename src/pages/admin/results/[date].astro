@@ -18,11 +18,9 @@ const existing = (results as any[]).find(r => r.date === date);
 const d = new Date(date + 'T12:00:00');
 const fullDate = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-// Derive the next raceNum
 const maxRaceNum = (results as any[]).reduce((m: number, r: any) => Math.max(m, r.raceNum ?? 0), 0);
 const raceNum = existing?.raceNum ?? (maxRaceNum + 1);
 
-// Collect all driver names from history for autocomplete
 const allDrivers = [...new Set((results as any[]).flatMap((r: any) =>
   r.divisions.flatMap((d: any) => [
     ...(d.features
@@ -54,10 +52,8 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
     </div>
   </div>
 
-  <!-- Status banner -->
   <div id="status-banner" hidden style="margin-bottom:24px;padding:14px 18px;border-radius:4px;font-size:14px;line-height:1.5"></div>
 
-  <!-- Preview pane -->
   <div id="preview-pane" hidden style="margin-bottom:32px">
     <h2 style="font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#a3a09a;margin:0 0 16px">Preview</h2>
     <div id="preview-content" style="border:1px solid #333;border-radius:8px;padding:24px;background:#111113"></div>
@@ -67,10 +63,12 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
     </div>
   </div>
 
-  <!-- Editor form -->
   <div id="editor-form">
     {DIVISIONS.map(div => {
       const existingDiv = existing?.divisions?.find((d: any) => d.slug === div.slug);
+      const featuresData: any[] = existingDiv?.features
+        ?? [{ label: 'Feature 1', finishers: existingDiv?.feature ?? [] }];
+      const isMulti = !!existingDiv?.features;
       return (
         <div class="division-block" data-slug={div.slug} data-name={div.name} style="margin-bottom:32px;background:#1a1a1e;border:1px solid #2a2a2e;border-radius:8px;padding:24px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
@@ -89,30 +87,49 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
             />
           </div>
 
-          <!-- Driver rows -->
-          <div>
+          <!-- Feature sections -->
+          <div style="margin-bottom:20px">
             <label style="display:block;font-size:12px;color:#a3a09a;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Finishing order</label>
-            <div class="driver-list" style="display:flex;flex-direction:column;gap:6px">
-              {(existingDiv?.feature ?? []).map((f: any) => (
-                <div class="driver-row" draggable="true" style="display:flex;align-items:center;gap:8px;background:#0d0d10;border:1px solid #2a2a2e;border-radius:4px;padding:8px 10px">
-                  <span class="drag-handle" style="color:#555;cursor:grab;user-select:none;font-size:16px;line-height:1">⠿</span>
-                  <span class="pos-num" style="min-width:24px;font-size:13px;color:#a3a09a;font-variant-numeric:tabular-nums">{f.pos}.</span>
-                  <input type="text" class="driver-name" value={f.driver} list="driver-datalist" autocomplete="off"
-                    placeholder="Driver name"
-                    style="flex:1;background:none;border:none;color:#f5f3ef;font-size:14px;font-family:inherit;outline:none;min-width:0" />
-                  <input type="number" class="driver-pts" value={f.pts ?? ''} min="0" inputmode="numeric"
-                    placeholder="pts" title="Points scored"
-                    style="width:54px;background:#0a0a0c;border:1px solid #333;border-radius:4px;color:#f5f3ef;font-size:13px;font-family:inherit;text-align:center;padding:5px 4px;min-width:0" />
-                  <button type="button" class="tag-btn" data-tag="" style="font-size:11px;background:#222;border:1px solid #333;color:#888;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;white-space:nowrap">+ tag</button>
-                  <button type="button" class="remove-row" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px;padding:0;line-height:1" title="Remove">×</button>
+            <div class="features-container" style="display:flex;flex-direction:column;gap:10px">
+              {featuresData.map((feat: any, fi: number) => (
+                <div class="feature-section" style="border:1px solid #222;border-radius:6px;padding:12px">
+                  <div class="feature-section-head" style={isMulti ? 'display:flex;align-items:center;gap:8px;margin-bottom:10px' : 'display:none'}>
+                    <input type="text" class="feature-label-input" value={feat.label} placeholder={`Feature ${fi + 1}`}
+                      style="flex:1;padding:6px 10px;background:#0a0a0c;border:1px solid #2d2d30;border-radius:4px;color:#f5f3ef;font-size:12px;font-family:inherit;letter-spacing:0.05em" />
+                    {fi > 0 && (
+                      <button type="button" class="remove-feature-btn"
+                        style="background:none;border:1px solid #444;color:#888;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap">
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                  <div class="driver-list" style="display:flex;flex-direction:column;gap:6px">
+                    {feat.finishers.map((f: any) => (
+                      <div class="driver-row" draggable="true" style="display:flex;align-items:center;gap:8px;background:#0d0d10;border:1px solid #2a2a2e;border-radius:4px;padding:8px 10px">
+                        <span class="drag-handle" style="color:#555;cursor:grab;user-select:none;font-size:16px;line-height:1">⠿</span>
+                        <span class="pos-num" style="min-width:24px;font-size:13px;color:#a3a09a;font-variant-numeric:tabular-nums">{f.pos}.</span>
+                        <input type="text" class="driver-name" value={f.driver} list="driver-datalist" autocomplete="off"
+                          placeholder="Driver name"
+                          style="flex:1;background:none;border:none;color:#f5f3ef;font-size:14px;font-family:inherit;outline:none;min-width:0" />
+                        <input type="number" class="driver-pts" value={f.pts ?? ''} min="0" inputmode="numeric"
+                          placeholder="pts" title="Points scored"
+                          style="width:54px;background:#0a0a0c;border:1px solid #333;border-radius:4px;color:#f5f3ef;font-size:13px;font-family:inherit;text-align:center;padding:5px 4px;min-width:0" />
+                        <button type="button" class="tag-btn" data-tag="" style="font-size:11px;background:#222;border:1px solid #333;color:#888;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;white-space:nowrap">+ tag</button>
+                        <button type="button" class="remove-row" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px;padding:0;line-height:1" title="Remove">×</button>
+                      </div>
+                    ))}
+                  </div>
+                  <button type="button" class="add-driver-btn" style="margin-top:10px;background:none;border:1px dashed #333;color:#a3a09a;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:13px;font-family:inherit;width:100%">+ Add driver</button>
                 </div>
               ))}
             </div>
-            <button type="button" class="add-driver-btn" style="margin-top:10px;background:none;border:1px dashed #333;color:#a3a09a;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:13px;font-family:inherit;width:100%">+ Add driver</button>
+            <button type="button" class="add-feature-btn" style="margin-top:8px;background:none;border:1px dashed #2a3d2a;color:#5a8a5a;padding:7px 14px;border-radius:4px;cursor:pointer;font-size:12px;font-family:inherit;width:100%">
+              {isMulti ? '+ Add another feature' : '+ Add second feature'}
+            </button>
           </div>
 
           <!-- DNS/DQ section -->
-          <div style="margin-top:20px">
+          <div>
             <label style="display:block;font-size:12px;color:#a3a09a;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">DNF / DNS / DQ <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
             <div class="dnf-list" style="display:flex;flex-direction:column;gap:6px">
               {(existingDiv?.dnf ?? []).map((entry: any) => {
@@ -141,12 +158,10 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
     })}
   </div>
 
-  <!-- Driver autocomplete datalist -->
   <datalist id="driver-datalist">
     {allDrivers.map(name => <option value={name} />)}
   </datalist>
 
-  <!-- Tag picker dialog -->
   <dialog id="tag-dialog" style="background:#1a1a1e;border:1px solid #333;border-radius:8px;padding:20px;color:#f5f3ef;min-width:200px">
     <p style="margin:0 0 14px;font-size:14px;font-weight:600">Finish status</p>
     <div style="display:flex;flex-direction:column;gap:8px" id="tag-options">
@@ -163,7 +178,6 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
     </div>
   </dialog>
 
-  <!-- Confirm dialog -->
   <dialog id="confirm-dialog" style="background:#1a1a1e;border:1px solid #333;border-radius:8px;padding:28px;color:#f5f3ef;min-width:320px;max-width:480px">
     <h3 id="confirm-title" style="margin:0 0 12px;font-size:18px">Publish results?</h3>
     <p id="confirm-msg" style="margin:0 0 24px;font-size:14px;color:#a3a09a;line-height:1.6"></p>
@@ -178,14 +192,13 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
 <script define:vars={{ date, scheduleTitle: scheduleEntry.title, raceNum, existing, SITE }}>
 (function () {
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
+  // ── Row/section factories ──────────────────────────────────────────────────
 
   function makeDriverRow(name = '', tag = '', pts = '') {
     const div = document.createElement('div');
     div.className = 'driver-row';
     div.draggable = true;
     div.style.cssText = 'display:flex;align-items:center;gap:8px;background:#0d0d10;border:1px solid #2a2a2e;border-radius:4px;padding:8px 10px';
-    const tagLabel = tag ? ` (${tag})` : '';
     div.innerHTML = `
       <span class="drag-handle" style="color:#555;cursor:grab;user-select:none;font-size:16px;line-height:1">⠿</span>
       <span class="pos-num" style="min-width:24px;font-size:13px;color:#a3a09a;font-variant-numeric:tabular-nums"></span>
@@ -223,6 +236,28 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
     return div;
   }
 
+  function makeFeatureSection(label) {
+    const section = document.createElement('div');
+    section.className = 'feature-section';
+    section.style.cssText = 'border:1px solid #222;border-radius:6px;padding:12px';
+    section.innerHTML = `
+      <div class="feature-section-head" style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <input type="text" class="feature-label-input" value="${label.replace(/"/g,'&quot;')}" placeholder="${label}"
+          style="flex:1;padding:6px 10px;background:#0a0a0c;border:1px solid #2d2d30;border-radius:4px;color:#f5f3ef;font-size:12px;font-family:inherit;letter-spacing:0.05em" />
+        <button type="button" class="remove-feature-btn"
+          style="background:none;border:1px solid #444;color:#888;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap">
+          Remove
+        </button>
+      </div>
+      <div class="driver-list" style="display:flex;flex-direction:column;gap:6px"></div>
+      <button type="button" class="add-driver-btn" style="margin-top:10px;background:none;border:1px dashed #333;color:#a3a09a;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:13px;font-family:inherit;width:100%">+ Add driver</button>
+    `;
+    wireFeatureSection(section);
+    return section;
+  }
+
+  // ── Per-feature-section wiring ─────────────────────────────────────────────
+
   function renumberRows(list) {
     list.querySelectorAll('.driver-row').forEach((row, i) => {
       const span = row.querySelector('.pos-num');
@@ -230,63 +265,39 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
     });
   }
 
-  // ── Wire up each division block ────────────────────────────────────────────
+  function wireFeatureSection(section) {
+    const list = section.querySelector('.driver-list');
 
-  document.querySelectorAll('.division-block').forEach(block => {
-    const list = block.querySelector('.driver-list');
-    const dnfList = block.querySelector('.dnf-list');
-
-    renumberRows(list);
-
-    // Add driver
-    block.querySelector('.add-driver-btn').addEventListener('click', () => {
+    section.querySelector('.add-driver-btn').addEventListener('click', () => {
       const row = makeDriverRow();
       list.appendChild(row);
       renumberRows(list);
       row.querySelector('.driver-name').focus();
     });
 
-    // Add DNF row
-    block.querySelector('.add-dnf-btn').addEventListener('click', () => {
-      const row = makeDnfRow();
-      dnfList.appendChild(row);
-      row.querySelector('.dnf-name').focus();
-    });
-
-    // Remove driver row (delegated)
     list.addEventListener('click', e => {
       if (e.target.classList.contains('remove-row')) {
         e.target.closest('.driver-row').remove();
         renumberRows(list);
+        return;
+      }
+      if (e.target.classList.contains('tag-btn')) {
+        const btn = e.target;
+        const dialog = document.getElementById('tag-dialog');
+        const current = btn.dataset.tag ?? '';
+        dialog.querySelectorAll('input[name="tag-pick"]').forEach(r => { r.checked = r.value === current; });
+        dialog.showModal();
+        document.getElementById('tag-apply').onclick = () => {
+          const picked = dialog.querySelector('input[name="tag-pick"]:checked')?.value ?? '';
+          btn.dataset.tag = picked;
+          btn.textContent = picked || '+ tag';
+          btn.style.color = picked ? '#e8552a' : '#888';
+          dialog.close();
+        };
+        document.getElementById('tag-cancel').onclick = () => dialog.close();
       }
     });
 
-    // Remove DNF row (delegated)
-    dnfList.addEventListener('click', e => {
-      if (e.target.classList.contains('remove-dnf')) {
-        e.target.closest('.dnf-row').remove();
-      }
-    });
-
-    // Tag button (opens dialog)
-    list.addEventListener('click', e => {
-      if (!e.target.classList.contains('tag-btn')) return;
-      const btn = e.target;
-      const dialog = document.getElementById('tag-dialog');
-      const current = btn.dataset.tag ?? '';
-      dialog.querySelectorAll('input[name="tag-pick"]').forEach(r => { r.checked = r.value === current; });
-      dialog.showModal();
-      document.getElementById('tag-apply').onclick = () => {
-        const picked = dialog.querySelector('input[name="tag-pick"]:checked')?.value ?? '';
-        btn.dataset.tag = picked;
-        btn.textContent = picked || '+ tag';
-        btn.style.color = picked ? '#e8552a' : '#888';
-        dialog.close();
-      };
-      document.getElementById('tag-cancel').onclick = () => dialog.close();
-    });
-
-    // Drag-to-reorder
     let dragSrc = null;
     list.addEventListener('dragstart', e => {
       dragSrc = e.target.closest('.driver-row');
@@ -303,9 +314,69 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
       }
     });
     list.addEventListener('dragend', () => { dragSrc = null; renumberRows(list); });
+  }
+
+  // ── Feature-section visibility ─────────────────────────────────────────────
+
+  function updateFeatureVisibility(block) {
+    const sections = block.querySelectorAll('.feature-section');
+    const multi = sections.length > 1;
+    sections.forEach(section => {
+      const head = section.querySelector('.feature-section-head');
+      if (head) head.style.display = multi ? 'flex' : 'none';
+    });
+    const addBtn = block.querySelector('.add-feature-btn');
+    if (addBtn) addBtn.textContent = multi ? '+ Add another feature' : '+ Add second feature';
+  }
+
+  // ── Wire each division block ───────────────────────────────────────────────
+
+  document.querySelectorAll('.division-block').forEach(block => {
+    const container = block.querySelector('.features-container');
+    const dnfList = block.querySelector('.dnf-list');
+
+    block.querySelectorAll('.feature-section').forEach(section => wireFeatureSection(section));
+
+    container.addEventListener('click', e => {
+      if (e.target.classList.contains('remove-feature-btn')) {
+        e.target.closest('.feature-section').remove();
+        updateFeatureVisibility(block);
+      }
+    });
+
+    block.querySelector('.add-feature-btn').addEventListener('click', () => {
+      const count = container.querySelectorAll('.feature-section').length;
+      container.appendChild(makeFeatureSection(`Feature ${count + 1}`));
+      updateFeatureVisibility(block);
+    });
+
+    block.querySelector('.add-dnf-btn').addEventListener('click', () => {
+      const row = makeDnfRow();
+      dnfList.appendChild(row);
+      row.querySelector('.dnf-name').focus();
+    });
+
+    dnfList.addEventListener('click', e => {
+      if (e.target.classList.contains('remove-dnf')) e.target.closest('.dnf-row').remove();
+    });
   });
 
   // ── Collect form data ──────────────────────────────────────────────────────
+
+  function collectFinishers(section) {
+    const finishers = [];
+    section.querySelectorAll('.driver-row').forEach((row, i) => {
+      const driver = row.querySelector('.driver-name').value.trim();
+      const tag = row.querySelector('.tag-btn').dataset.tag ?? '';
+      const ptsRaw = row.querySelector('.driver-pts')?.value.trim() ?? '';
+      if (driver) {
+        const entry = { pos: i + 1, driver: tag ? `${driver} (${tag})` : driver };
+        if (ptsRaw !== '') entry.pts = Number(ptsRaw);
+        finishers.push(entry);
+      }
+    });
+    return finishers;
+  }
 
   function collectData() {
     const divisions = [];
@@ -314,25 +385,25 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
       const name = block.dataset.name;
       const heatsRaw = block.querySelector('.heat-input').value.trim();
       const heats = heatsRaw ? heatsRaw.split(',').map(h => h.trim()).filter(Boolean) : [];
-      const feature = [];
-      block.querySelectorAll('.driver-row').forEach((row, i) => {
-        const driver = row.querySelector('.driver-name').value.trim();
-        const tag = row.querySelector('.tag-btn').dataset.tag ?? '';
-        const ptsRaw = row.querySelector('.driver-pts')?.value.trim() ?? '';
-        if (driver) {
-          const entry = { pos: i + 1, driver: tag ? `${driver} (${tag})` : driver };
-          if (ptsRaw !== '') entry.pts = Number(ptsRaw);
-          feature.push(entry);
-        }
-      });
+      const featureSections = [...block.querySelectorAll('.feature-section')];
       const dnf = [];
       block.querySelectorAll('.dnf-row').forEach(row => {
         const driver = row.querySelector('.dnf-name').value.trim();
         const tag = row.querySelector('.dnf-tag').value;
         if (driver) dnf.push({ driver, tag });
       });
-      if (feature.length > 0 || dnf.length > 0 || heats.length > 0) {
-        divisions.push({ slug, name, feature, heats, dnf });
+
+      if (featureSections.length === 1) {
+        const feature = collectFinishers(featureSections[0]);
+        if (feature.length > 0 || dnf.length > 0 || heats.length > 0)
+          divisions.push({ slug, name, feature, heats, dnf });
+      } else {
+        const features = featureSections.map((section, i) => ({
+          label: section.querySelector('.feature-label-input').value.trim() || `Feature ${i + 1}`,
+          finishers: collectFinishers(section),
+        })).filter(f => f.finishers.length > 0);
+        if (features.length > 0 || dnf.length > 0 || heats.length > 0)
+          divisions.push({ slug, name, features, heats, dnf });
       }
     });
     return { date, title: scheduleTitle, raceNum, divisions };
@@ -340,20 +411,32 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
 
   // ── Preview ────────────────────────────────────────────────────────────────
 
+  function renderFinishers(finishers) {
+    return finishers.map(f => {
+      const cls = [f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd'].filter(Boolean).join(' ');
+      return `<li class="${cls}"><span class="pos">${f.pos}</span><span class="nm">${f.driver}</span></li>`;
+    }).join('');
+  }
+
   function renderPreview(data) {
     const d = new Date(data.date + 'T12:00:00');
     const fullDate = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    const totalEntries = data.divisions.reduce((s, div) => s + div.feature.length + div.dnf.length, 0);
     const divCss = slug => slug === 'b-mod' ? 'mod' : slug;
+    const totalEntries = data.divisions.reduce((s, div) => {
+      const cnt = div.features ? (div.features[0]?.finishers?.length ?? 0) : div.feature.length;
+      return s + cnt + div.dnf.length;
+    }, 0);
 
     const divHtml = data.divisions.map(div => {
       const heatsHtml = div.heats.length > 0
         ? `<div class="heats"><span class="lbl">Heat${div.heats.length > 1 ? 's' : ''}</span><span class="winners">${div.heats.map(h => `<span>${h}</span>`).join('')}</span></div>`
         : '';
-      const featureHtml = div.feature.map(f => {
-        const cls = [f.pos <= 3 && 'is-podium', f.pos === 1 && 'is-1st', f.pos === 2 && 'is-2nd', f.pos === 3 && 'is-3rd'].filter(Boolean).join(' ');
-        return `<li class="${cls}"><span class="pos">${f.pos}</span><span class="nm">${f.driver}</span></li>`;
-      }).join('');
+      const featureHtml = div.features
+        ? div.features.map(feat =>
+            `<div class="multi-feature"><div class="feature-label">${feat.label}</div><ol class="field">${renderFinishers(feat.finishers)}</ol></div>`
+          ).join('')
+        : `<ol class="field">${renderFinishers(div.feature)}</ol>`;
+      const entryCount = div.features ? (div.features[0]?.finishers?.length ?? 0) : div.feature.length;
       const dnfHtml = div.dnf.length > 0
         ? `<div class="notes">${div.dnf.map(e => {
             const driver = typeof e === 'string' ? e : e.driver;
@@ -362,8 +445,8 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
           }).join('')}</div>`
         : '';
       return `<section class="class-panel" data-c="${divCss(div.slug)}">
-        <div class="cls-head"><div class="cls-name">${div.name}</div><div class="cls-entries"><strong>${div.feature.length + div.dnf.length}</strong> entries</div></div>
-        ${heatsHtml}<ol class="field">${featureHtml}</ol>${dnfHtml}
+        <div class="cls-head"><div class="cls-name">${div.name}</div><div class="cls-entries"><strong>${entryCount + div.dnf.length}</strong> entries</div></div>
+        ${heatsHtml}${featureHtml}${dnfHtml}
       </section>`;
     }).join('');
 
@@ -374,7 +457,7 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
           <div class="feature">${data.title}</div>
         </div>
         <div></div>
-        <div class="meta"><strong>${data.divisions.length} classes</strong> &middot; ${totalEntries} entries<br />Gates 5:00 &middot; Green 7:00</div>
+        <div class="meta"><strong>${data.divisions.length} classes</strong> &middot; ${totalEntries} entries</div>
       </header>
       <div class="class-grid">${divHtml}</div>
     </article>`;
@@ -394,7 +477,6 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
 
   function showBanner(msg, type) {
     const b = document.getElementById('status-banner');
-    b.textContent = '';
     b.innerHTML = msg;
     b.style.background = type === 'success' ? '#1a3a1a' : type === 'error' ? '#3a1a1a' : '#1a1a2e';
     b.style.border = `1px solid ${type === 'success' ? '#4caf50' : type === 'error' ? '#e8552a' : '#444'}`;
@@ -413,19 +495,13 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
     const publishBtn = document.getElementById('publish-btn');
     const publishFromPreview = document.getElementById('publish-from-preview');
     const busyLabel = clear ? 'Clearing…' : 'Saving…';
-    publishBtn.disabled = true;
-    publishBtn.textContent = busyLabel;
-    publishFromPreview.disabled = true;
-    publishFromPreview.textContent = busyLabel;
+    publishBtn.disabled = true; publishBtn.textContent = busyLabel;
+    publishFromPreview.disabled = true; publishFromPreview.textContent = busyLabel;
 
     try {
       const res = await fetch('/api/admin/results/save', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'fetch',
-          'Origin': SITE || window.location.origin,
-        },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'fetch', 'Origin': SITE || window.location.origin },
         credentials: 'same-origin',
         body: JSON.stringify(payload),
       });
@@ -435,28 +511,19 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
         showBanner(`Failed to ${clear ? 'clear' : 'save'}: ${detail}`, 'error');
       } else if (clear) {
         document.getElementById('preview-pane').hidden = true;
-        if (json.removed === false) {
-          showBanner('There were no published results for this date — nothing to clear.', 'info');
-        } else {
-          showBanner(
-            `Results cleared. Site will update in about 30 seconds. <a href="${json.commitUrl}" target="_blank" rel="noopener" style="color:#81c784">View commit →</a>`,
-            'success'
-          );
-        }
+        showBanner(json.removed === false
+          ? 'There were no published results for this date — nothing to clear.'
+          : `Results cleared. Site will update in about 30 seconds. <a href="${json.commitUrl}" target="_blank" rel="noopener" style="color:#81c784">View commit →</a>`,
+          json.removed === false ? 'info' : 'success');
       } else {
         document.getElementById('preview-pane').hidden = true;
-        showBanner(
-          `Posted! Site will update in about 30 seconds. <a href="${json.commitUrl}" target="_blank" rel="noopener" style="color:#81c784">View commit →</a>`,
-          'success'
-        );
+        showBanner(`Posted! Site will update in about 30 seconds. <a href="${json.commitUrl}" target="_blank" rel="noopener" style="color:#81c784">View commit →</a>`, 'success');
       }
-    } catch (err) {
+    } catch {
       showBanner('Network error — check your connection and try again.', 'error');
     } finally {
-      publishBtn.disabled = false;
-      publishBtn.textContent = 'Save & Publish';
-      publishFromPreview.disabled = false;
-      publishFromPreview.textContent = 'Save & Publish';
+      publishBtn.disabled = false; publishBtn.textContent = 'Save & Publish';
+      publishFromPreview.disabled = false; publishFromPreview.textContent = 'Save & Publish';
     }
   }
 
@@ -468,14 +535,9 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
     const yesBtn = document.getElementById('confirm-yes');
 
     if (data.divisions.length === 0) {
-      // Empty form. If results exist for this date, treat publish as a "clear" action.
-      if (!existing) {
-        showBanner('Add at least one driver before publishing — there are no results to clear.', 'error');
-        return;
-      }
+      if (!existing) { showBanner('Add at least one driver before publishing — there are no results to clear.', 'error'); return; }
       titleEl.textContent = 'Clear results?';
-      msgEl.textContent =
-        `You are about to clear all results for ${scheduleTitle} (${date}). This removes the night's results from the public site. You can re-enter them later if needed.`;
+      msgEl.textContent = `You are about to clear all results for ${scheduleTitle} (${date}). This removes the night's results from the public site. You can re-enter them later if needed.`;
       yesBtn.textContent = 'Yes, clear results';
       dialog.showModal();
       yesBtn.onclick = () => { dialog.close(); doPublish(true); };
@@ -483,10 +545,10 @@ const SITE = import.meta.env.SITE ?? 'https://chemungspeedrome.com';
       return;
     }
 
-    const totalDrivers = data.divisions.reduce((s, d) => s + d.feature.length, 0);
+    const totalDrivers = data.divisions.reduce((s, d) =>
+      s + (d.features ? d.features.reduce((a, f) => a + f.finishers.length, 0) : d.feature.length), 0);
     titleEl.textContent = 'Publish results?';
-    msgEl.textContent =
-      `Publish results for ${scheduleTitle} (${date})? ${totalDrivers} drivers across ${data.divisions.length} class${data.divisions.length !== 1 ? 'es' : ''}.`;
+    msgEl.textContent = `Publish results for ${scheduleTitle} (${date})? ${totalDrivers} drivers across ${data.divisions.length} class${data.divisions.length !== 1 ? 'es' : ''}.`;
     yesBtn.textContent = 'Yes, publish';
     dialog.showModal();
     yesBtn.onclick = () => { dialog.close(); doPublish(false); };
