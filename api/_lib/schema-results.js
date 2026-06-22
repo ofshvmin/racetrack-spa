@@ -29,25 +29,45 @@ export function validateResultsEntry(entry) {
     return { ok: false, errors };
   }
 
+  function validateFinishers(finishers, fieldPath) {
+    const positions = finishers.map(f => f.pos);
+    const expected = Array.from({ length: positions.length }, (_, i) => i + 1);
+    if (JSON.stringify(positions) !== JSON.stringify(expected)) {
+      errors.push({ field: fieldPath, message: 'Positions must be sequential from 1' });
+    }
+    finishers.forEach((f, fi) => {
+      if (!f.driver?.trim()) errors.push({ field: `${fieldPath}[${fi}].driver`, message: 'Driver name required' });
+      if (f.pts != null && (typeof f.pts !== 'number' || !Number.isFinite(f.pts) || f.pts < 0)) {
+        errors.push({ field: `${fieldPath}[${fi}].pts`, message: 'Points must be a non-negative number' });
+      }
+    });
+  }
+
   entry.divisions.forEach((div, di) => {
     const p = `divisions[${di}]`;
     if (!VALID_SLUGS.has(div.slug)) errors.push({ field: `${p}.slug`, message: `Unknown slug "${div.slug}"` });
     if (!div.name?.trim()) errors.push({ field: `${p}.name`, message: 'Division name required' });
 
-    if (!Array.isArray(div.feature)) {
-      errors.push({ field: `${p}.feature`, message: 'feature must be an array' });
-    } else {
-      const positions = div.feature.map(f => f.pos);
-      const expected = Array.from({ length: positions.length }, (_, i) => i + 1);
-      if (JSON.stringify(positions) !== JSON.stringify(expected)) {
-        errors.push({ field: `${p}.feature`, message: 'Positions must be sequential from 1' });
-      }
-      div.feature.forEach((f, fi) => {
-        if (!f.driver?.trim()) errors.push({ field: `${p}.feature[${fi}].driver`, message: 'Driver name required' });
-        if (f.pts != null && (typeof f.pts !== 'number' || !Number.isFinite(f.pts) || f.pts < 0)) {
-          errors.push({ field: `${p}.feature[${fi}].pts`, message: 'Points must be a non-negative number' });
+    // A division carries either a single `feature` array, or a `features`
+    // array of { label, finishers } for double-feature nights.
+    if (Array.isArray(div.features)) {
+      div.features.forEach((feat, fi) => {
+        const fp = `${p}.features[${fi}]`;
+        if (!feat || typeof feat !== 'object') {
+          errors.push({ field: fp, message: 'feature must be an object with label and finishers' });
+          return;
+        }
+        if (!feat.label?.trim()) errors.push({ field: `${fp}.label`, message: 'Feature label required' });
+        if (!Array.isArray(feat.finishers)) {
+          errors.push({ field: `${fp}.finishers`, message: 'finishers must be an array' });
+        } else {
+          validateFinishers(feat.finishers, `${fp}.finishers`);
         }
       });
+    } else if (!Array.isArray(div.feature)) {
+      errors.push({ field: `${p}.feature`, message: 'feature must be an array' });
+    } else {
+      validateFinishers(div.feature, `${p}.feature`);
     }
 
     if (!Array.isArray(div.heats)) errors.push({ field: `${p}.heats`, message: 'heats must be an array' });
