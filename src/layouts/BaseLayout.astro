@@ -1,5 +1,6 @@
 ---
 import Nav from '../components/Nav.astro';
+import AlertBanner from '../components/AlertBanner.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 import site from '../content/site.json';
@@ -46,6 +47,7 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).toStri
   </head>
   <body class="min-h-screen flex flex-col">
     <Nav />
+    <AlertBanner />
     <main id="main-content" class="flex-1">
       <slot />
     </main>

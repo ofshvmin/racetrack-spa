@@ -51,7 +51,7 @@ const today = new Date();
 today.setHours(0, 0, 0, 0);
 
 const upcomingRaces = schedule.filter(
-  e => e.type === 'race' && new Date(e.date + 'T12:00:00') >= today
+  e => e.type === 'race' && !(e as any).canceled && new Date(e.date + 'T12:00:00') >= today
 );
 const nextEvent = upcomingRaces[0] ?? null;
 

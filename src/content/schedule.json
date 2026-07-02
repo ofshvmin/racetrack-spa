@@ -42,6 +42,7 @@
     "divisions": ["4-Cyl", "Hobby Stocks", "Super Stocks", "Mods"],
     "featured": false,
     "canceled": true,
+    "cancelBadge": "Canceled: Rained Out",
     "notes": "Canceled due to rain."
   },
   {
@@ -112,7 +113,10 @@
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
-    "featured": true
+    "featured": true,
+    "canceled": true,
+    "cancelBadge": "Canceled: Extreme Heat",
+    "notes": "Canceled due to expected extreme heat."
   },
   {
     "id": "2026-07-10-vintage-mods-night",

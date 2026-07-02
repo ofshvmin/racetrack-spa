@@ -29,7 +29,8 @@ const races = schedule
     const dataClasses = divTags.map(t => t.cls).join(' ');
     const hasResults  = resultDates.has(e.date);
     const canceled    = (e as any).canceled === true;
-    return { ...e, dayNum, weekday, month, year, divTags, dataClasses, hasResults, canceled };
+    const cancelBadge = (e as any).cancelBadge ?? 'Canceled';
+    return { ...e, dayNum, weekday, month, year, divTags, dataClasses, hasResults, canceled, cancelBadge };
   });
 
 const raceCount = races.length;
@@ -70,9 +71,9 @@ const raceCount = races.length;
               <div class="day-info"><strong>{race.weekday}</strong>{race.month}<br />{race.year}</div>
             </div>
             <div class="title">
-              {race.canceled && <span class="canceled-badge">Rained Out</span>}
+              {race.canceled && <span class="canceled-badge">{race.cancelBadge}</span>}
               {race.title}
-              {race.notes && !race.canceled && <span class="sub">{race.notes}</span>}
+              {race.notes && <span class="sub">{race.notes}</span>}
               {(race as any).sponsor && (
                 <span class="sponsor-note">
                   <span class="presented-by">Presented by</span>{(race as any).sponsor}
@@ -143,8 +144,8 @@ const raceCount = races.length;
       if (resultsLink) resultsLink.style.display = '';
     });
 
-    if (future.length > 0) {
-      const next = future[0];
+    const next = future.find(row => !row.classList.contains('is-canceled'));
+    if (next) {
       next.classList.add('is-next');
       const titleEl = next.querySelector('.title');
       if (titleEl && !titleEl.querySelector('.next-badge')) {

@@ -114,6 +114,50 @@ h1, h2 {
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line-soft);
 }
+
+/* Site-wide announcement banner — sits directly under the nav */
+.alert-banner {
+  background: linear-gradient(90deg, var(--hot-deep), var(--hot));
+  border-bottom: 1px solid oklch(0.40 0.16 30);
+  color: var(--ink);
+}
+.alert-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 16px;
+  padding: 11px 0;
+}
+.alert-label {
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  background: rgba(10, 10, 12, 0.35);
+  color: #fff;
+}
+.alert-msg {
+  flex: 1 1 auto;
+  min-width: 240px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #fff;
+}
+.alert-link {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: #fff;
+}
+.alert-link:hover { text-decoration: none; }
+
 .topbar-inner {
   display: flex;
   align-items: center;

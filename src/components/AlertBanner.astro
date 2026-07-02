@@ -1,0 +1,21 @@
+---
+// Site-wide announcement banner (e.g. weather cancellations).
+// Content is driven by the `alert` object in src/content/site.json.
+// Renders nothing when alert.active is false or the object is absent.
+import site from '../content/site.json';
+
+const alert = (site as any).alert;
+const show = alert?.active === true && alert?.message;
+---
+
+{show && (
+  <aside class="alert-banner" role="alert" aria-label="Track announcement">
+    <div class="container alert-inner">
+      {alert.label && <span class="alert-label">{alert.label}</span>}
+      <p class="alert-msg">{alert.message}</p>
+      {alert.href && alert.linkText && (
+        <a class="alert-link" href={alert.href}>{alert.linkText}&nbsp;→</a>
+      )}
+    </div>
+  </aside>
+)}
