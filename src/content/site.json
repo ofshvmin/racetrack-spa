@@ -23,10 +23,10 @@
   "defaultGateTime": "5:00 PM",
   "defaultRaceTime": "7:00 PM",
   "alert": {
-    "active": true,
-    "label": "Race Canceled",
-    "message": "Friday, July 3 is canceled due to expected extreme heat. Stay cool and safe — next up is Vintage Mods Night on Friday, July 10.",
-    "href": "/schedule",
-    "linkText": "See the schedule"
+    "active": false,
+    "label": "",
+    "message": "",
+    "href": "",
+    "linkText": ""
   }
 }
