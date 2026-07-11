@@ -55,22 +55,29 @@ const upcomingRaces = schedule.filter(
 );
 const nextEvent = upcomingRaces[0] ?? null;
 
+// The page is prerendered, so the server-side `nextEvent` above is frozen at
+// build time and goes stale once a race passes. We serialize the upcoming
+// races and re-pick the correct one in the browser against the real current
+// date (see the countdown script below). This is the same build-time list the
+// server rendered from — a superset of what's still upcoming — so the client
+// only ever needs to skip races that have since passed.
+const raceData = upcomingRaces.map(e => ({
+  date: e.date,
+  title: e.title,
+  notes: (e as any).notes ?? '',
+  gateTime: e.gateTime,
+  raceTime: e.raceTime,
+}));
+
 let nextDayAbbr = '';
 let nextMonthAbbr = '';
 let nextDayNum = '';
-let nextEventISO = '';
 
 if (nextEvent) {
   const d = new Date(nextEvent.date + 'T12:00:00');
   nextDayAbbr   = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
   nextMonthAbbr = d.toLocaleDateString('en-US', { month: 'short' });
   nextDayNum    = String(d.getDate());
-
-  const [time, ampm] = nextEvent.raceTime.split(' ');
-  let [h, m] = time.split(':').map(Number);
-  if (ampm === 'PM' && h !== 12) h += 12;
-  if (ampm === 'AM' && h === 12) h = 0;
-  nextEventISO = `${nextEvent.date}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00-04:00`;
 }
 ---
 
@@ -99,10 +106,10 @@ if (nextEvent) {
           <div class="meta-col">
             <div class="tag">Next Race</div>
             <div class="when">
-              <span class="day">{nextDayAbbr},</span> {nextMonthAbbr}&nbsp;{nextDayNum}
+              <span class="day" data-cd-weekday>{nextDayAbbr},</span> <span data-cd-month>{nextMonthAbbr}</span>&nbsp;<span data-cd-daynum>{nextDayNum}</span>
             </div>
-            <div class="feature">{nextEvent.title}</div>
-            {nextEvent.notes && <p class="feature-sub">{nextEvent.notes}</p>}
+            <div class="feature" data-cd-title>{nextEvent.title}</div>
+            <p class="feature-sub" data-cd-notes hidden={!nextEvent.notes}>{nextEvent.notes}</p>
 
             <div class="presenter-chip" aria-label="Race presented by Elm Chevrolet">
               <span class="lbl">Race presented by</span>
@@ -127,8 +134,8 @@ if (nextEvent) {
               <div class="cd"><div class="num" data-cd="secs">00</div><div class="lbl">Sec</div></div>
             </div>
             <div class="gates">
-              <div class="row"><span>Gates</span><strong>{nextEvent.gateTime}</strong></div>
-              <div class="row"><span>Green Flag</span><strong>{nextEvent.raceTime}</strong></div>
+              <div class="row"><span>Gates</span><strong data-cd-gate>{nextEvent.gateTime}</strong></div>
+              <div class="row"><span>Green Flag</span><strong data-cd-green>{nextEvent.raceTime}</strong></div>
             </div>
           </div>
         </article>
@@ -138,24 +145,69 @@ if (nextEvent) {
   )}
 
   {nextEvent && (
-    <script define:vars={{ nextEventISO }}>
-      const target = new Date(nextEventISO).getTime();
-      const els = {
-        days:  document.querySelector('[data-cd="days"]'),
-        hours: document.querySelector('[data-cd="hours"]'),
-        mins:  document.querySelector('[data-cd="mins"]'),
-        secs:  document.querySelector('[data-cd="secs"]'),
-      };
-      const pad = n => String(Math.max(0, n)).padStart(2, '0');
-      function tick() {
-        let diff = Math.max(0, target - Date.now());
-        if (els.days)  els.days.textContent  = pad(Math.floor(diff / 86400000));
-        if (els.hours) els.hours.textContent = pad(Math.floor((diff % 86400000) / 3600000));
-        if (els.mins)  els.mins.textContent  = pad(Math.floor((diff % 3600000) / 60000));
-        if (els.secs)  els.secs.textContent  = pad(Math.floor((diff % 60000) / 1000));
+    <script define:vars={{ raceData }}>
+      // Today's date in Eastern Time (the track's timezone), as YYYY-MM-DD so it
+      // sorts against the race dates with a plain string comparison.
+      const todayISO = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/New_York',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+      }).format(new Date());
+
+      // Re-pick the next race against the real current date. `raceData` is
+      // already sorted and free of canceled races; we just drop any that have
+      // passed since the page was built.
+      const next = raceData.find(r => r.date >= todayISO) ?? null;
+
+      const section = document.querySelector('.next-race-section');
+      if (!next) {
+        // Season's over (relative to now) — hide the stale block entirely.
+        if (section) section.hidden = true;
+      } else {
+        const d = new Date(next.date + 'T12:00:00');
+        const set = (sel, val) => {
+          const el = document.querySelector(sel);
+          if (el) el.textContent = val;
+        };
+        set('[data-cd-weekday]', d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase() + ',');
+        set('[data-cd-month]',   d.toLocaleDateString('en-US', { month: 'short' }));
+        set('[data-cd-daynum]',  String(d.getDate()));
+        set('[data-cd-title]',   next.title);
+        set('[data-cd-gate]',    next.gateTime);
+        set('[data-cd-green]',   next.raceTime);
+
+        const notesEl = document.querySelector('[data-cd-notes]');
+        if (notesEl) {
+          notesEl.textContent = next.notes;
+          notesEl.hidden = !next.notes;
+        }
+
+        // Countdown target: green-flag time in Eastern (EDT, -04:00 — the
+        // season runs May–Sept, so it's always daylight time).
+        const [time, ampm] = next.raceTime.split(' ');
+        let [h, m] = time.split(':').map(Number);
+        if (ampm === 'PM' && h !== 12) h += 12;
+        if (ampm === 'AM' && h === 12) h = 0;
+        const target = new Date(
+          `${next.date}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00-04:00`
+        ).getTime();
+
+        const els = {
+          days:  document.querySelector('[data-cd="days"]'),
+          hours: document.querySelector('[data-cd="hours"]'),
+          mins:  document.querySelector('[data-cd="mins"]'),
+          secs:  document.querySelector('[data-cd="secs"]'),
+        };
+        const pad = n => String(Math.max(0, n)).padStart(2, '0');
+        function tick() {
+          let diff = Math.max(0, target - Date.now());
+          if (els.days)  els.days.textContent  = pad(Math.floor(diff / 86400000));
+          if (els.hours) els.hours.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+          if (els.mins)  els.mins.textContent  = pad(Math.floor((diff % 3600000) / 60000));
+          if (els.secs)  els.secs.textContent  = pad(Math.floor((diff % 60000) / 1000));
+        }
+        tick();
+        setInterval(tick, 1000);
       }
-      tick();
-      setInterval(tick, 1000);
     </script>
   )}
 
