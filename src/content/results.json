@@ -39,7 +39,7 @@
               {
                 "pos": 6,
                 "driver": "Nick Morich",
-                "pts": 25
+                "pts": 24
               },
               {
                 "pos": 7,
@@ -98,7 +98,7 @@
               },
               {
                 "pos": 18,
-                "driver": "DNF: Chris Clemons",
+                "driver": "Chris Clemons",
                 "pts": 25
               }
             ]
@@ -182,7 +182,12 @@
           "G Zacharias",
           "Curren"
         ],
-        "dnf": []
+        "dnf": [
+          {
+            "driver": "Nick Morich",
+            "tag": "DNS"
+          }
+        ]
       },
       {
         "slug": "hobby",
@@ -240,23 +245,13 @@
           },
           {
             "pos": 11,
-            "driver": "DNF: Luke Nickels",
+            "driver": "Luke Nickels",
             "pts": 37
           },
           {
             "pos": 12,
-            "driver": "DNF: Cody Marshall",
+            "driver": "Cody Marshall",
             "pts": 39
-          },
-          {
-            "pos": 13,
-            "driver": "DNS: Kamden Wheeler",
-            "pts": 1
-          },
-          {
-            "pos": 14,
-            "driver": "DNS: M-R Taylor",
-            "pts": 1
           }
         ],
         "heats": [
@@ -264,7 +259,16 @@
           "Sharpsteen",
           "Marshall"
         ],
-        "dnf": []
+        "dnf": [
+          {
+            "driver": "Kamden Wheeler",
+            "tag": "DNS"
+          },
+          {
+            "driver": "M-R Taylor",
+            "tag": "DNS"
+          }
+        ]
       },
       {
         "slug": "4cyl",
