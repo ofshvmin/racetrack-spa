@@ -314,51 +314,63 @@
         "feature": [
           {
             "pos": 1,
-            "driver": "TJ Potrzebowski"
+            "driver": "TJ Potrzebowski",
+            "pts": 63
           },
           {
             "pos": 2,
-            "driver": "Jimmy Zacharias"
+            "driver": "Jimmy Zacharias",
+            "pts": 61
           },
           {
             "pos": 3,
-            "driver": "Jesse Kent"
+            "driver": "Jesse Kent",
+            "pts": 57
           },
           {
             "pos": 4,
-            "driver": "Lee Sharpsteen"
+            "driver": "Lee Sharpsteen",
+            "pts": 53
           },
           {
             "pos": 5,
-            "driver": "Zack Curren"
+            "driver": "Zack Curren",
+            "pts": 49
           },
           {
             "pos": 6,
-            "driver": "Garrett Zacharias"
+            "driver": "Garrett Zacharias",
+            "pts": 47
           },
           {
             "pos": 7,
-            "driver": "Jody Buckley"
+            "driver": "Jody Buckley",
+            "pts": 44
           },
           {
             "pos": 8,
-            "driver": "Tommy Rought"
+            "driver": "Tommy Rought",
+            "pts": 42
           },
           {
             "pos": 9,
-            "driver": "Tyler Harbst"
+            "driver": "Tyler Harbst",
+            "pts": 40
           },
           {
             "pos": 10,
-            "driver": "Charlie Sharpsteen"
+            "driver": "Charlie Sharpsteen",
+            "pts": 38
           },
           {
             "pos": 11,
-            "driver": "Lucas Bartlett"
+            "driver": "Lucas Bartlett",
+            "pts": 36
           },
           {
             "pos": 12,
-            "driver": "Nolan Baker"
+            "driver": "Nolan Baker",
+            "pts": 34
           }
         ],
         "heats": [
@@ -373,55 +385,73 @@
         "feature": [
           {
             "pos": 1,
-            "driver": "Cullen Sharpsteen"
+            "driver": "Cullen Sharpsteen",
+            "pts": 65
           },
           {
             "pos": 2,
-            "driver": "Michael Bast"
+            "driver": "Michael Bast",
+            "pts": 59
           },
           {
             "pos": 3,
-            "driver": "Tom Shaffer"
+            "driver": "Tom Shaffer",
+            "pts": 52
           },
           {
             "pos": 4,
-            "driver": "Ethan Roberts"
+            "driver": "Ethan Roberts",
+            "pts": 55
           },
           {
             "pos": 5,
-            "driver": "John Lane"
+            "driver": "John Lane",
+            "pts": 51
           },
           {
             "pos": 6,
-            "driver": "Terry Potrzebowski"
+            "driver": "Terry Potrzebowski",
+            "pts": 46
           },
           {
             "pos": 7,
-            "driver": "Cody Marshall"
+            "driver": "Cody Marshall",
+            "pts": 45
           },
           {
             "pos": 8,
-            "driver": "Josh Parker"
+            "driver": "Josh Parker",
+            "pts": 42
           },
           {
             "pos": 9,
-            "driver": "Thomas Decker"
+            "driver": "Thomas Decker",
+            "pts": 40
           },
           {
             "pos": 10,
-            "driver": "Kamden Wheeler"
+            "driver": "Kamden Wheeler",
+            "pts": 38
           },
           {
             "pos": 11,
-            "driver": "Mike Caranright"
+            "driver": "Mike Caranright",
+            "pts": 36
           },
           {
             "pos": 12,
-            "driver": "Mark Taylor"
+            "driver": "Mark Taylor",
+            "pts": 34
           },
           {
             "pos": 13,
-            "driver": "Mike Bailey"
+            "driver": "Mike Bailey",
+            "pts": 32
+          },
+          {
+            "pos": 14,
+            "driver": "DNS: Chad Lane",
+            "pts": 1
           }
         ],
         "heats": [
@@ -436,23 +466,28 @@
         "feature": [
           {
             "pos": 1,
-            "driver": "Greg Moldt"
+            "driver": "Greg Moldt",
+            "pts": 63
           },
           {
             "pos": 2,
-            "driver": "Zach Daugherty"
+            "driver": "Zach Daugherty",
+            "pts": 61
           },
           {
             "pos": 3,
-            "driver": "Mike Kintner"
+            "driver": "Mike Kintner",
+            "pts": 53
           },
           {
             "pos": 4,
-            "driver": "Ronald Manwaring Jr"
+            "driver": "Ronald Manwaring Jr",
+            "pts": 50
           },
           {
             "pos": 5,
-            "driver": "Eric Ellsworth"
+            "driver": "Eric Ellsworth",
+            "pts": 48
           }
         ],
         "heats": [
