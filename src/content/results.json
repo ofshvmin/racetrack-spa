@@ -182,12 +182,7 @@
           "G Zacharias",
           "Curren"
         ],
-        "dnf": [
-          {
-            "driver": "Nick Morich",
-            "tag": "DNS"
-          }
-        ]
+        "dnf": []
       },
       {
         "slug": "hobby",
