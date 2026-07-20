@@ -446,18 +446,18 @@
             "pos": 13,
             "driver": "Mike Bailey",
             "pts": 32
-          },
-          {
-            "pos": 14,
-            "driver": "DNS: Chad Lane",
-            "pts": 1
           }
         ],
         "heats": [
           "Sharpsteen",
           "Roberts"
         ],
-        "dnf": []
+        "dnf": [
+          {
+            "driver": "Chad Lane",
+            "tag": "DNS"
+          }
+        ]
       },
       {
         "slug": "4cyl",
