@@ -159,14 +159,15 @@
     "featured": false
   },
   {
-    "id": "2026-08-07-race-night",
+    "id": "2026-08-07-bill-gill-memorial-75",
     "type": "race",
-    "title": "Race Night",
+    "title": "Bill Gill Memorial 75",
     "date": "2026-08-07",
     "gateTime": "5:00 PM",
     "raceTime": "7:00 PM",
     "divisions": ["4-Cyl", "Hobby Stocks", "Mods"],
-    "featured": false
+    "featured": true,
+    "notes": "75-lap Sportsman feature paying $2,000 to win, run under RoC rules. Hobby Stocks and Mini Stocks complete the card. Pit gates 4:00 PM, practice 6:00–6:55 PM. No increase in front gate admission."
   },
   {
     "id": "2026-08-14-race-night",

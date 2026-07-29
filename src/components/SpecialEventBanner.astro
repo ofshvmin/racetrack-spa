@@ -1,0 +1,87 @@
+---
+// Temporary home-page banner announcing a one-off special event.
+// Content is driven by src/content/special-event.json — set `active` to false
+// (or delete the banner block) once the event has run.
+import event from '../content/special-event.json';
+
+const banner = (event as any).banner;
+const show = (event as any).active === true && banner?.message;
+const href = `/events/${(event as any).slug}`;
+const eventDate = (event as any).date;
+---
+
+{show && (
+  <aside class="event-banner" data-event-banner data-date={eventDate} aria-label="Special event announcement">
+    <div class="container event-banner-inner">
+      <span class="event-banner-label">{banner.label}</span>
+      <p class="event-banner-msg">{banner.message}</p>
+      <a class="event-banner-link" href={href}>{banner.linkText}&nbsp;→</a>
+    </div>
+  </aside>
+)}
+
+{show && (
+  <script is:inline>
+    // The page is prerendered, so this banner would otherwise linger after the
+    // event has run. Hide it in the browser once the race date has passed.
+    (function () {
+      var el = document.querySelector('[data-event-banner]');
+      if (!el) return;
+      var todayET = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/New_York',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+      }).format(new Date());
+      if (todayET > (el.getAttribute('data-date') || '')) el.hidden = true;
+    })();
+  </script>
+)}
+
+<style>
+  .event-banner {
+    background:
+      linear-gradient(90deg, var(--surface-2), var(--surface) 55%);
+    border-bottom: 1px solid var(--line);
+    border-top: 2px solid var(--hot);
+  }
+  .event-banner[hidden] { display: none; }
+  .event-banner-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 16px;
+    padding: 11px 0;
+  }
+  .event-banner-label {
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    background: var(--hot);
+    color: #0a0a0c;
+  }
+  .event-banner-msg {
+    flex: 1 1 auto;
+    min-width: 240px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .event-banner-link {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--hot);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .event-banner-link:hover { text-decoration: none; }
+</style>

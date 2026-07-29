@@ -2,6 +2,8 @@
 export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import site from '../content/site.json';
+import specialEvent from '../content/special-event.json';
+import press from '../content/press.json';
 
 const metaTitle = 'Visit | Chemung Speedrome';
 const metaDescription = 'Directions and visitor information for Chemung Speedrome. A 3/8-mile asphalt oval in Chemung, NY — easy off Route 17, gates at 5:00 PM every Friday.';
@@ -156,23 +158,23 @@ const mapsLinkUrl = 'https://www.google.com/maps/dir/?api=1&destination=Chemung+
 
       <div class="press-grid">
 
-        <a class="press" href="#" target="_blank" rel="noopener">
-          <div class="outlet">Star-Gazette</div>
-          <span class="placeholder-mark">Link TBD</span>
-          <h3>The lights come back on at Chemung Speedrome</h3>
-          <p class="lede">Coverage of the relaunch under new ownership, the planned 2026 season, and what's changed at the 3/8-mile oval since the doors last closed.</p>
-          <span class="date">Spring 2026</span>
+        <a class="press" href={`/events/${specialEvent.slug}`}>
+          <div class="outlet">{specialEvent.article.outlet}</div>
+          <h3>{specialEvent.article.headline}</h3>
+          <p class="lede">{specialEvent.article.deck[0]} {specialEvent.article.deck[1]}</p>
+          <span class="date">{specialEvent.article.dateLabel} · {specialEvent.article.byline}</span>
           <span class="read">Read article</span>
         </a>
 
-        <a class="press" href="#" target="_blank" rel="noopener">
-          <div class="outlet">Speed-Sport / Local Press</div>
-          <span class="placeholder-mark">Link TBD</span>
-          <h3>Southern Tier short track gets a second life</h3>
-          <p class="lede">Profile of the new ownership group, the partnership with the Race of Champions Modified Series, and the Friday-night schedule for the inaugural reopening season.</p>
-          <span class="date">Spring 2026</span>
-          <span class="read">Read article</span>
-        </a>
+        {press.map(item => (
+          <a class="press" href={item.url} target="_blank" rel="noopener">
+            <div class="outlet">{item.outlet}</div>
+            <h3>{item.headline}</h3>
+            <p class="lede">{item.lede}</p>
+            <span class="date">{item.date}</span>
+            <span class="read">Read article</span>
+          </a>
+        ))}
 
         <a class="press" href={`mailto:${site.email}`} style="background:var(--surface);border:1px dashed var(--line)">
           <div class="outlet" style="color:var(--ink-dim)"><span style="background:var(--ink-dim);width:18px;height:2px;display:inline-block;vertical-align:middle;margin-right:10px"></span>Got coverage?</div>

@@ -3,6 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import ElmBanner from '../components/ElmBanner.astro';
+import SpecialEventBanner from '../components/SpecialEventBanner.astro';
 import schedule from '../content/schedule.json';
 import sponsors from '../content/sponsors.json';
 import site from '../content/site.json';
@@ -83,6 +84,9 @@ if (nextEvent) {
 
 <BaseLayout title={metaTitle} description={metaDescription}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- Temporary special-event announcement -->
+  <SpecialEventBanner />
 
   <!-- Hero -->
   <Hero />

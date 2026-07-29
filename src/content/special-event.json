@@ -1,0 +1,50 @@
+{
+  "active": true,
+  "slug": "bill-gill-memorial-75",
+  "name": "Bill Gill Memorial 75",
+  "date": "2026-08-07",
+  "dateLabel": "Friday, August 7, 2026",
+  "tagline": "75-lap Sportsman feature · $2,000 to win · RoC rules",
+  "summary": "The inaugural Bill Gill Memorial 75 — a 75-lap Sportsman feature paying $2,000 to win under Race of Champions rules, with the Marion Decker Insurance Agency Hobby Stocks and the Big Jim's Wicked Tee's Mini Stocks on the card. No increase in front gate admission.",
+  "registrationUrl": "https://docs.google.com/forms/d/e/1FAIpQLSe9NWxsKdD3wlcf7jTXmVEuBOzfhN5IOKqJvGpnnS0WS1iDdA/viewform",
+  "registrationNote": "Drivers: name, car number, and hometown. Takes a minute.",
+  "banner": {
+    "label": "Special Event",
+    "message": "Bill Gill Memorial 75 — Friday, August 7. 75-lap Sportsman feature, $2,000 to win.",
+    "linkText": "More info"
+  },
+  "facts": [
+    { "label": "Feature", "value": "75 laps · Sportsman" },
+    { "label": "Purse", "value": "$2,000 to win" },
+    { "label": "Rules", "value": "Race of Champions (RoC)" },
+    { "label": "Also racing", "value": "Hobby Stocks · Mini Stocks" }
+  ],
+  "schedule": [
+    { "label": "Pit gates", "value": "4:00 PM" },
+    { "label": "Grandstand seating", "value": "5:00 PM" },
+    { "label": "Practice", "value": "6:00 – 6:55 PM" },
+    { "label": "First green flag", "value": "7:00 PM" }
+  ],
+  "admissionNote": "No increase in front gate ticket admission for this event.",
+  "article": {
+    "outlet": "Speedrome Press Release",
+    "dateLabel": "July 2026",
+    "headline": "Bill Gill Memorial set to roll off at New Chemung Speedrome presented by Elm Chevrolet",
+    "deck": [
+      "75-lap feature event for Sportsman to pay $2,000 and run under RoC Rules.",
+      "Also on the card will be Hobby and Mini Stocks."
+    ],
+    "byline": "Story by Kenny Shupp Jr.",
+    "body": [
+      "(Chemung, NY) What many have dubbed as the biggest Sportsman Modified event thus far in 2026 at the New Chemung Speedrome, track promoters George Nichols Jr. and Dan Mathews will present a huge event paying $2,000 to the winner of the 75-lap feature event.",
+      "The Inaugural Bill Gill Memorial 75 will feature most of the top Sportsman teams in the region with the event run under Race of Champions (RoC) Rules, and to make things even better there will not be any increase in the front gate ticket admission price for this event.",
+      "According to New Chemung Speedrome track management, “The family and friends of the late Bill Gill have put this event together. The added purse money has been put up by them, and it is significant.”",
+      "Also on the card for the Friday, August 7, 2026, event will be a complete show of the Marion Decker Insurance Agency Hobby Stocks along with the Big Jim’s Wicked Tee’s Mini Stocks.",
+      "Pit gates open at 4:00 pm with the Main Grandstand Seating to follow at 5:00.",
+      "The Fast 3/8 of a Mile Paved Oval will be open for practice from 6:00 till 6:55 with the first green flag of the evening waving promptly at 7:00 pm.",
+      "The New Chemung Speedrome presented by Elm Chevrolet in Elmira is located just off Exit 59 on I-86.",
+      "For continual updates leading up to the August 7 Bill Gill Memorial go to Facebook.",
+      "For a look at the current point standings and other valuable information go to the track’s all new web site at www.chemungspeedrome.com."
+    ]
+  }
+}

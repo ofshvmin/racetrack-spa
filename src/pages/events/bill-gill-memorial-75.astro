@@ -1,0 +1,312 @@
+---
+export const prerender = true;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import event from '../../content/special-event.json';
+import site from '../../content/site.json';
+
+const metaTitle = `${event.name} — ${event.dateLabel} | Chemung Speedrome`;
+const metaDescription = event.summary;
+
+const article = event.article;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsEvent',
+  name: event.name,
+  description: event.summary,
+  startDate: `${event.date}T19:00:00-04:00`,
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: site.trackName,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '605 Wyncoop Creek Rd',
+      addressLocality: 'Chemung',
+      addressRegion: 'NY',
+      postalCode: '14825',
+      addressCountry: 'US',
+    },
+  },
+};
+---
+
+<BaseLayout title={metaTitle} description={metaDescription}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- Page header -->
+  <section class="page-header">
+    <div class="container page-header-inner">
+      <div class="eyebrow">Special Event · {event.dateLabel}</div>
+      <h1>Bill Gill <span class="hot">Memorial 75.</span></h1>
+      <p class="lede">{event.tagline}</p>
+    </div>
+  </section>
+
+  <div class="checker thin" aria-hidden="true"></div>
+
+  <section class="block">
+    <div class="container">
+
+      <div class="event-grid">
+
+        <!-- Left: the facts -->
+        <div>
+          <div class="section-eyebrow">The event</div>
+          <p class="event-summary">{event.summary}</p>
+
+          <dl class="fact-grid">
+            {event.facts.map(f => (
+              <div class="fact">
+                <dt>{f.label}</dt>
+                <dd>{f.value}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <div class="section-eyebrow" style="margin-top:36px">Race day · {event.dateLabel}</div>
+          <dl class="time-list">
+            {event.schedule.map(s => (
+              <div class="time-row">
+                <dt>{s.label}</dt>
+                <dd>{s.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <p class="admission-note">{event.admissionNote}</p>
+        </div>
+
+        <!-- Right: register -->
+        <aside class="register-card">
+          <div class="section-eyebrow">Drivers</div>
+          <h2>Sign up to <span class="hot">race.</span></h2>
+          <p>{event.registrationNote}</p>
+          <a class="btn btn-primary" href={event.registrationUrl} target="_blank" rel="noopener">
+            <span class="arrow"></span> Registration Form
+          </a>
+          <p class="register-fine">Opens the official event entry form in a new tab.</p>
+
+          <div class="register-links">
+            <a href="/schedule">Full schedule →</a>
+            <a href={site.socialLinks.facebook} target="_blank" rel="noopener">Updates on Facebook →</a>
+          </div>
+        </aside>
+
+      </div>
+
+      <!-- Full article -->
+      <details class="article-drop">
+        <summary>
+          <span class="art-eyebrow">In print</span>
+          <span class="art-title">Read the full article</span>
+          <span class="art-cue" aria-hidden="true"></span>
+        </summary>
+
+        <article class="article-body">
+          <div class="art-meta">{article.outlet} · {article.dateLabel}</div>
+          <h2>{article.headline}</h2>
+          {article.deck.map(line => <p class="art-deck">{line}</p>)}
+          <p class="art-byline">{article.byline}</p>
+          {article.body.map(p => <p>{p}</p>)}
+        </article>
+      </details>
+
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .event-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .event-grid > * {
+    background: var(--bg);
+    padding: 32px 30px;
+  }
+  @media (max-width: 860px) {
+    .event-grid { grid-template-columns: 1fr; }
+  }
+
+  .event-summary {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-mute);
+    max-width: 62ch;
+    margin: 14px 0 28px;
+  }
+
+  .fact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .fact { background: var(--surface); padding: 18px 20px; }
+  .fact dt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 8px;
+  }
+  .fact dd {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.05;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  @media (max-width: 520px) {
+    .fact-grid { grid-template-columns: 1fr; }
+  }
+
+  .time-list { margin-top: 14px; }
+  .time-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .time-row dt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .time-row dd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .admission-note {
+    margin-top: 16px;
+    font-size: 13.5px;
+    color: var(--ink-mute);
+  }
+
+  .register-card { display: grid; align-content: start; gap: 14px; }
+  .register-card h2 {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(30px, 3.4vw, 42px);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+  .register-card h2 .hot { color: var(--hot); }
+  .register-card p { font-size: 14px; color: var(--ink-mute); line-height: 1.55; }
+  .register-card .btn { justify-self: start; }
+  .register-fine { font-size: 12px; color: var(--ink-dim); }
+  .register-links {
+    display: grid;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .register-links a { color: var(--hot); }
+  .register-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* --- Full article disclosure --- */
+  .article-drop {
+    margin-top: 40px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .article-drop summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 26px;
+  }
+  .article-drop summary::-webkit-details-marker { display: none; }
+  .article-drop summary:hover { background: var(--surface-2); }
+  .art-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--hot);
+    flex-shrink: 0;
+  }
+  .art-title {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 20px;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .art-cue {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-mute);
+  }
+  .art-cue::after { content: "Open ↓"; }
+  .article-drop[open] .art-cue::after { content: "Close ↑"; }
+
+  .article-body {
+    padding: 4px 26px 32px;
+    border-top: 1px solid var(--line);
+    max-width: 72ch;
+  }
+  .art-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin: 24px 0 12px;
+  }
+  .article-body h2 {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(26px, 3.2vw, 38px);
+    line-height: 0.95;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .art-deck {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .art-byline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--hot);
+    margin: 18px 0 20px;
+  }
+  .article-body p:not(.art-deck):not(.art-byline) {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink-mute);
+    margin-bottom: 16px;
+  }
+</style>
