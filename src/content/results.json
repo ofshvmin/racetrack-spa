@@ -1,5 +1,241 @@
 [
   {
+    "date": "2026-08-07",
+    "title": "Bill Gill Memorial 75",
+    "raceNum": 12,
+    "divisions": [
+      {
+        "slug": "b-mod",
+        "name": "Modifieds",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Tommy Catalano"
+          },
+          {
+            "pos": 2,
+            "driver": "Shawn Nye"
+          },
+          {
+            "pos": 3,
+            "driver": "Lee Sharpsteen"
+          },
+          {
+            "pos": 4,
+            "driver": "Kevin Youngs"
+          },
+          {
+            "pos": 5,
+            "driver": "TJ Potrzebowski"
+          },
+          {
+            "pos": 6,
+            "driver": "Mason Hanel"
+          },
+          {
+            "pos": 7,
+            "driver": "Jimmy Zacharias"
+          },
+          {
+            "pos": 8,
+            "driver": "Zack Curren"
+          },
+          {
+            "pos": 9,
+            "driver": "Tyler Catalano"
+          },
+          {
+            "pos": 10,
+            "driver": "JP Harbst"
+          },
+          {
+            "pos": 11,
+            "driver": "Tyler Harbst"
+          },
+          {
+            "pos": 12,
+            "driver": "Lucas Bartlett"
+          },
+          {
+            "pos": 13,
+            "driver": "Zack Knowlden"
+          },
+          {
+            "pos": 14,
+            "driver": "Dave Yehl"
+          },
+          {
+            "pos": 15,
+            "driver": "Garrett Zacharias"
+          },
+          {
+            "pos": 16,
+            "driver": "Chris Clemons"
+          },
+          {
+            "pos": 17,
+            "driver": "Jesse Kent"
+          },
+          {
+            "pos": 18,
+            "driver": "Nick Morich"
+          },
+          {
+            "pos": 19,
+            "driver": "Trevor Catalano"
+          },
+          {
+            "pos": 20,
+            "driver": "DJ Shaw"
+          },
+          {
+            "pos": 21,
+            "driver": "John Wilber"
+          },
+          {
+            "pos": 22,
+            "driver": "Tommy Rought"
+          },
+          {
+            "pos": 23,
+            "driver": "Charlie Sharpsteen"
+          },
+          {
+            "pos": 24,
+            "driver": "Lee Fritz"
+          }
+        ],
+        "heats": [
+          "Curren",
+          "Sharpsteen",
+          "Tommy Catalano",
+          "Trevor Catalano."
+        ],
+        "dnf": []
+      },
+      {
+        "slug": "hobby",
+        "name": "Hobby Stocks",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Ethan Roberts",
+            "pts": 65
+          },
+          {
+            "pos": 2,
+            "driver": "Gene Purvis",
+            "pts": 56
+          },
+          {
+            "pos": 3,
+            "driver": "Cullen Sharpsteen",
+            "pts": 55
+          },
+          {
+            "pos": 4,
+            "driver": "Terry Potrzebowski",
+            "pts": 51
+          },
+          {
+            "pos": 5,
+            "driver": "Mike Bailey",
+            "pts": 51
+          },
+          {
+            "pos": 6,
+            "driver": "Cody Marshall",
+            "pts": 51
+          },
+          {
+            "pos": 7,
+            "driver": "John Lane",
+            "pts": 49
+          },
+          {
+            "pos": 8,
+            "driver": "Chad Lane",
+            "pts": 45
+          },
+          {
+            "pos": 9,
+            "driver": "Josh Parker",
+            "pts": 40
+          },
+          {
+            "pos": 10,
+            "driver": "Mark Taylor",
+            "pts": 39
+          },
+          {
+            "pos": 11,
+            "driver": "Michael Bast",
+            "pts": 36
+          },
+          {
+            "pos": 12,
+            "driver": "Tom Shaffer",
+            "pts": 35
+          },
+          {
+            "pos": 13,
+            "driver": "M-R Taylor",
+            "pts": 32
+          },
+          {
+            "pos": 14,
+            "driver": "Paul Bailey",
+            "pts": 30
+          },
+          {
+            "pos": 15,
+            "driver": "Thomas Decker",
+            "pts": 28
+          },
+          {
+            "pos": 16,
+            "driver": "Kamden Wheeler",
+            "pts": 27
+          }
+        ],
+        "heats": [
+          "Lane",
+          "Marshall",
+          "Roberts."
+        ],
+        "dnf": []
+      },
+      {
+        "slug": "4cyl",
+        "name": "4 Cylinder",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Greg Moldt",
+            "pts": 60
+          },
+          {
+            "pos": 2,
+            "driver": "Matt Jenkins",
+            "pts": 56
+          },
+          {
+            "pos": 3,
+            "driver": "Jeffery Noe",
+            "pts": 50
+          },
+          {
+            "pos": 4,
+            "driver": "Ronald Manwaring Jr",
+            "pts": 52
+          }
+        ],
+        "heats": [],
+        "dnf": []
+      }
+    ]
+  },
+  {
     "date": "2026-07-31",
     "title": "Race Night",
     "raceNum": 11,
