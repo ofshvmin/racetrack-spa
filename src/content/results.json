@@ -1,5 +1,180 @@
 [
   {
+    "date": "2026-08-14",
+    "title": "Race Night",
+    "raceNum": 13,
+    "divisions": [
+      {
+        "slug": "b-mod",
+        "name": "Modifieds",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Jesse Kent",
+            "pts": 65
+          },
+          {
+            "pos": 2,
+            "driver": "Lee Sharpsteen",
+            "pts": 61
+          },
+          {
+            "pos": 3,
+            "driver": "Jody Buckley",
+            "pts": 55
+          },
+          {
+            "pos": 4,
+            "driver": "Joey Bevacqua",
+            "pts": 51
+          },
+          {
+            "pos": 5,
+            "driver": "JP Harbst",
+            "pts": 48
+          },
+          {
+            "pos": 6,
+            "driver": "Damon Frutchey",
+            "pts": 47
+          },
+          {
+            "pos": 7,
+            "driver": "Charlie Sharpsteen",
+            "pts": 42
+          },
+          {
+            "pos": 8,
+            "driver": "Lucas Bartlett",
+            "pts": 43
+          }
+        ],
+        "heats": [
+          "Kent",
+          "Sharpsteen."
+        ],
+        "dnf": []
+      },
+      {
+        "slug": "hobby",
+        "name": "Hobby Stocks",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Cullen Sharpsteen",
+            "pts": 60
+          },
+          {
+            "pos": 2,
+            "driver": "Josh Parker",
+            "pts": 59
+          },
+          {
+            "pos": 3,
+            "driver": "Terry Potrzebowski",
+            "pts": 57
+          },
+          {
+            "pos": 4,
+            "driver": "Mark Taylor",
+            "pts": 55
+          },
+          {
+            "pos": 5,
+            "driver": "Frank Chapman",
+            "pts": 51
+          },
+          {
+            "pos": 6,
+            "driver": "John Lane",
+            "pts": 47
+          },
+          {
+            "pos": 7,
+            "driver": "Thomas Decker",
+            "pts": 44
+          },
+          {
+            "pos": 8,
+            "driver": "Mike Bailey",
+            "pts": 45
+          },
+          {
+            "pos": 9,
+            "driver": "Chad Lane",
+            "pts": 40
+          },
+          {
+            "pos": 10,
+            "driver": "Paul Bailey",
+            "pts": 38
+          },
+          {
+            "pos": 11,
+            "driver": "Zack Pendleton",
+            "pts": 36
+          },
+          {
+            "pos": 12,
+            "driver": "Kamden Wheeler",
+            "pts": 34
+          },
+          {
+            "pos": 13,
+            "driver": "Ethan Roberts",
+            "pts": 32
+          },
+          {
+            "pos": 14,
+            "driver": "Tom Shaffer",
+            "pts": 35
+          },
+          {
+            "pos": 15,
+            "driver": "Cody Marshall",
+            "pts": 29
+          },
+          {
+            "pos": 16,
+            "driver": "M-R Taylor",
+            "pts": 28
+          }
+        ],
+        "heats": [
+          "Shaffer",
+          "Potrzebowski",
+          "Mark Taylor."
+        ],
+        "dnf": []
+      },
+      {
+        "slug": "4cyl",
+        "name": "4 Cylinder",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Greg Moldt",
+            "pts": 65
+          },
+          {
+            "pos": 2,
+            "driver": "Matt Jenkins",
+            "pts": 59
+          },
+          {
+            "pos": 3,
+            "driver": "Jeffery Noe",
+            "pts": 53
+          }
+        ],
+        "heats": [
+          "Moldt"
+        ],
+        "dnf": []
+      }
+    ]
+  },
+  {
     "date": "2026-08-07",
     "title": "Bill Gill Memorial 75",
     "raceNum": 12,
