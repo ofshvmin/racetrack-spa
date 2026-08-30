@@ -10,55 +10,68 @@
         "feature": [
           {
             "pos": 1,
-            "driver": "Jesse Kent"
+            "driver": "Jesse Kent",
+            "pts": 65
           },
           {
             "pos": 2,
-            "driver": "Jimmy Zacharias"
+            "driver": "Jimmy Zacharias",
+            "pts": 59
           },
           {
             "pos": 3,
-            "driver": "Garrett Zacharias"
+            "driver": "Garrett Zacharias",
+            "pts": 55
           },
           {
             "pos": 4,
-            "driver": "Lee Sharpsteen"
+            "driver": "Lee Sharpsteen",
+            "pts": 51
           },
           {
             "pos": 5,
-            "driver": "Zack Curren"
+            "driver": "Zack Curren",
+            "pts": 53
           },
           {
             "pos": 6,
-            "driver": "Charlie Sharpsteen"
+            "driver": "Charlie Sharpsteen",
+            "pts": 47
           },
           {
             "pos": 7,
-            "driver": "Nick Morich"
+            "driver": "Nick Morich",
+            "pts": 44
           },
           {
             "pos": 8,
-            "driver": "Joey Bevacqua"
+            "driver": "Joey Bevacqua",
+            "pts": 42
           },
           {
             "pos": 9,
-            "driver": "Lucas Bartlett"
+            "driver": "Lucas Bartlett",
+            "pts": 40
           },
           {
             "pos": 10,
-            "driver": "Tommy Rought"
+            "driver": "Tommy Rought",
+            "pts": 38
           },
           {
             "pos": 11,
-            "driver": "Tyler Harbst"
+            "driver": "Tyler Harbst",
+            "pts": 36
           },
           {
             "pos": 12,
-            "driver": "JP Harbst"
+            "driver": "JP Harbst",
+            "pts": 34
           },
           {
             "pos": 13,
-            "driver": "Jake Rought"
+            "driver": "Jake Rought",
+            "pts": 32
           }
         ],
         "heats": [
