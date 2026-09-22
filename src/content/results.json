@@ -1,5 +1,218 @@
 [
   {
+    "date": "2026-09-18",
+    "title": "Race Night",
+    "raceNum": 17,
+    "divisions": [
+      {
+        "slug": "b-mod",
+        "name": "Modifieds",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Lee Sharpsteen",
+            "pts": 65
+          },
+          {
+            "pos": 2,
+            "driver": "Zack Curren",
+            "pts": 0
+          },
+          {
+            "pos": 3,
+            "driver": "TJ Potrzebowski",
+            "pts": 55
+          },
+          {
+            "pos": 4,
+            "driver": "Kevin Youngs",
+            "pts": 50
+          },
+          {
+            "pos": 5,
+            "driver": "Jesse Kent",
+            "pts": 49
+          },
+          {
+            "pos": 6,
+            "driver": "Garrett Zacharias",
+            "pts": 47
+          },
+          {
+            "pos": 7,
+            "driver": "Jody Buckley",
+            "pts": 47
+          },
+          {
+            "pos": 8,
+            "driver": "Tommy Rought",
+            "pts": 42
+          },
+          {
+            "pos": 9,
+            "driver": "Lucas Bartlett",
+            "pts": 40
+          },
+          {
+            "pos": 10,
+            "driver": "Damon Frutchey",
+            "pts": 38
+          },
+          {
+            "pos": 11,
+            "driver": "Charlie Sharpsteen",
+            "pts": 36
+          },
+          {
+            "pos": 12,
+            "driver": "Tyler Harbst",
+            "pts": 34
+          },
+          {
+            "pos": 13,
+            "driver": "Dave Yehl",
+            "pts": 32
+          },
+          {
+            "pos": 14,
+            "driver": "Nick Morich",
+            "pts": 30
+          }
+        ],
+        "heats": [
+          "Curren",
+          "L Sharpsteen"
+        ],
+        "dnf": []
+      },
+      {
+        "slug": "hobby",
+        "name": "Hobby Stocks",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Terry Potrzebowski",
+            "pts": 63
+          },
+          {
+            "pos": 2,
+            "driver": "Cullen Sharpsteen",
+            "pts": 57
+          },
+          {
+            "pos": 3,
+            "driver": "Frank Chapman",
+            "pts": 57
+          },
+          {
+            "pos": 4,
+            "driver": "Josh Parker",
+            "pts": 51
+          },
+          {
+            "pos": 5,
+            "driver": "Mike Bailey",
+            "pts": 48
+          },
+          {
+            "pos": 6,
+            "driver": "Dennis Beardslee",
+            "pts": 46
+          },
+          {
+            "pos": 7,
+            "driver": "Mark Taylor",
+            "pts": 49
+          },
+          {
+            "pos": 8,
+            "driver": "Luke Nickels",
+            "pts": 42
+          },
+          {
+            "pos": 9,
+            "driver": "Ethan Roberts",
+            "pts": 45
+          },
+          {
+            "pos": 10,
+            "driver": "M-R Taylor",
+            "pts": 38
+          },
+          {
+            "pos": 11,
+            "driver": "Kamden Wheeler",
+            "pts": 36
+          },
+          {
+            "pos": 12,
+            "driver": "Paul Bailey",
+            "pts": 34
+          },
+          {
+            "pos": 13,
+            "driver": "John Lane",
+            "pts": 33
+          },
+          {
+            "pos": 14,
+            "driver": "Thomas Decker",
+            "pts": 30
+          },
+          {
+            "pos": 15,
+            "driver": "Cameron Nichols",
+            "pts": 28
+          },
+          {
+            "pos": 16,
+            "driver": "Mike Kintner",
+            "pts": 27
+          },
+          {
+            "pos": 17,
+            "driver": "Cody Marshall",
+            "pts": 29
+          },
+          {
+            "pos": 18,
+            "driver": "Tom Shaffer",
+            "pts": 28
+          }
+        ],
+        "heats": [
+          "Chapman",
+          "Mark Taylor",
+          "Roberts"
+        ],
+        "dnf": []
+      },
+      {
+        "slug": "4cyl",
+        "name": "4 Cylinder",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Greg Moldt",
+            "pts": 60
+          },
+          {
+            "pos": 2,
+            "driver": "Ronald Manwaring Jr",
+            "pts": 56
+          },
+          {
+            "pos": 3,
+            "driver": "Sidnie Decker",
+            "pts": 52
+          }
+        ],
+        "heats": [],
+        "dnf": []
+      }
+    ]
+  },
+  {
     "date": "2026-09-11",
     "title": "Race Night",
     "raceNum": 16,
