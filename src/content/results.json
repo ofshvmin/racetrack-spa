@@ -1,5 +1,192 @@
 [
   {
+    "date": "2026-09-25",
+    "title": "Championship Night",
+    "raceNum": 18,
+    "divisions": [
+      {
+        "slug": "b-mod",
+        "name": "Modifieds",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Jesse Kent",
+            "pts": 65
+          },
+          {
+            "pos": 2,
+            "driver": "Lee Sharpsteen",
+            "pts": 61
+          },
+          {
+            "pos": 3,
+            "driver": "Jody Buckley",
+            "pts": 55
+          },
+          {
+            "pos": 4,
+            "driver": "Charlie Sharpsteen",
+            "pts": 50
+          },
+          {
+            "pos": 5,
+            "driver": "Joey Bevacqua",
+            "pts": 48
+          },
+          {
+            "pos": 6,
+            "driver": "JP Harbst",
+            "pts": 46
+          },
+          {
+            "pos": 7,
+            "driver": "Tommy Rought",
+            "pts": 45
+          },
+          {
+            "pos": 8,
+            "driver": "Damon Frutchey",
+            "pts": 42
+          },
+          {
+            "pos": 9,
+            "driver": "Tyler Harbst",
+            "pts": 40
+          },
+          {
+            "pos": 10,
+            "driver": "Lucas Bartlett",
+            "pts": 39
+          },
+          {
+            "pos": 11,
+            "driver": "DJ Shaw",
+            "pts": 36
+          },
+          {
+            "pos": 12,
+            "driver": "Zack Curren",
+            "pts": 37
+          }
+        ],
+        "heats": [
+          "Sharpsteen",
+          "Kent."
+        ],
+        "dnf": []
+      },
+      {
+        "slug": "hobby",
+        "name": "Hobby Stocks",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Cody Marshall",
+            "pts": 61
+          },
+          {
+            "pos": 2,
+            "driver": "Tom Shaffer",
+            "pts": 0
+          },
+          {
+            "pos": 3,
+            "driver": "Frank Chapman",
+            "pts": 55
+          },
+          {
+            "pos": 4,
+            "driver": "Josh Parker",
+            "pts": 55
+          },
+          {
+            "pos": 5,
+            "driver": "Terry Potrzebowski",
+            "pts": 49
+          },
+          {
+            "pos": 6,
+            "driver": "Mike Bailey",
+            "pts": 46
+          },
+          {
+            "pos": 7,
+            "driver": "Dennis Beardslee",
+            "pts": 44
+          },
+          {
+            "pos": 8,
+            "driver": "Cullen Sharpsteen",
+            "pts": 42
+          },
+          {
+            "pos": 9,
+            "driver": "Mark Taylor",
+            "pts": 40
+          },
+          {
+            "pos": 10,
+            "driver": "Cameron Nichols",
+            "pts": 38
+          },
+          {
+            "pos": 11,
+            "driver": "Ethan Roberts",
+            "pts": 36
+          },
+          {
+            "pos": 12,
+            "driver": "Thomas Decker",
+            "pts": 37
+          },
+          {
+            "pos": 13,
+            "driver": "M-R Taylor",
+            "pts": 32
+          },
+          {
+            "pos": 14,
+            "driver": "Paul Bailey",
+            "pts": 30
+          },
+          {
+            "pos": 15,
+            "driver": "Frank Morich",
+            "pts": 28
+          },
+          {
+            "pos": 16,
+            "driver": "Kamden Wheeler",
+            "pts": 27
+          }
+        ],
+        "heats": [
+          "Shaffer",
+          "Parker."
+        ],
+        "dnf": []
+      },
+      {
+        "slug": "4cyl",
+        "name": "4 Cylinder",
+        "feature": [
+          {
+            "pos": 1,
+            "driver": "Ronald Manwaring Jr",
+            "pts": 60
+          },
+          {
+            "pos": 2,
+            "driver": "Mike Kintner",
+            "pts": 56
+          }
+        ],
+        "heats": [],
+        "dnf": []
+      }
+    ]
+  },
+  {
     "date": "2026-09-18",
     "title": "Race Night",
     "raceNum": 17,
