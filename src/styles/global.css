@@ -1248,7 +1248,8 @@ section.sponsors { background: var(--bg-2); }
   letter-spacing: 0.02em;
   transition: color .15s;
 }
-.sponsor .nm .small {
+.sponsor .nm .small,
+.sponsor .brandmark .small {
   display: block;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 400;
@@ -1260,6 +1261,40 @@ section.sponsors { background: var(--bg-2); }
   text-transform: uppercase;
 }
 .sponsor:hover .nm { color: var(--hot); }
+/* Sponsor wordmark carrying the sponsor's own type and colours, rather
+   than the track's Big Shoulders treatment. Muted at rest and brought to
+   full colour on hover, matching how the logo images behave. */
+.sponsor .brandmark {
+  font-family: 'Bricolage Grotesque', 'Manrope', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 27px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--brand-ink, var(--ink));
+  opacity: 0.9;
+  filter: grayscale(0.35) saturate(0.78) brightness(0.96);
+  transition: filter .25s ease, opacity .25s ease;
+}
+.sponsor .brandmark .accent { color: var(--brand-accent, var(--hot)); }
+.sponsor:hover .brandmark { opacity: 1; filter: none; }
+
+/* DankoDev brand palette, taken from dankodev.com */
+.sponsor .brandmark.dankodev { --brand-ink: #f4f0eb; --brand-accent: #e27a4b; }
+
+/* Linked sponsors. The anchor fills the cell's padding box, which is the
+   same containing block the absolutely positioned logo images already use,
+   so their centring and max-width are unchanged — and unlike a zero-height
+   inline anchor it gives keyboard users a focus ring they can actually see. */
+.sponsor-link {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+.sponsor-link:focus-visible { outline: 2px solid var(--hot); outline-offset: -4px; }
+
 @media (max-width: 820px) {
   .sponsor-grid { grid-template-columns: repeat(2, 1fr); }
   .sponsor { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }

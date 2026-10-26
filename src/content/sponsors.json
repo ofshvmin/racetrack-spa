@@ -15,5 +15,8 @@
   { "name": "Benjamin's Garage",            "nm": "Benjamin's\nGarage",                  "small": "— Randy & Judy Davenport —" },
   { "name": "Kintner's Contracting",        "nm": "Kintner's\nContracting",              "small": "— (570) 423-3365 —" },
   { "name": "Ward Apparatus",               "img": "/images/sponsors/ward.png",          "alt": "Ward Apparatus" },
-  { "name": "Elmira Heat Treating, Inc.",   "img": "/images/sponsors/elmira-heat-treating.jpg", "alt": "Elmira Heat Treating, Inc. — Quality, Service, Innovation" }
+  { "name": "Elmira Heat Treating, Inc.",   "img": "/images/sponsors/elmira-heat-treating.jpg", "alt": "Elmira Heat Treating, Inc. — Quality, Service, Innovation" },
+  { "name": "Hoosier Racing Tire",          "img": "/images/sponsors/hoosier.svg",       "alt": "Hoosier Racing Tire", "href": "https://www.hoosiertire.com/" },
+  { "name": "DankoDev",                     "brandmark": { "lead": "Danko", "accent": "Dev", "theme": "dankodev" }, "small": "— Software Development —", "href": "https://dankodev.com" },
+  { "name": "Sunoco Race Fuels",            "img": "/images/sponsors/sunoco.svg",        "alt": "Sunoco Race Fuels", "href": "https://www.sunocoracefuels.com/" }
 ]

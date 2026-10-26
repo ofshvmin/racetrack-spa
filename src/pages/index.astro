@@ -227,21 +227,37 @@ if (nextEvent) {
       </div>
       <ElmBanner />
       <div class="sponsor-grid">
-        {sponsors.map((s: any) => (
-          <div class="sponsor">
-            {s.img ? (
-              <>
-                <img src={s.img} alt={s.alt ?? s.name} loading="lazy" />
-                <span class="tag">{s.name}</span>
-              </>
-            ) : (
-              <div class="nm">
-                {s.nm?.split('\n').map((line: string, i: number) => i === 0 ? line : <><br />{line}</>)}
-                {s.small && <span class="small">{s.small}</span>}
-              </div>
-            )}
-          </div>
-        ))}
+        {sponsors.map((s: any) => {
+          const mark = s.img ? (
+            <>
+              <img src={s.img} alt={s.alt ?? s.name} loading="lazy" />
+              <span class="tag">{s.name}</span>
+            </>
+          ) : s.brandmark ? (
+            <div class={`brandmark ${s.brandmark.theme ?? ''}`.trim()}>
+              <span>{s.brandmark.lead}</span><span class="accent">{s.brandmark.accent}</span>
+              {s.small && <span class="small">{s.small}</span>}
+            </div>
+          ) : (
+            <div class="nm">
+              {s.nm?.split('\n').map((line: string, i: number) => i === 0 ? line : <><br />{line}</>)}
+              {s.small && <span class="small">{s.small}</span>}
+            </div>
+          );
+          return (
+            <div class="sponsor">
+              {s.href ? (
+                <a
+                  class="sponsor-link"
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${s.name} — opens in a new tab`}
+                >{mark}</a>
+              ) : mark}
+            </div>
+          );
+        })}
       </div>
       <div class="sponsor-cta" id="sponsor-cta">
         <div>
